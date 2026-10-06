@@ -1,7 +1,25 @@
 #!/bin/bash
-# Evaluate a kept checkpoint of a run:  bash jobs/eval_snap.sh NAME STEP   (deterministic sampler, then churn 0.8 for flow maps)
-n=$1; s=$(printf "%07d" $2); ck=$DEQ_ROOT/runs/$n/step_$s.pt
-for i in $(seq 60); do [ -f $ck ] && break; sleep 60; done
-[ -f $ck ] || { echo "no $ck"; exit 1; }
-[ -f runs/$n/eval_step$2.json ] || $PY -u scripts/eval_lm.py $ck out=runs/$n/eval_step$2.json
-grep -q '"flow_map": true' runs/$n/eval_step$2.json && { [ -f runs/$n/eval_step$2_churn0.8.json ] || $PY -u scripts/eval_lm.py $ck out=runs/$n/eval_step$2_churn0.8.json churn=0.8; }
+# Evaluate kept checkpoints of a run (deterministic sampler, then churn 0.8 for flow maps).
+#   bash jobs/eval_snap.sh NAME STEP      one checkpoint (waits up to an hour for it to appear)
+#   bash jobs/eval_snap.sh NAME all SECS  every kept checkpoint not evaluated yet, within SECS seconds
+n=$1
+one() { # step  [timeout seconds]
+  local s=$(printf "%07d" $1) t=${2:-3600}; local ck=$DEQ_ROOT/runs/$n/step_$s.pt o=runs/$n/eval_step$1
+  if [ ! -f $o.json ]; then
+    timeout ${t}s $PY -u scripts/eval_lm.py $ck out=$o.tmp.json ${EVAL_ARGS} && mv $o.tmp.json $o.json || return 1
+  fi
+  if grep -q '"flow_map": true' $o.json && [ ! -f ${o}_churn0.8.json ]; then
+    timeout ${t}s $PY -u scripts/eval_lm.py $ck out=${o}_churn.tmp.json churn=0.8 && mv ${o}_churn.tmp.json ${o}_churn0.8.json || return 1
+  fi
+}
+if [ "$2" = all ]; then
+  end=$(( $(date +%s) + ${3:-600} ))
+  for ck in $(ls $DEQ_ROOT/runs/$n/step_*.pt 2>/dev/null); do
+    step=$((10#$(basename $ck .pt | cut -d_ -f2))); left=$(( end - $(date +%s) ))
+    [ $left -lt 240 ] && break
+    one $step $left || break
+  done
+else
+  for i in $(seq 60); do [ -f $DEQ_ROOT/runs/$n/step_$(printf "%07d" $2).pt ] && break; sleep 60; done
+  one $2
+fi

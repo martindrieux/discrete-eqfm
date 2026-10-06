@@ -63,6 +63,11 @@ slot() {   # slot <index> <comma-separated gpu ids>
     local pid=$!
     while kill -0 $pid 2>/dev/null; do touch runs/$picked/.lock/hb; sleep 30; done
     wait $pid; local rc=$?
+    # kept checkpoints not evaluated yet (a denoiser gets a short Euler evaluation), within the time that is left
+    ( [ $script = train_field.py ] && export EVAL_ARGS='eval.steps=[32,256]'
+      CUDA_VISIBLE_DEVICES=${gpus%%,*} bash jobs/eval_snap.sh $picked all $(( END - $(date +%s) - 120 )) ) >> runs/$picked/train.log 2>&1 &
+    local epid=$!
+    while kill -0 $epid 2>/dev/null; do touch runs/$picked/.lock/hb; sleep 30; done
     if [ $rc = 0 ]; then    # done: this worker takes one of the tasks it unblocks; start a worker for each of the others
       touch runs/$picked/DONE
       $PY scripts/nb_record.py $picked >> runs/$picked/train.log 2>&1    # experiment tracker; never fatal
