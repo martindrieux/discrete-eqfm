@@ -1,0 +1,22 @@
+== Training step
+input: batch of $B$ = `train.batch_size` token sequences $y \in \{1..V\}^L$, softmax network $\hat D$
+$x_1$ = one-hot of $y$, $x_0 \sim \mathcal{N}(0, I)$ in $\mathbb{R}^{L \times V}$
+$u \sim \mathcal{U}[0, 1]$   // one per sequence; if `loss.stratified`, $u_i = (i + \mathcal{U}[0,1]) / B$ in random order
+$t$ and weight $w$ by the rule `loss.diag_time`:
+    uniform: $t = (1 - \epsilon) u$, $w = \frac{1}{1 - t}$   // $\epsilon$ = `loss.t_eps`
+    log_uniform: $t = 1 - \epsilon^{u}$, $w = \log(1 / \epsilon)$
+    reparam: $t = \tau^{-1}(u)$, $w = 1$   // $\tau(t) = 1 - \frac{V}{V-1} P(\arg\max_v I_t^l \ne y^l)$
+$I_t = (1 - t) x_0 + t x_1$
+network input $a$ by the rule `model.cond`:
+    duration: $a = 0$   // time-free
+    state_time: $a = \tau(\hat t(I_t))$, $\hat t(x)$ the root of $(1 - t)^2 V + t^2 = \frac{1}{L} \sum_l \lVert x^l \rVert^2$   // time-free
+    time: $a = \tau(t)$   // FLM
+$L(\theta) = \frac{1}{B} \sum_{i=1}^{B} w^{(i)} \frac{1}{L} \sum_{l=1}^{L} - \log \hat D(I_t^{(i)}, a^{(i)})^l_{y^{(i),l}}$
+
+== Generating samples (Euler)
+input: number of steps $K$, times $t_0 = 0 < \dots < t_K = 1$ by the rule `eval.grid`
+$x \sim \mathcal{N}(0, I)$
+for $k = 0, \dots, K - 1$:
+    $\kappa_k = \frac{t_{k+1} - t_k}{1 - t_k}$   // $\kappa_{K-1} = 1$
+    $x \leftarrow (1 - \kappa_k) x + \kappa_k \hat D(x, a)$   // $a$ as in training, with $t = t_k$
+return $\arg\max_v x^l_v$ for every position $l$

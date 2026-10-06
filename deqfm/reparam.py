@@ -13,6 +13,8 @@ import numpy as np
 import torch
 
 
+from .track import nb
+
 def tau_of_t_exact(t, vocab_size, n_gh=100):
     from numpy.polynomial.hermite import hermgauss
     from scipy.special import log_ndtr
@@ -70,6 +72,7 @@ def get_reparam(vocab_size):
     return Reparam(vocab_size)
 
 
+@nb.core
 def state_time(x):
     """Noise level of a state, from its norm alone. x: [B, L, V] -> t_hat: [B].
 
@@ -78,6 +81,6 @@ def state_time(x):
     A flow-map state (1 - kappa) x + kappa delta keeps the same noise component, so the estimate follows the jump.
     """
     V = x.shape[-1]
-    m = x.float().pow(2).sum(-1).mean(-1)                      # [B]
+    m = torch.linalg.vector_norm(x.float(), dim=-1).pow(2).mean(-1)   # [B]; no vocabulary-sized temporary
     disc = (V * V - (V + 1) * (V - m)).clamp_min(0.0)
     return ((V - disc.sqrt()) / (V + 1)).clamp(0.0, 1.0)

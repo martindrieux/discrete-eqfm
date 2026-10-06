@@ -1,0 +1,38 @@
+== Training step
+input: batch of $B$ = `train.batch_size` token sequences $y$, softmax network $\hat\delta_\kappa(x)$, optional frozen teacher denoiser (`loss.teacher`)
+$\bar D$ = the teacher if given, else the model's own $\hat\delta_0$; no gradient through $\bar D$
+split the batch: first half for the diagonal loss, second half for the off-diagonal loss   // if `loss.split_batch`
+diagonal half: $t$, $w$ by `loss.diag_time` as for the denoiser, $I_t = (1 - t) x_0 + t x_1$
+$L_{\mathrm{diag}}$:
+    from data: $\mathrm{mean}\big[- w \frac{1}{L} \sum_l \log \hat\delta_0(I_t)^l_{y^l}\big]$
+    distillation: $\mathrm{mean}\big[- \frac{1}{L} \sum_l \bar D(I_t)^l \cdot \log \hat\delta_0(I_t)^l\big]$
+off-diagonal half: time $t$, jump fraction $\kappa$ and first leg $\kappa_1 \le \kappa$ by the rule `loss.jump_sampling`:
+    notes: $t \sim \mathcal{U}[0,1]$; semigroup: $\sigma_3 = \sqrt{u}$, $\sigma_1 \sim \mathcal{U}[0, \sigma_3]$, $\kappa = \kappa(\sigma_3)$, $\kappa_1 = \kappa(\sigma_1)$; otherwise $\sigma \sim \mathcal{U}[0,1]$, $\kappa = \kappa(\sigma)$
+    reparam: $h \sim \mathcal{U}[0,1]$, $\tau_s \sim \mathcal{U}[0, 1 - h]$, $\tau_e = \tau_s + h$; with probability `loss.whole_jump_prob`: $\tau_s = 0$, $\tau_e = 1$; $t = \tau^{-1}(\tau_s)$, $t' = \tau^{-1}(\tau_e)$, $u = \tau^{-1}(\frac{\tau_s + \tau_e}{2})$, $\kappa = \frac{t' - t}{1 - t}$, $\kappa_1 = \frac{u - t}{1 - t}$
+    endpoint: $t \sim \mathcal{U}[0,1]$, $\kappa = 1$
+boundary samples: with probability `loss.boundary_prob`, replace by $t \sim \mathcal{U}[t_b, 1]$, $\kappa = 1$ with probability $\frac12$ else $\kappa \sim \mathcal{U}[0,1]$   // $t_b$ = `loss.boundary_t`
+$x = I_t = (1 - t) x_0 + t x_1$
+target $\bar\delta$ (no gradient) by the rule `loss.off_diagonal`:
+    semigroup: $\kappa_2 = \frac{\kappa - \kappa_1}{1 - \kappa_1}$, $\gamma = \frac{\kappa_1 (1 - \kappa_2)}{\kappa}$, $x' = (1 - \kappa_1) x + \kappa_1 \hat\delta_{\kappa_1}(x)$, $\bar\delta = \gamma \hat\delta_{\kappa_1}(x) + (1 - \gamma) \hat\delta_{\kappa_2}(x')$
+    lagrangian: $x' = (1 - \kappa) x + \kappa \hat\delta_\kappa(x)$, $\bar\delta = \bar D(x') - c \kappa \partial_\sigma \hat\delta_\sigma(x)$   // $c = c(\sigma)$, $\kappa = \kappa(\sigma)$
+    eulerian: $J = \frac{d}{d\epsilon} \hat\delta_{\sigma - \epsilon c}(x + \epsilon v) \big|_{\epsilon = 0}$ with $v = \bar D(x) - x$, or $v = x_1 - x$ if `loss.direction` = data; $\bar\delta = (1 - \kappa)(v + x) + \kappa (\hat\delta_\sigma(x) + J)$
+    samples with $\kappa = 1$, if `loss.whole_jump_target` = semigroup: the semigroup target
+    boundary samples: $\bar\delta = \bar D(x)$, or $x_1$ if `loss.boundary_target` = data
+$L_{\mathrm{off}} = \mathrm{mean}\big[- \frac{1}{L} \sum_l \bar\delta^l \cdot \log \hat\delta_\kappa(x)^l\big]$
+$L(\theta) = w_{\mathrm{diag}} L_{\mathrm{diag}} + \alpha L_{\mathrm{off}}$   // $w_{\mathrm{diag}}$ = `loss.diag_weight`, $\alpha$ = `loss.alpha`
+
+== What the network receives for $\hat\delta_\kappa(x)$, with $x$ at time $t$
+by the rule `model.cond`:
+    duration: $\sigma = \kappa^{-1}(\kappa)$ under `clock`   // time-free
+    state_time: $\tau(\hat t(x))$ and $\tau(1 - (1 - \kappa)(1 - \hat t(x)))$   // time-free: $\hat t(x)$ is read off $\lVert x \rVert$
+    time: $\tau(t)$ and $\tau(1 - (1 - \kappa)(1 - t))$   // FMLM
+
+== Generating samples
+input: number of steps $K$, times $t_0 = 0 < \dots < t_K = 1$ by the rule `eval.grid`, churn $g \in [0, 1)$
+$x \sim \mathcal{N}(0, I)$
+for $k = 0, \dots, K - 1$:
+    $s = (1 - t_{k+1}) \sqrt{1 - g^2}$, $\kappa_k = 1 - \frac{s}{1 - t_k}$   // $g = 0$: $\kappa_k = \frac{t_{k+1} - t_k}{1 - t_k}$
+    $p = \hat\delta_{\kappa_k}(x)$
+    if $k = K - 1$: $x \leftarrow p$
+    else: $x \leftarrow (1 - \kappa_k) x + \kappa_k p + (s - (1 - t_{k+1})) p + g (1 - t_{k+1}) \xi$, $\xi \sim \mathcal{N}(0, I)$
+return $\arg\max_v x^l_v$ for every position $l$

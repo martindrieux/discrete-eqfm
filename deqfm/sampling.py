@@ -16,11 +16,14 @@ from .nets import make_fn, probs_fn
 from .reparam import get_reparam
 
 
+from .track import nb
+
 def uniform_kappas(steps):
     """kappa_k = 1 / (K - k): every step removes the same amount of noise level. The last one is 1."""
     return [1.0 / (steps - k) for k in range(steps)]
 
 
+@nb.core
 def time_grid(steps, kind="uniform", vocab_size=None):
     if kind == "uniform":
         return [k / steps for k in range(steps + 1)]
@@ -29,6 +32,7 @@ def time_grid(steps, kind="uniform", vocab_size=None):
     raise ValueError(f"unknown grid '{kind}'")
 
 
+@nb.core
 @torch.no_grad()
 def sample_grid(model, cond, clock, num, grid, flow_map=True, churn=0.0, device="cpu", return_state=False):
     """Token ids [num, seq_len] from a time grid. `churn` is the gamma of the FMLM sampler: each step jumps a

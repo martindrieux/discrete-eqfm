@@ -7,3 +7,5 @@ wandb/
 .pytest_cache/
 nohup.out
 logs/
+nb_runs/
+.venv/

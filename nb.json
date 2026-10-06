@@ -1,0 +1,209 @@
+{
+ "url": "https://lab.loopflowlabs.com",
+ "project": "discrete-eqfm",
+ "title": "Equilibrium flow maps for text (LM1B)",
+ "headline": "gen_ppl_1",
+ "views": [
+  {
+   "title": "Generative perplexity, 1 sampling step",
+   "shows": "$\\exp\\big(-\\frac{1}{N}\\sum_n \\log p_{\\mathrm{GPT2L}}(w_n \\mid w_{<n})\\big)$ over the judge tokens $w$ of 1024 samples decoded from $\\arg\\max_v x^l_v$, sampler with $K = 1$ jump (real LM1B text: 52.7)",
+   "kind": "curve",
+   "metric": "gen_ppl_1",
+   "log_y": true,
+   "better": "lower"
+  },
+  {
+   "title": "Entropy, 1 sampling step",
+   "shows": "mean over 1024 samples of $-\\sum_v q_v \\log q_v$, $q_v$ = frequency of token $v$ inside one sample of $L$ tokens (real LM1B text: 4.31), $K = 1$",
+   "kind": "curve",
+   "metric": "entropy_1",
+   "better": "higher"
+  },
+  {
+   "title": "Generative perplexity, 2 sampling steps",
+   "shows": "$\\exp\\big(-\\frac{1}{N}\\sum_n \\log p_{\\mathrm{GPT2L}}(w_n \\mid w_{<n})\\big)$ over the judge tokens $w$ of 1024 samples decoded from $\\arg\\max_v x^l_v$, $K = 2$",
+   "kind": "curve",
+   "metric": "gen_ppl_2",
+   "log_y": true,
+   "better": "lower"
+  },
+  {
+   "title": "Generative perplexity, 2 sampling steps, stochastic sampler",
+   "shows": "$\\exp\\big(-\\frac{1}{N}\\sum_n \\log p_{\\mathrm{GPT2L}}(w_n \\mid w_{<n})\\big)$ over the judge tokens $w$ of 1024 samples decoded from $\\arg\\max_v x^l_v$, $K = 2$, sampler with churn $g = 0.8$ as in FMLM",
+   "kind": "curve",
+   "metric": "gen_ppl_2_churn",
+   "log_y": true,
+   "better": "lower"
+  },
+  {
+   "title": "Generative perplexity, 4 sampling steps",
+   "shows": "$\\exp\\big(-\\frac{1}{N}\\sum_n \\log p_{\\mathrm{GPT2L}}(w_n \\mid w_{<n})\\big)$ over the judge tokens $w$ of 1024 samples decoded from $\\arg\\max_v x^l_v$, $K = 4$",
+   "kind": "curve",
+   "metric": "gen_ppl_4",
+   "log_y": true,
+   "better": "lower"
+  },
+  {
+   "title": "Generative perplexity, 4 sampling steps, stochastic sampler",
+   "shows": "$\\exp\\big(-\\frac{1}{N}\\sum_n \\log p_{\\mathrm{GPT2L}}(w_n \\mid w_{<n})\\big)$ over the judge tokens $w$ of 1024 samples decoded from $\\arg\\max_v x^l_v$, $K = 4$, sampler with churn $g = 0.8$ as in FMLM",
+   "kind": "curve",
+   "metric": "gen_ppl_4_churn",
+   "log_y": true,
+   "better": "lower"
+  },
+  {
+   "title": "Generative perplexity, 8 sampling steps",
+   "shows": "$\\exp\\big(-\\frac{1}{N}\\sum_n \\log p_{\\mathrm{GPT2L}}(w_n \\mid w_{<n})\\big)$ over the judge tokens $w$ of 1024 samples decoded from $\\arg\\max_v x^l_v$, $K = 8$",
+   "kind": "curve",
+   "metric": "gen_ppl_8",
+   "log_y": true,
+   "better": "lower"
+  },
+  {
+   "title": "Generative perplexity, 8 sampling steps, stochastic sampler",
+   "shows": "$\\exp\\big(-\\frac{1}{N}\\sum_n \\log p_{\\mathrm{GPT2L}}(w_n \\mid w_{<n})\\big)$ over the judge tokens $w$ of 1024 samples decoded from $\\arg\\max_v x^l_v$, $K = 8$, sampler with churn $g = 0.8$ as in FMLM",
+   "kind": "curve",
+   "metric": "gen_ppl_8_churn",
+   "log_y": true,
+   "better": "lower"
+  },
+  {
+   "title": "Entropy, 8 sampling steps",
+   "shows": "mean over 1024 samples of $-\\sum_v q_v \\log q_v$, $q_v$ = frequency of token $v$ inside one sample of $L$ tokens (real LM1B text: 4.31), $K = 8$",
+   "kind": "curve",
+   "metric": "entropy_8",
+   "better": "higher"
+  },
+  {
+   "title": "Generative perplexity, 1024 Euler steps (denoisers)",
+   "shows": "$\\exp\\big(-\\frac{1}{N}\\sum_n \\log p_{\\mathrm{GPT2L}}(w_n \\mid w_{<n})\\big)$ over the judge tokens $w$ of 1024 samples decoded from $\\arg\\max_v x^l_v$, Euler sampler of the denoiser with $K = 1024$",
+   "kind": "curve",
+   "metric": "gen_ppl_1024",
+   "log_y": true,
+   "better": "lower"
+  },
+  {
+   "title": "Entropy, 1024 Euler steps (denoisers)",
+   "shows": "mean over 1024 samples of $-\\sum_v q_v \\log q_v$, $q_v$ = frequency of token $v$ inside one sample of $L$ tokens (real LM1B text: 4.31), $K = 1024$",
+   "kind": "curve",
+   "metric": "entropy_1024",
+   "better": "higher"
+  },
+  {
+   "title": "Training loss",
+   "shows": "$L = w_{\\mathrm{diag}} L_{\\mathrm{diag}} + \\alpha L_{\\mathrm{off}}$ (flow map) or $L_{\\mathrm{diag}}$ (denoiser), mean over the last `train.log_every` steps",
+   "kind": "curve",
+   "metric": "loss",
+   "log_y": true,
+   "better": "lower"
+  },
+  {
+   "title": "Diagonal loss",
+   "shows": "$L_{\\mathrm{diag}} = \\mathbb{E}\\big[-w(t)\\frac{1}{L}\\sum_l \\log \\hat\\delta_0(I_t)^l_{y^l}\\big]$ from data, or $\\mathbb{E}\\big[-\\frac{1}{L}\\sum_l \\bar D(I_t)^l \\cdot \\log \\hat\\delta_0(I_t)^l\\big]$ when distilling",
+   "kind": "curve",
+   "metric": "diag",
+   "log_y": true,
+   "better": "lower"
+  },
+  {
+   "title": "Off-diagonal loss",
+   "shows": "$L_{\\mathrm{off}} = \\mathbb{E}\\big[-\\frac{1}{L}\\sum_l \\bar\\delta^l \\cdot \\log \\hat\\delta_\\kappa(I_t)^l\\big]$, $\\bar\\delta$ the stop-gradient target of `loss.off_diagonal`",
+   "kind": "curve",
+   "metric": "off",
+   "log_y": true,
+   "better": "lower"
+  }
+ ],
+ "glossary": {
+  "algos": {
+   "denoiser": "$\\hat D = \\arg\\min \\mathbb{E}_{t,x_0,x_1}\\big[-w(t)\\, x_1 \\cdot \\log \\hat D(I_t)\\big]$, $I_t = (1-t)x_0 + t x_1$; sampled by Euler steps of $\\dot x = (\\hat D(x) - x)/(1-t)$",
+   "flow-map": "$\\hat\\Phi_\\kappa(x) = (1-\\kappa)x + \\kappa\\,\\hat\\delta_\\kappa(x)$ with $\\hat\\delta_0 = \\hat D$ and $\\hat\\delta_\\kappa$ trained by cross-entropy to a stop-gradient target (semigroup, Lagrangian or Eulerian); sampled by $K$ jumps"
+  },
+  "params": {
+   "seed": "random seed",
+   "out_dir": "folder for logs and results of the run",
+   "ckpt_dir": "folder for checkpoints (default: `out_dir`)",
+   "clock": "map between the label $\\sigma$ and $\\kappa$: exponential $\\kappa = \\sigma$, $c = 1-\\sigma$; rational $\\kappa = 1 - e^{-\\sigma/(1-\\sigma)}$, $c = (1-\\sigma)^2$",
+   "data.name": "dataset: toy (8 fixed sequences), text (characters), tokens (token file), blocks (LM1B cut in sequences of $L$ tokens as in FLM)",
+   "data.seq_len": "$L$: number of tokens per sequence",
+   "data.vocab_size": "$V$ for the toy data (LM1B: $V = 30522$)",
+   "data.n_modes": "number of sequences of the toy data",
+   "data.path": "file of the dataset",
+   "model.arch": "network: denoiser (small transformer, absolute positions) or dit (the 12-layer transformer of FLM, rotary positions)",
+   "model.dim": "width of the transformer",
+   "model.depth": "number of transformer blocks",
+   "model.heads": "number of attention heads",
+   "model.mlp_ratio": "hidden width of the feed-forward layers divided by `model.dim`",
+   "model.dropout": "dropout probability during training",
+   "model.sigma_scale": "denoiser arch: largest frequency of the embedding of $\\sigma$, in radians per unit $\\sigma$",
+   "model.cond": "inputs of the network besides $x$: duration $\\to \\sigma$; state_time $\\to \\tau(\\hat t(x))$ and $\\tau(t')$ (time-free); time $\\to \\tau(t)$ and $\\tau(t')$ (FLM, FMLM)",
+   "model.cond_dim": "width of the embedding of the scalar inputs (dit)",
+   "model.softcap": "$s$ in attention scores $a \\leftarrow s\\tanh(a/s)$ (dit)",
+   "model.logit_cap": "$m$ in output logits $z \\leftarrow m\\tanh(z/m)$ (dit)",
+   "loss.diag_time": "law of $t$ and weight $w(t)$ of the diagonal loss: uniform $t \\sim \\mathcal{U}[0,1-\\epsilon]$, $w = \\frac{1}{1-t}$; log_uniform density $\\propto \\frac{1}{1-t}$, $w$ constant; reparam $\\tau(t) \\sim \\mathcal{U}[0,1]$, $w = 1$",
+   "loss.stratified": "if true, the $B$ uniform draws of a batch are $u_i = (i + \\mathcal{U}[0,1])/B$ in random order",
+   "loss.t_eps": "$\\epsilon$: largest time is $1 - \\epsilon$ in `loss.diag_time` = uniform or log_uniform",
+   "loss.off_diagonal": "target $\\bar\\delta$: semigroup $\\gamma\\hat\\delta_{\\kappa_1}(x) + (1-\\gamma)\\hat\\delta_{\\kappa_2}(\\hat\\Phi_{\\kappa_1}(x))$; lagrangian $\\bar D(\\hat\\Phi_\\kappa(x)) - c\\kappa\\,\\partial_\\sigma\\hat\\delta$; eulerian $(1-\\kappa)\\bar D(x) + \\kappa(\\hat\\delta + J)$",
+   "loss.alpha": "$\\alpha$ in $L = w_{\\mathrm{diag}}L_{\\mathrm{diag}} + \\alpha L_{\\mathrm{off}}$",
+   "loss.diag_weight": "$w_{\\mathrm{diag}}$ in $L = w_{\\mathrm{diag}}L_{\\mathrm{diag}} + \\alpha L_{\\mathrm{off}}$; 0 trains no denoiser",
+   "loss.direction": "Eulerian loss: $J$ is the derivative of $\\hat\\delta$ along $(\\bar D(x) - x, -c)$ (denoiser) or along $(x_1 - x, -c)$ (data)",
+   "loss.jvp": "how derivatives of $\\hat\\delta$ are computed: forward (forward-mode differentiation) or fd (central finite differences)",
+   "loss.fd_eps": "step $h$ of the finite difference $\\frac{f(z + hu) - f(z - hu)}{2h}$",
+   "loss.split_batch": "if true, the first half of the batch is used for $L_{\\mathrm{diag}}$ and the second for $L_{\\mathrm{off}}$",
+   "loss.teacher": "checkpoint of the frozen denoiser $\\bar D$ (distillation); none: training from data, $\\bar D = \\hat\\delta_0$",
+   "loss.teacher_cond": "how the teacher is told the time (same choices as `model.cond`)",
+   "loss.init_from_teacher": "if true, the flow map starts from the teacher's weights",
+   "loss.flat_init": "duration-conditioned dit: start with $\\hat\\delta_\\sigma = \\bar D$ for every $\\sigma$",
+   "loss.jump_sampling": "law of $(t, \\kappa)$: notes $t, \\sigma \\sim \\mathcal{U}[0,1]$; reparam $h \\sim \\mathcal{U}[0,1]$, $\\tau(t) \\sim \\mathcal{U}[0,1-h]$, $\\tau(t') = \\tau(t) + h$; endpoint $t \\sim \\mathcal{U}[0,1]$, $\\kappa = 1$",
+   "loss.whole_jump_prob": "probability that an off-diagonal sample is the whole jump $t = 0$, $\\kappa = 1$ (reparam sampling)",
+   "loss.whole_jump_target": "target for samples with $\\kappa = 1$ under the Lagrangian or Eulerian loss: same, or the semigroup target",
+   "loss.boundary_prob": "probability that an off-diagonal sample is a boundary sample: $t \\sim \\mathcal{U}[t_b, 1]$, any $\\kappa$, target $\\bar D(I_t)$",
+   "loss.boundary_t": "$t_b$: smallest time of a boundary sample",
+   "loss.boundary_target": "target of a boundary sample: $\\bar D(I_t)$ (denoiser) or $x_1$ (data)",
+   "train.steps": "number of optimizer steps",
+   "train.batch_size": "$B$ per process; the batch of one step is $B \\times$ processes $\\times$ `train.grad_accum`",
+   "train.grad_accum": "number of batches whose gradients are summed per optimizer step",
+   "train.lr": "$\\eta$: learning rate of AdamW after warmup",
+   "train.warmup": "$W$: learning rate at step $k$ is $\\eta\\min(1, k/W)$",
+   "train.betas": "$(\\beta_1, \\beta_2)$ of AdamW",
+   "train.weight_decay": "weight decay of AdamW",
+   "train.grad_clip": "largest norm of the gradient (0: no clipping)",
+   "train.ema": "$\\rho$: averaged weights $\\bar\\theta \\leftarrow \\rho\\bar\\theta + (1-\\rho)\\theta$; samples and teachers use $\\bar\\theta$",
+   "train.precision": "mixed precision passed to accelerate (the dit runs its blocks in bfloat16 by itself)",
+   "train.num_workers": "data loader processes",
+   "train.log_every": "steps between two log lines",
+   "train.save_every": "steps between two checkpoints",
+   "train.resume": "if true, continue from the last checkpoint of `ckpt_dir`",
+   "train.init": "checkpoint whose averaged weights initialise the network",
+   "train.init_time": "value of $\\tau$ at which a time-conditioned initialisation is frozen when the new network is time-free",
+   "train.min_rate": "stop and move to another node if the speed is below this many steps per second (0: off)",
+   "train.max_minutes": "checkpoint and stop after this many minutes (0: off)",
+   "train.keep_every": "steps between two kept copies of the averaged weights (0: off)",
+   "sample.steps": "$K$ for scripts/sample.py",
+   "sample.num": "number of samples for scripts/sample.py",
+   "eval.steps": "values of $K$ evaluated",
+   "eval.num": "number of samples per evaluation",
+   "eval.batch": "samples generated at once",
+   "eval.grid": "sampling times $t_0 = 0 < \\dots < t_K = 1$: uniform $t_k = k/K$; reparam $\\tau(t_k) = k/K$; $\\kappa_k = \\frac{t_{k+1} - t_k}{1 - t_k}$",
+   "eval.judge": "language model that scores the samples",
+   "eval.at_end": "unused",
+   "wandb.project": "Weights and Biases project (none: off)",
+   "wandb.name": "Weights and Biases run name"
+  },
+  "symbols": {
+   "x_1": "one-hot matrix in $\\mathbb{R}^{L \\times V}$ of a data sequence $y$ of $L$ tokens from a vocabulary of size $V$",
+   "x_0": "noise, $x_0 \\sim \\mathcal{N}(0, I)$ in $\\mathbb{R}^{L \\times V}$",
+   "I_t": "state at time $t \\in [0,1]$: $I_t = (1-t)x_0 + t x_1$",
+   "\\hat D": "denoiser: softmax network, $\\hat D(x) \\approx \\mathbb{E}[x_1 \\mid I_t = x]$",
+   "\\kappa": "jump fraction in $[0,1]$: a jump from time $t$ lands at $t' = 1 - (1-\\kappa)(1-t)$; $\\kappa = 1$ is the whole jump to the end",
+   "\\hat\\delta_\\kappa": "softmax network of the flow map; one jump is $\\hat\\Phi_\\kappa(x) = (1-\\kappa)x + \\kappa\\hat\\delta_\\kappa(x)$, and $\\hat\\delta_0 = \\hat D$",
+   "\\sigma": "duration label seen by a duration-conditioned network, $\\kappa = \\kappa(\\sigma)$ given by the clock",
+   "c(\\sigma)": "clock speed, $c = 1 - \\sigma$ (exponential clock) or $(1-\\sigma)^2$ (rational clock)",
+   "\\tau(t)": "decoding-error clock of FLM: $\\tau(t) = 1 - \\frac{V}{V-1}P(\\arg\\max_v I_t^l \\ne y^l)$, increasing from 0 to 1",
+   "\\hat t(x)": "time read off a state: root of $(1-t)^2 V + t^2 = \\frac{1}{L}\\sum_l \\lVert x^l \\rVert^2$",
+   "\\bar D": "denoiser used in targets, no gradient: the frozen teacher when distilling, else the model's own $\\hat\\delta_0$",
+   "K": "number of sampling steps (network evaluations)",
+   "\\eta": "learning rate"
+  }
+ }
+}

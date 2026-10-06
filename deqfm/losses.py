@@ -17,6 +17,8 @@ import torch
 import torch.nn.functional as F
 
 
+from .track import nb
+
 def _b(v):
     """[B] -> [B, 1, 1] for broadcasting against states."""
     return v.view(-1, 1, 1)
@@ -24,6 +26,7 @@ def _b(v):
 
 # ----------------------------------------------------------------------------- states and times
 
+@nb.core
 def sample_state(tokens, vocab_size, t):
     """I_t = (1 - t) x_0 + t x_1 with x_0 ~ N(0, I) and x_1 the one-hot matrix of `tokens`. t: [B]."""
     x1 = F.one_hot(tokens, vocab_size).float()
@@ -38,6 +41,7 @@ def uniform01(batch, device, stratified=False):
     return u
 
 
+@nb.core
 def sample_diag_time(batch, mode, t_eps, device, reparam=None, stratified=False):
     """Time t ~ q and loss weight for the diagonal loss.
 
@@ -59,6 +63,7 @@ def sample_diag_time(batch, mode, t_eps, device, reparam=None, stratified=False)
 
 # ----------------------------------------------------------------------------- losses
 
+@nb.core
 def soft_cross_entropy(logits, target):
     """- target . log softmax(logits), averaged over positions and batch.
 
@@ -67,6 +72,7 @@ def soft_cross_entropy(logits, target):
     return -(target.float() * F.log_softmax(logits.float(), dim=-1)).sum(-1).mean()
 
 
+@nb.core
 def diagonal_data_loss(logits, tokens, weight):
     """Weighted cross-entropy against the data: mean over the batch of weight * (- x_1 . log delta_hat_0(I_t)) / L."""
     ce = F.cross_entropy(logits.float().flatten(0, 1), tokens.flatten(), reduction="none").view(tokens.shape)
@@ -91,6 +97,7 @@ def make_jvp_fd(eps):
 
 # ----------------------------------------------------------------------------- jump sampling
 
+@nb.core
 def sample_jumps(batch, mode, clock, device, need_mid, reparam=None, boundary_prob=0.0, stratified=False):
     """State time t, jump fraction k3 and (for the semigroup loss) first-leg fraction k1, each of shape [batch].
 
@@ -129,6 +136,7 @@ def land(t, k):
 
 # ----------------------------------------------------------------------------- off-diagonal targets
 
+@nb.core
 @torch.no_grad()
 def semigroup_target(f, Dbar, x, t, k3, k1, clock=None, jvp=None):
     """Algorithm 2: target = gamma f(x, k1) + (1 - gamma) f(x', k2), with x' the state after the first leg."""
@@ -147,6 +155,7 @@ def _in_sigma(f):
     return f.in_sigma
 
 
+@nb.core
 @torch.no_grad()
 def lagrangian_target(f, Dbar, x, t, k3, k1=None, clock=None, jvp=jvp_forward):
     """Algorithm 3: target = Dbar(x') - c kappa d/dsigma f(x, sigma), with x' the state after the jump."""
@@ -156,6 +165,7 @@ def lagrangian_target(f, Dbar, x, t, k3, k1=None, clock=None, jvp=jvp_forward):
     return Dbar(x_end, land(t, k3)) - _b(clock.c(s) * k3) * J
 
 
+@nb.core
 @torch.no_grad()
 def eulerian_target(f, Dbar, x, t, k3, k1=None, clock=None, jvp=jvp_forward):
     """Algorithm 4: target = (1 - kappa) Dbar(x) + kappa f(x, sigma) + kappa J,

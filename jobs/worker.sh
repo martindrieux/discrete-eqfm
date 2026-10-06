@@ -65,6 +65,7 @@ slot() {   # slot <index> <comma-separated gpu ids>
     wait $pid; local rc=$?
     if [ $rc = 0 ]; then    # done: this worker takes one of the tasks it unblocks; start a worker for each of the others
       touch runs/$picked/DONE
+      $PY scripts/nb_record.py $picked >> runs/$picked/train.log 2>&1    # experiment tracker; never fatal
       for i in $(seq 2 $(awk -F'\t' -v n=$picked '$2==n' $TASKS | wc -l)); do resubmit > /dev/null; done
     fi
     rm -rf runs/$picked/.lock
