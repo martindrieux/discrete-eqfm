@@ -242,3 +242,15 @@ def test_flat_start_from_teacher(tmp_path):
     with torch.no_grad():
         ref = teacher(x, torch.zeros(3))
         assert torch.allclose(student(x, torch.rand(3)), ref, atol=1e-5)
+
+
+def test_endpoint_only_training(tmp_path):
+    """The endpoint-only special case (transport map of DBTM): Eulerian loss at kappa = 1 along x_1 - x, no denoiser."""
+    cfg, dataset, model = tiny(tmp_path, *DIT, "loss.jump_sampling=endpoint", "loss.off_diagonal=eulerian",
+                               "loss.direction=data", "loss.diag_weight=0", "loss.boundary_prob=0.3",
+                               "loss.boundary_t=0.75", "loss.boundary_target=data")
+    clk = build_clock("exponential")
+    _, logs = make_flow_map_loss(cfg, dataset.vocab_size, clk)(model, model, torch.stack([dataset[i] for i in range(8)]))
+    assert logs["diag"] == 0.0 and logs["off"] > 0
+    train(cfg, model, dataset, make_flow_map_loss(cfg, dataset.vocab_size, clk), kind="flow_map")
+    assert all(torch.isfinite(p).all() for p in model.parameters())

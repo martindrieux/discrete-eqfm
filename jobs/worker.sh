@@ -43,13 +43,15 @@ slot() {   # slot <index> <comma-separated gpu ids>
     script=$(awk -F'\t' -v n=$picked '$1==n{print $3}' $TASKS); args=$(awk -F'\t' -v n=$picked '$1==n{print $4}' $TASKS)
     args=$(eval echo "\"$args\"")
     local launch="$PY -u"
-    [ $GPT -gt 1 ] && launch="$(dirname $PY)/accelerate launch --multi_gpu --num_processes $GPT --mixed_precision no"
+    [ $GPT -gt 1 ] && launch="$PY -m accelerate.commands.launch --multi_gpu --num_processes $GPT --mixed_precision no"
     log $id "start $picked (budget ${left} min, gpus $gpus)"
     ( export CUDA_VISIBLE_DEVICES=$gpus
       $launch scripts/$script $args out_dir=runs/$picked ckpt_dir=$DEQ_ROOT/runs/$picked train.max_minutes=$left
       rc=$?
-      if [ $rc = 0 ] && [ ! -f runs/$picked/eval.json ]; then
-        $PY -u scripts/eval_lm.py $DEQ_ROOT/runs/$picked/last.pt out=runs/$picked/eval.json || rc=4
+      if [ $rc = 0 ] && [ ! -f runs/$picked/eval.json ]; then   # bounded by the walltime: an unfinished evaluation is redone
+        timeout $(( END - $(date +%s) - 150 ))s $PY -u scripts/eval_lm.py $DEQ_ROOT/runs/$picked/last.pt out=runs/$picked/eval.tmp.json
+        rc=$?; [ $rc = 124 ] && rc=3; [ $rc != 0 ] && [ $rc != 3 ] && rc=4
+        [ $rc = 0 ] && mv runs/$picked/eval.tmp.json runs/$picked/eval.json
       fi
       exit $rc ) >> runs/$picked/train.log 2>&1 &
     local pid=$!

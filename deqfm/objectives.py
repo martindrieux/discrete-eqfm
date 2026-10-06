@@ -41,6 +41,11 @@ def make_flow_map_loss(cfg, vocab_size, clock, teacher=None, teacher_cond=None):
 
     The two terms use the two halves of the batch (`split_batch`) and one forward pass.
 
+    Endpoint-only learning (the transport map of Discrete Beckmann Transport Models) is the special case
+    `jump_sampling: endpoint`, `off_diagonal: eulerian`, `direction: data`, `diag_weight: 0`, with the boundary term
+    on the data (`boundary_target: data`): the Eulerian target at kappa = 1 is delta + (x_1 - x) . grad delta, the
+    conservation equation b . grad T = 0 with the data point standing in for the denoiser, and no denoiser is trained.
+
     `boundary_prob` > 0 adds the boundary term: on that fraction of the off-diagonal samples the state is taken
     close to the data (t > boundary_t) and the target for a jump of any length, in particular the whole jump
     kappa = 1, is Dbar(x) (`boundary_target: denoiser`) or the data (`data`). A time-free network needs it: the
@@ -54,10 +59,15 @@ def make_flow_map_loss(cfg, vocab_size, clock, teacher=None, teacher_cond=None):
     forward_mode = L.jvp == "forward"
     jvp = jvp_forward if forward_mode else make_jvp_fd(L.fd_eps)
     need_jvp = L.off_diagonal != "semigroup"
+    use_diag = L.diag_weight > 0
+    if L.direction == "data":
+        assert L.off_diagonal == "eulerian", "loss.direction = data is only defined for the Eulerian loss"
 
     def loss_fn(model, raw, tokens):
         B, dev = tokens.shape[0], tokens.device
-        if L.split_batch and B >= 2:
+        if not use_diag:
+            tok_diag, tok_off = tokens[:0], tokens
+        elif L.split_batch and B >= 2:
             tok_diag, tok_off = tokens[:B // 2], tokens[B // 2:]
         else:
             tok_diag = tok_off = tokens
@@ -87,25 +97,31 @@ def make_flow_map_loss(cfg, vocab_size, clock, teacher=None, teacher_cond=None):
             far = ~near
             target = torch.empty_like(x_o)
             if far.any():
-                target[far] = target_fn(f, Dbar, x_o[far], t_o[far], k3[far], None if k1 is None else k1[far],
+                Dfar = Dbar
+                if L.direction == "data":   # the data point in place of the denoiser: a one-sample estimate
+                    x1_far = torch.nn.functional.one_hot(tok_off[far], vocab_size).float()
+                    Dfar = lambda y, t: x1_far
+                target[far] = target_fn(f, Dfar, x_o[far], t_o[far], k3[far], None if k1 is None else k1[far],
                                         clock=clock, jvp=jvp)
             if near.any():
                 if L.boundary_target == "data":
                     target[near] = torch.nn.functional.one_hot(tok_off[near], vocab_size).float()
                 else:
                     target[near] = Dbar(x_o[near], t_o[near])
-            if teacher is not None:
+            if teacher is not None and use_diag:
                 target_d = Dbar(x_d, t_d)
 
         fn = make_fn(model, cfg.model.cond, clock, vocab_size)
         logits = fn(torch.cat([x_d, x_o]), torch.cat([t_d, t_o]), torch.cat([torch.zeros_like(t_d), k3]))
-        if teacher is None:
+        if not use_diag:
+            loss_diag = logits.new_zeros(())
+        elif teacher is None:
             loss_diag = diagonal_data_loss(logits[:nd], tok_diag, w_d)
         else:
             loss_diag = soft_cross_entropy(logits[:nd], target_d)
         loss_off = soft_cross_entropy(logits[nd:], target)
 
-        loss = loss_diag + L.alpha * loss_off
+        loss = L.diag_weight * loss_diag + L.alpha * loss_off
         return loss, {"loss": loss.item(), "diag": loss_diag.item(), "off": loss_off.item()}
 
     return loss_fn

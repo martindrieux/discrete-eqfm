@@ -29,7 +29,8 @@ DEFAULTS = {
         "t_eps": 1.0e-4,                 # numerical guard on t near 1
         # flow map only
         "off_diagonal": "semigroup",     # semigroup | lagrangian | eulerian
-        "alpha": 1.0,                    # loss = diag + alpha * off
+        "alpha": 1.0, "diag_weight": 1.0,   # loss = diag_weight * diag + alpha * off (diag_weight 0: no denoiser is trained)
+        "direction": "denoiser",         # eulerian: derivative along Dbar(x) - x (denoiser) or along x_1 - x (data)
         "jvp": "forward",                # forward (torch.func.jvp) | fd (central finite differences)
         "fd_eps": 1.0e-3,
         "split_batch": True,             # half of each batch per term (as in FMLM); else both terms on the full batch
@@ -38,6 +39,7 @@ DEFAULTS = {
         "init_from_teacher": True,
         "flat_init": True,               # dit, cond = duration: start with delta_sigma = teacher denoiser for every sigma
         "jump_sampling": "notes",        # notes: t and sigma uniform | reparam: as FMLM, uniform in the decoding-error clock
+                                         # | endpoint: only the whole jump kappa = 1
         "whole_jump_prob": 0.0,          # reparam: probability of the whole jump from noise (FMLM uses 1/32)
         "boundary_prob": 0.0,            # fraction of off-diagonal samples used for the boundary term (see objectives.py)
         "boundary_t": 0.9, "boundary_target": "denoiser",   # denoiser | data
@@ -88,6 +90,16 @@ def _wrap(d):
     return Cfg({k: _wrap(v) if isinstance(v, dict) else v for k, v in d.items()})
 
 
+def _number(v):
+    """YAML reads 1e-4 (no decimal point) as a string."""
+    if isinstance(v, str):
+        try:
+            return float(v)
+        except ValueError:
+            return v
+    return v
+
+
 def load_config(path=None, overrides=()):
     cfg = copy.deepcopy(DEFAULTS)
     if path:
@@ -99,7 +111,7 @@ def load_config(path=None, overrides=()):
         *parents, leaf = key.split(".")
         for p in parents:
             node = node.setdefault(p, {})
-        node[leaf] = yaml.safe_load(value)
+        node[leaf] = _number(yaml.safe_load(value))
     return _wrap(cfg)
 
 

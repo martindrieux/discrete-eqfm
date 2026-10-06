@@ -95,6 +95,7 @@ def sample_jumps(batch, mode, clock, device, need_mid, reparam=None, boundary_pr
     """State time t, jump fraction k3 and (for the semigroup loss) first-leg fraction k1, each of shape [batch].
 
     notes   : t ~ U[0, 1]. Semigroup: sigma_3 with density 2 sigma_3, sigma_1 ~ U[0, sigma_3]. Otherwise sigma ~ U[0, 1].
+    endpoint: t ~ U[0, 1] and kappa = 1 always: the map to the end of the flow only (not for the semigroup loss).
     reparam : as FMLM, in the reparameterised time tau: h ~ U[0, 1], tau_s ~ U[0, 1 - h], tau_t = tau_s + h, midpoint
               (tau_s + tau_t) / 2; with probability `boundary_prob` the pair is (0, 1), a whole one-step jump.
     """
@@ -105,6 +106,8 @@ def sample_jumps(batch, mode, clock, device, need_mid, reparam=None, boundary_pr
             s1 = torch.rand(batch, device=device) * s3
             return t, clock.kappa(s3), clock.kappa(s1)
         return t, clock.kappa(torch.rand(batch, device=device)), None
+    if mode == "endpoint":       # only the whole jump to the end, from a state at a uniform time
+        return uniform01(batch, device, stratified), torch.ones(batch, device=device), None
     if mode == "reparam":
         h = uniform01(batch, device, stratified)
         tau_s = torch.rand(batch, device=device) * (1 - h)
