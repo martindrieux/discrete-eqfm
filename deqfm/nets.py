@@ -40,6 +40,12 @@ def make_fn(net, cond, clock, vocab_size, **kw):
         if not two:
             return net(x, rep.tau(t))
         return net(x, rep.tau(t), rep.tau(1 - (1 - kappa) * (1 - t)))
+
+    if cond == "state_time" and two and clock.name == "exponential":
+        def in_sigma(x, sigma):   # kappa = sigma; every input is a differentiable function of (x, sigma)
+            t = state_time(x)
+            return net(x, rep.tau_diff(t), rep.tau_diff(1 - (1 - sigma) * (1 - t)), **kw)
+        fn.in_sigma = in_sigma
     return fn
 
 

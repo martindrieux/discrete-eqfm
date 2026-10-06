@@ -143,7 +143,7 @@ def semigroup_target(f, Dbar, x, t, k3, k1, clock=None, jvp=None):
 def _in_sigma(f):
     """f as a function of (x, sigma), for derivatives with respect to the duration label."""
     if not hasattr(f, "in_sigma"):
-        raise ValueError("the Lagrangian and Eulerian losses need model.cond = duration")
+        raise ValueError("the Lagrangian and Eulerian losses need model.cond = duration or state_time")
     return f.in_sigma
 
 

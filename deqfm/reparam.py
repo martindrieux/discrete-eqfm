@@ -34,6 +34,8 @@ class Reparam:
         tau_u, idx = np.unique(tau, return_index=True)
         self._tau2t = CubicSpline(tau_u, t[idx])
         self.vocab_size = vocab_size
+        self._table = torch.from_numpy(tau).float()      # tau at uniform knots in t, for the differentiable version
+        self._tables = {}
 
     @staticmethod
     def _apply(spline, v):
@@ -47,6 +49,16 @@ class Reparam:
     def t(self, tau):
         """tau -> t."""
         return self._apply(self._tau2t, tau)
+
+    def tau_diff(self, t):
+        """t -> tau by linear interpolation of the table: differentiable in t (forward and reverse mode)."""
+        key = (t.device, t.dtype)
+        if key not in self._tables:
+            self._tables[key] = self._table.to(device=t.device, dtype=t.dtype)
+        table = self._tables[key]
+        pos = t.clamp(0, 1) * (table.numel() - 1)
+        i = pos.detach().floor().long().clamp(max=table.numel() - 2)
+        return table[i] + (pos - i) * (table[i + 1] - table[i])
 
     def grid(self, steps):
         """Sampling grid t_0 = 0 < ... < t_K = 1, uniform in tau, as a list of floats."""

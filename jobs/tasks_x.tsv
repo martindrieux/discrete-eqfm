@@ -1,0 +1,4 @@
+# Phase 2, distillation from the FLM checkpoint released by its authors, at FMLM's budget: batch 512 (4 GPUs), 100k steps.
+X_statetime_semigroup	-	train_flow_map.py	configs/lm1b.yaml model.cond=state_time loss.teacher=released:$DEQ_ROOT/ckpt/released/FLM-B-LM1B loss.teacher_cond=state_time loss.boundary_prob=0 train.betas=[0.9,0.95] train.steps=100000 train.keep_every=25000
+X_statetime_eulerian_wholesemi	-	train_flow_map.py	configs/lm1b.yaml model.cond=state_time loss.teacher=released:$DEQ_ROOT/ckpt/released/FLM-B-LM1B loss.teacher_cond=state_time loss.boundary_prob=0 loss.off_diagonal=eulerian loss.whole_jump_target=semigroup train.betas=[0.9,0.95] train.steps=100000 train.keep_every=25000
+X_fmlm_replica	-	train_flow_map.py	configs/lm1b.yaml model.cond=time loss.teacher=released:$DEQ_ROOT/ckpt/released/FLM-B-LM1B loss.boundary_prob=0 train.betas=[0.9,0.95] train.steps=100000 train.keep_every=25000

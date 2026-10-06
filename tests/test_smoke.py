@@ -254,3 +254,25 @@ def test_endpoint_only_training(tmp_path):
     assert logs["diag"] == 0.0 and logs["off"] > 0
     train(cfg, model, dataset, make_flow_map_loss(cfg, dataset.vocab_size, clk), kind="flow_map")
     assert all(torch.isfinite(p).all() for p in model.parameters())
+
+
+def test_state_time_conditioning_is_differentiable(tmp_path):
+    """Forward-mode derivative of a state_time flow map with respect to (x, sigma) against finite differences."""
+    from deqfm.reparam import get_reparam
+    rep = get_reparam(30522)
+    t = torch.linspace(0.05, 0.95, 40, dtype=torch.float64)
+    assert torch.allclose(rep.tau_diff(t), rep.tau(t), atol=2e-4)
+    cfg, dataset, _ = tiny(tmp_path, *DIT, "model.cond=state_time")
+    model = build_model(cfg.model, dataset.vocab_size, dataset.seq_len, "flow_map")
+    for p in model.parameters():
+        torch.nn.init.normal_(p, std=0.2)
+    f = probs_fn(make_fn(model, "state_time", build_clock("exponential"), dataset.vocab_size))
+    tokens = torch.stack([dataset[i] for i in range(3)])
+    x, s = sample_state(tokens, dataset.vocab_size, torch.tensor([0.3, 0.5, 0.7])), torch.tensor([0.2, 0.5, 0.8])
+    u, v = torch.randn_like(x), torch.randn_like(s)
+    with torch.no_grad():
+        out, jvp_a = jvp_forward(f.in_sigma, x, s, u, v)
+        _, jvp_b = make_jvp_fd(1e-2)(f.in_sigma, x, s, u, v)
+        assert torch.allclose(out, f(x, None, s), atol=2e-3)       # same function as the non-differentiable path
+    assert jvp_a.abs().max() > 1e-3
+    assert torch.allclose(jvp_a, jvp_b, rtol=1e-1, atol=1e-2)
