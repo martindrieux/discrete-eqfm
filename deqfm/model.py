@@ -84,7 +84,14 @@ class Denoiser(nn.Module):
         return self.head(self.norm(h) * (1 + s) + b)
 
 
-def build_model(cfg, vocab_size, seq_len):
-    """cfg is the `model` section of the config."""
+def build_model(cfg, vocab_size, seq_len, kind="field"):
+    """cfg is the `model` section of the config. `kind` is 'field' or 'flow_map'."""
+    if cfg.get("arch", "denoiser") == "dit":
+        from .dit import DiT
+        second = kind == "flow_map" and cfg["cond"] != "duration"   # the target time is a second input
+        return DiT(vocab_size, seq_len, cfg["dim"], cfg["depth"], cfg["heads"], cfg["cond_dim"], cfg["dropout"],
+                   cfg["softcap"], cfg["logit_cap"], second_input=second)
+    if cfg.get("cond", "duration") != "duration":
+        raise ValueError("model.arch = denoiser only supports model.cond = duration")
     return Denoiser(vocab_size, seq_len, cfg["dim"], cfg["depth"], cfg["heads"], cfg["mlp_ratio"], cfg["dropout"],
                     cfg["sigma_scale"])

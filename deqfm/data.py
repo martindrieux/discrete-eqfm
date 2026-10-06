@@ -109,7 +109,40 @@ class TokenFile(Dataset):
         return self._tok.decode([int(t) for t in tokens])
 
 
-DATASETS = {"toy": ToyModes, "text": TextFile, "tokens": TokenFile}
+class BlockFile(Dataset):
+    """Pre-cut sequences: a .npy-format array of token ids [N, seq_len], read through a memory map.
+
+    `path + '.json'` holds {"vocab_size", "tokenizer"}. Written by scripts/prepare_lm1b.py.
+    """
+
+    def __init__(self, path, seq_len):
+        with open(path + ".json") as f:
+            self.meta = json.load(f)
+        self.path, self.vocab_size = path, int(self.meta["vocab_size"])
+        shape = np.load(path, mmap_mode="r").shape
+        assert shape[1] == seq_len, f"{path} has sequences of length {shape[1]}, not {seq_len}"
+        self.n, self.seq_len = shape[0], seq_len
+        self._data, self._tok = None, None
+
+    def __len__(self):
+        return self.n
+
+    def __getitem__(self, i):
+        if self._data is None:
+            self._data = np.load(self.path, mmap_mode="r")
+        return torch.from_numpy(self._data[i].astype(np.int64))
+
+    def tokenizer(self):
+        if self._tok is None:
+            from transformers import AutoTokenizer
+            self._tok = AutoTokenizer.from_pretrained(self.meta["tokenizer"])
+        return self._tok
+
+    def decode(self, tokens):
+        return self.tokenizer().decode([int(t) for t in tokens])
+
+
+DATASETS = {"toy": ToyModes, "text": TextFile, "tokens": TokenFile, "blocks": BlockFile}
 
 
 def build_dataset(cfg):
@@ -117,6 +150,6 @@ def build_dataset(cfg):
     name, seq_len = cfg["name"], cfg["seq_len"]
     if name == "toy":
         return ToyModes(seq_len, cfg["vocab_size"], cfg["n_modes"])
-    if name in ("text", "tokens"):
+    if name in ("text", "tokens", "blocks"):
         return DATASETS[name](cfg["path"], seq_len)
     raise ValueError(f"unknown dataset '{name}', choose from {sorted(DATASETS)}")

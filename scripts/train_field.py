@@ -8,9 +8,11 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from deqfm.clocks import build_clock
 from deqfm.config import parse_cli
 from deqfm.data import build_dataset
 from deqfm.model import build_model
+from deqfm.nets import init_from
 from deqfm.objectives import make_field_loss
 from deqfm.trainer import train
 
@@ -18,8 +20,10 @@ from deqfm.trainer import train
 def main():
     cfg = parse_cli()
     dataset = build_dataset(cfg.data)
-    model = build_model(cfg.model, dataset.vocab_size, dataset.seq_len)
-    train(cfg, model, dataset, make_field_loss(cfg, dataset.vocab_size), kind="field")
+    model = build_model(cfg.model, dataset.vocab_size, dataset.seq_len, "field")
+    if cfg.train.init:
+        init_from(model, cfg, "field")
+    train(cfg, model, dataset, make_field_loss(cfg, dataset.vocab_size, build_clock(cfg.clock)), kind="field")
 
 
 if __name__ == "__main__":

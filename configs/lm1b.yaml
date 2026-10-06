@@ -1,0 +1,11 @@
+# LM1B as in FLM / FMLM: bert-base-uncased (vocabulary 30522), blocks of 128 tokens, the 12-layer DiT of FLM.
+# Create the data with scripts/prepare_lm1b.py. The effective batch is train.batch_size x processes x train.grad_accum.
+out_dir: runs/lm1b
+clock: exponential
+data: {name: blocks, path: /data/user_data/mdrieux/deqfm/data/lm1b_train.bin, seq_len: 128}
+model: {arch: dit, dim: 768, depth: 12, heads: 12, dropout: 0.1, cond: duration}
+loss: {diag_time: reparam, stratified: true, off_diagonal: semigroup, jump_sampling: reparam, whole_jump_prob: 0.03125,
+       boundary_prob: 0.1, boundary_t: 0.9}
+train: {steps: 1000000, batch_size: 128, lr: 3.0e-4, warmup: 2500, precision: "no", num_workers: 4,
+        save_every: 5000, log_every: 100}
+eval: {steps: [1, 2, 4, 8], num: 1024, batch: 128, grid: reparam}

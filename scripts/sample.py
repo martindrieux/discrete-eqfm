@@ -26,10 +26,10 @@ def main():
         cfg[key] = ckpt["cfg"][key]
     device = "cuda" if torch.cuda.is_available() else "cpu"
     dataset = build_dataset(cfg["data"])
-    model = build_model(cfg["model"], ckpt["vocab_size"], ckpt["seq_len"]).to(device).eval()
+    model = build_model(cfg["model"], ckpt["vocab_size"], ckpt["seq_len"], ckpt["kind"]).to(device).eval()
     model.load_state_dict(ckpt["ema"])
     tokens = sample(model, build_clock(cfg["clock"]), cfg.sample.num, cfg.sample.steps,
-                    flow_map=ckpt["kind"] == "flow_map", device=device)
+                    flow_map=ckpt["kind"] == "flow_map", device=device, cond=cfg["model"].get("cond", "duration"))
     for row in tokens:
         print(dataset.decode(row.cpu()))
     print(f"\n{ckpt['kind']} | step {ckpt['step']} | {cfg.sample.steps} network evaluations | "

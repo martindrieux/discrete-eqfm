@@ -1,0 +1,2 @@
+# Phase 1, two-GPU path: same total batch (2 x 64) as S_field_timefree.
+S_field_timefree_2gpu	-	train_field.py	configs/lm1b.yaml model.dim=512 model.depth=8 model.heads=8 model.dropout=0 train.batch_size=64 train.steps=40000
