@@ -1,37 +1,37 @@
-# run name	subproject	title (plain words, at most 100 characters)
-S_field_timefree	denoiser-training	Medium time-free denoiser, time sampled in the decoding-error clock
-S_field_timecond	denoiser-training	Medium time-conditioned denoiser (FLM), time sampled in the decoding-error clock
-S_field_timefree_uniform	denoiser-training	Medium time-free denoiser, uniform time with weight 1/(1-t)
-S_field_timefree_loguniform	denoiser-training	Medium time-free denoiser, log-uniform time
-S_field_timefree_2gpu	denoiser-training	Medium time-free denoiser trained on two GPUs (same total batch)
-F_field_timefree	denoiser-training	Released FLM fine-tuned into a time-free denoiser
-M_field_timefree	denoiser-training	Full-size time-free denoiser from scratch, batch 512
-M_field_timecond	denoiser-training	Full-size time-conditioned denoiser (FLM) from scratch, batch 512
-S_data_semigroup	flow-map-from-data	Medium flow map from data, semigroup loss
-S_data_lagrangian	flow-map-from-data	Medium flow map from data, Lagrangian loss
-S_data_eulerian	flow-map-from-data	Medium flow map from data, Eulerian loss
-S_data_semigroup_notes	flow-map-from-data	Medium flow map from data, semigroup loss, uniform sampling of jumps and no boundary term
-S_data_semigroup_rational	flow-map-from-data	Medium flow map from data, semigroup loss, rational clock
-S_data_lagrangian_wholesemi	flow-map-from-data	Medium flow map from data, Lagrangian loss with the semigroup target on the whole jump
-S_data_eulerian_wholesemi	flow-map-from-data	Medium flow map from data, Eulerian loss with the semigroup target on the whole jump
-F_tf_data_semigroup	flow-map-from-data	Full-size flow map from data, started from the fine-tuned time-free denoiser
-Y_data_statetime_semigroup	flow-map-from-data	Full-size flow map from data from scratch, time read off the state, semigroup loss
-S_distill_semigroup	flow-map-distillation	Medium flow map distilled from the time-free denoiser, semigroup loss
-S_distill_lagrangian	flow-map-distillation	Medium flow map distilled from the time-free denoiser, Lagrangian loss
-S_distill_eulerian	flow-map-distillation	Medium flow map distilled from the time-free denoiser, Eulerian loss
-S_distill_eulerian_fd	flow-map-distillation	Medium flow map distilled from the time-free denoiser, Eulerian loss by finite differences
-S_fmlm	flow-map-distillation	Medium FMLM: two-time flow map distilled from the time-conditioned denoiser
-F_tf_semigroup	flow-map-distillation	Full-size duration-conditioned flow map from the fine-tuned time-free denoiser, semigroup loss
-F_tf_lagrangian	flow-map-distillation	Full-size duration-conditioned flow map from the fine-tuned time-free denoiser, Lagrangian loss
-F_tf_eulerian	flow-map-distillation	Full-size duration-conditioned flow map from the fine-tuned time-free denoiser, Eulerian loss
-F_tf_semigroup_noboundary	flow-map-distillation	Full-size duration-conditioned flow map, semigroup loss, no boundary term
-F_fmlm_replica	released-flm-distillation	FMLM re-distilled from the released FLM, batch 128
-F_statetime_semigroup	released-flm-distillation	Time-free flow map (time read off the state) from the released FLM, semigroup loss, batch 128
-Y_fmlm_replica	released-flm-distillation	FMLM re-distilled from the released FLM, batch 128, long run
-Y_statetime_semigroup	released-flm-distillation	Time-free flow map from the released FLM, semigroup loss, batch 128, long run
-Y_statetime_eulerian_wholesemi	released-flm-distillation	Time-free flow map from the released FLM, Eulerian loss, semigroup on the whole jump, batch 128
-Y_statetime_lagrangian_wholesemi	released-flm-distillation	Time-free flow map from the released FLM, Lagrangian loss, semigroup on whole jump, batch 128
-X_fmlm_replica	released-flm-distillation	FMLM re-distilled from the released FLM, batch 512
-X_statetime_semigroup	released-flm-distillation	Time-free flow map from the released FLM, semigroup loss, batch 512
-X_statetime_eulerian_wholesemi	released-flm-distillation	Time-free flow map from the released FLM, Eulerian loss, semigroup on the whole jump, batch 512
-S_data_endpoint	endpoint-only	Medium endpoint-only map: Eulerian loss at the whole jump along the data direction, no denoiser
+# run name	subproject	title (2 to 4 words, no numbers); formulas are in jobs/titles.json
+S_field_timefree	denoiser-training	Time-free, medium
+S_field_timecond	denoiser-training	Time-conditioned, medium
+S_field_timefree_uniform	denoiser-training	Uniform $t$
+S_field_timefree_loguniform	denoiser-training	Log-uniform $t$
+S_field_timefree_2gpu	denoiser-training	Two GPUs
+F_field_timefree	denoiser-training	Released FLM made time-free
+M_field_timefree	denoiser-training	Time-free, full size
+M_field_timecond	denoiser-training	Time-conditioned, full size
+S_data_semigroup	flow-map-from-data	Semigroup
+S_data_lagrangian	flow-map-from-data	Lagrangian
+S_data_eulerian	flow-map-from-data	Eulerian
+S_data_semigroup_notes	flow-map-from-data	Semigroup, uniform jumps
+S_data_semigroup_rational	flow-map-from-data	Semigroup, rational clock
+S_data_lagrangian_wholesemi	flow-map-from-data	Lagrangian, semigroup at $\kappa = 1$
+S_data_eulerian_wholesemi	flow-map-from-data	Eulerian, semigroup at $\kappa = 1$
+F_tf_data_semigroup	flow-map-from-data	Semigroup, full size, pretrained
+Y_data_statetime_semigroup	flow-map-from-data	Semigroup, full size, state time
+S_distill_semigroup	flow-map-distillation	Semigroup, medium
+S_distill_lagrangian	flow-map-distillation	Lagrangian, medium
+S_distill_eulerian	flow-map-distillation	Eulerian, medium
+S_distill_eulerian_fd	flow-map-distillation	Eulerian, finite differences
+S_fmlm	flow-map-distillation	FMLM, medium
+F_tf_semigroup	flow-map-distillation	Semigroup, duration inputs
+F_tf_lagrangian	flow-map-distillation	Lagrangian, duration inputs
+F_tf_eulerian	flow-map-distillation	Eulerian, duration inputs
+F_tf_semigroup_noboundary	flow-map-distillation	Semigroup, no boundary term
+F_fmlm_replica	released-flm-distillation	FMLM, short
+F_statetime_semigroup	released-flm-distillation	State time, short
+Y_fmlm_replica	released-flm-distillation	FMLM, long
+Y_statetime_semigroup	released-flm-distillation	State time, semigroup, long
+Y_statetime_eulerian_wholesemi	released-flm-distillation	State time, Eulerian, long
+Y_statetime_lagrangian_wholesemi	released-flm-distillation	State time, Lagrangian, long
+X_fmlm_replica	released-flm-distillation	FMLM, four GPUs
+X_statetime_semigroup	released-flm-distillation	State time, semigroup, four GPUs
+X_statetime_eulerian_wholesemi	released-flm-distillation	State time, Eulerian, four GPUs
+S_data_endpoint	endpoint-only	Endpoint only

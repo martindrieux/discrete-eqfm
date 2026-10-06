@@ -5,113 +5,63 @@
  "headline": "gen_ppl_1",
  "views": [
   {
-   "title": "Generative perplexity, 1 sampling step",
-   "shows": "$\\exp\\big(-\\frac{1}{N}\\sum_n \\log p_{\\mathrm{GPT2L}}(w_n \\mid w_{<n})\\big)$ over the judge tokens $w$ of 1024 samples decoded from $\\arg\\max_v x^l_v$, sampler with $K = 1$ jump (real LM1B text: 52.7)",
+   "title": "$\\mathrm{PPL}$ at $K = 1$",
+   "shows": "$\\mathrm{PPL} = \\exp\\big(-\\frac{1}{N}\\sum_n \\log p_{\\mathrm{GPT2L}}(w_n \\mid w_{<n})\\big)$ over the judge tokens $w$ of 1024 samples, sampler with $K = 1$ jump",
    "kind": "curve",
    "metric": "gen_ppl_1",
    "log_y": true,
-   "better": "lower"
+   "better": "lower",
+   "label": "$\\mathrm{PPL}$ at $K = 1$",
+   "meaning": "perplexity of one-step samples under GPT-2 Large (real text: 52.7)"
   },
   {
-   "title": "Entropy, 1 sampling step",
-   "shows": "mean over 1024 samples of $-\\sum_v q_v \\log q_v$, $q_v$ = frequency of token $v$ inside one sample of $L$ tokens (real LM1B text: 4.31), $K = 1$",
+   "title": "$H$ at $K = 1$",
+   "shows": "$H$ = mean over 1024 samples of $-\\sum_v q_v \\log q_v$, $q_v$ = frequency of token $v$ in the sample, $K = 1$",
    "kind": "curve",
    "metric": "entropy_1",
-   "better": "higher"
+   "better": "higher",
+   "label": "$H$ at $K = 1$",
+   "meaning": "token entropy inside one sample; below real text (4.31) means repeated tokens"
   },
   {
-   "title": "Generative perplexity, 2 sampling steps",
-   "shows": "$\\exp\\big(-\\frac{1}{N}\\sum_n \\log p_{\\mathrm{GPT2L}}(w_n \\mid w_{<n})\\big)$ over the judge tokens $w$ of 1024 samples decoded from $\\arg\\max_v x^l_v$, $K = 2$",
-   "kind": "curve",
-   "metric": "gen_ppl_2",
-   "log_y": true,
-   "better": "lower"
-  },
-  {
-   "title": "Generative perplexity, 2 sampling steps, stochastic sampler",
-   "shows": "$\\exp\\big(-\\frac{1}{N}\\sum_n \\log p_{\\mathrm{GPT2L}}(w_n \\mid w_{<n})\\big)$ over the judge tokens $w$ of 1024 samples decoded from $\\arg\\max_v x^l_v$, $K = 2$, sampler with churn $g = 0.8$ as in FMLM",
-   "kind": "curve",
-   "metric": "gen_ppl_2_churn",
-   "log_y": true,
-   "better": "lower"
-  },
-  {
-   "title": "Generative perplexity, 4 sampling steps",
-   "shows": "$\\exp\\big(-\\frac{1}{N}\\sum_n \\log p_{\\mathrm{GPT2L}}(w_n \\mid w_{<n})\\big)$ over the judge tokens $w$ of 1024 samples decoded from $\\arg\\max_v x^l_v$, $K = 4$",
-   "kind": "curve",
-   "metric": "gen_ppl_4",
-   "log_y": true,
-   "better": "lower"
-  },
-  {
-   "title": "Generative perplexity, 4 sampling steps, stochastic sampler",
-   "shows": "$\\exp\\big(-\\frac{1}{N}\\sum_n \\log p_{\\mathrm{GPT2L}}(w_n \\mid w_{<n})\\big)$ over the judge tokens $w$ of 1024 samples decoded from $\\arg\\max_v x^l_v$, $K = 4$, sampler with churn $g = 0.8$ as in FMLM",
-   "kind": "curve",
-   "metric": "gen_ppl_4_churn",
-   "log_y": true,
-   "better": "lower"
-  },
-  {
-   "title": "Generative perplexity, 8 sampling steps",
-   "shows": "$\\exp\\big(-\\frac{1}{N}\\sum_n \\log p_{\\mathrm{GPT2L}}(w_n \\mid w_{<n})\\big)$ over the judge tokens $w$ of 1024 samples decoded from $\\arg\\max_v x^l_v$, $K = 8$",
+   "title": "$\\mathrm{PPL}$ at $K = 8$",
+   "shows": "$\\mathrm{PPL} = \\exp\\big(-\\frac{1}{N}\\sum_n \\log p_{\\mathrm{GPT2L}}(w_n \\mid w_{<n})\\big)$ over the judge tokens $w$ of 1024 samples, $K = 8$ jumps, churn $g = 0$",
    "kind": "curve",
    "metric": "gen_ppl_8",
    "log_y": true,
-   "better": "lower"
+   "better": "lower",
+   "label": "$\\mathrm{PPL}$ at $K = 8$",
+   "meaning": "perplexity of 8-step samples, deterministic sampler"
   },
   {
-   "title": "Generative perplexity, 8 sampling steps, stochastic sampler",
-   "shows": "$\\exp\\big(-\\frac{1}{N}\\sum_n \\log p_{\\mathrm{GPT2L}}(w_n \\mid w_{<n})\\big)$ over the judge tokens $w$ of 1024 samples decoded from $\\arg\\max_v x^l_v$, $K = 8$, sampler with churn $g = 0.8$ as in FMLM",
+   "title": "$\\mathrm{PPL}$ at $K = 8$, $g = 0.8$",
+   "shows": "$\\mathrm{PPL} = \\exp\\big(-\\frac{1}{N}\\sum_n \\log p_{\\mathrm{GPT2L}}(w_n \\mid w_{<n})\\big)$ over the judge tokens $w$ of 1024 samples, $K = 8$ jumps, churn $g = 0.8$",
    "kind": "curve",
    "metric": "gen_ppl_8_churn",
    "log_y": true,
-   "better": "lower"
+   "better": "lower",
+   "label": "$\\mathrm{PPL}$ at $K = 8$, $g = 0.8$",
+   "meaning": "perplexity of 8-step samples with the stochastic sampler of FMLM"
   },
   {
-   "title": "Entropy, 8 sampling steps",
-   "shows": "mean over 1024 samples of $-\\sum_v q_v \\log q_v$, $q_v$ = frequency of token $v$ inside one sample of $L$ tokens (real LM1B text: 4.31), $K = 8$",
-   "kind": "curve",
-   "metric": "entropy_8",
-   "better": "higher"
-  },
-  {
-   "title": "Generative perplexity, 1024 Euler steps (denoisers)",
-   "shows": "$\\exp\\big(-\\frac{1}{N}\\sum_n \\log p_{\\mathrm{GPT2L}}(w_n \\mid w_{<n})\\big)$ over the judge tokens $w$ of 1024 samples decoded from $\\arg\\max_v x^l_v$, Euler sampler of the denoiser with $K = 1024$",
+   "title": "$\\mathrm{PPL}$ at $K = 1024$",
+   "shows": "$\\mathrm{PPL} = \\exp\\big(-\\frac{1}{N}\\sum_n \\log p_{\\mathrm{GPT2L}}(w_n \\mid w_{<n})\\big)$ over the judge tokens $w$ of 1024 samples, Euler sampler of $\\hat D$ with $K = 1024$",
    "kind": "curve",
    "metric": "gen_ppl_1024",
    "log_y": true,
-   "better": "lower"
+   "better": "lower",
+   "label": "$\\mathrm{PPL}$ at $K = 1024$",
+   "meaning": "perplexity of a denoiser sampled with 1024 Euler steps"
   },
   {
-   "title": "Entropy, 1024 Euler steps (denoisers)",
-   "shows": "mean over 1024 samples of $-\\sum_v q_v \\log q_v$, $q_v$ = frequency of token $v$ inside one sample of $L$ tokens (real LM1B text: 4.31), $K = 1024$",
-   "kind": "curve",
-   "metric": "entropy_1024",
-   "better": "higher"
-  },
-  {
-   "title": "Training loss",
+   "title": "$L$",
    "shows": "$L = w_{\\mathrm{diag}} L_{\\mathrm{diag}} + \\alpha L_{\\mathrm{off}}$ (flow map) or $L_{\\mathrm{diag}}$ (denoiser), mean over the last `train.log_every` steps",
    "kind": "curve",
    "metric": "loss",
    "log_y": true,
-   "better": "lower"
-  },
-  {
-   "title": "Diagonal loss",
-   "shows": "$L_{\\mathrm{diag}} = \\mathbb{E}\\big[-w(t)\\frac{1}{L}\\sum_l \\log \\hat\\delta_0(I_t)^l_{y^l}\\big]$ from data, or $\\mathbb{E}\\big[-\\frac{1}{L}\\sum_l \\bar D(I_t)^l \\cdot \\log \\hat\\delta_0(I_t)^l\\big]$ when distilling",
-   "kind": "curve",
-   "metric": "diag",
-   "log_y": true,
-   "better": "lower"
-  },
-  {
-   "title": "Off-diagonal loss",
-   "shows": "$L_{\\mathrm{off}} = \\mathbb{E}\\big[-\\frac{1}{L}\\sum_l \\bar\\delta^l \\cdot \\log \\hat\\delta_\\kappa(I_t)^l\\big]$, $\\bar\\delta$ the stop-gradient target of `loss.off_diagonal`",
-   "kind": "curve",
-   "metric": "off",
-   "log_y": true,
-   "better": "lower"
+   "better": "lower",
+   "label": "$L$",
+   "meaning": "training loss, averaged over the last log interval"
   }
  ],
  "glossary": {
@@ -203,7 +153,17 @@
    "\\hat t(x)": "time read off a state: root of $(1-t)^2 V + t^2 = \\frac{1}{L}\\sum_l \\lVert x^l \\rVert^2$",
    "\\bar D": "denoiser used in targets, no gradient: the frozen teacher when distilling, else the model's own $\\hat\\delta_0$",
    "K": "number of sampling steps (network evaluations)",
-   "\\eta": "learning rate"
+   "\\eta": "learning rate",
+   "\\mathrm{PPL}": "generative perplexity of samples under GPT-2 Large, lower is better (real LM1B text: 52.7)",
+   "H": "mean entropy of the token histogram of one sample, in nats (real LM1B text: 4.31); compare $\\mathrm{PPL}$ only at similar $H$",
+   "g": "churn of the sampler: fraction of fresh noise re-injected after each jump ($g = 0$: deterministic)"
   }
- }
+ },
+ "formula": "$L = \\mathbb{E}\\big[-w(t)\\, x_1 \\cdot \\log \\hat\\delta_0(I_t)\\big] + \\alpha\\, \\mathbb{E}\\big[-\\bar\\delta \\cdot \\log \\hat\\delta_\\kappa(I_t)\\big]$, $I_t = (1-t)x_0 + t x_1$, $\\bar\\delta$ = stop-gradient target (semigroup, Lagrangian or Eulerian). Sampling: $x \\leftarrow (1-\\kappa_k)x + \\kappa_k \\hat\\delta_{\\kappa_k}(x)$, $k = 0..K-1$, $\\kappa_{K-1} = 1$, output $\\arg\\max_v x^l_v$.",
+ "table": [
+  "gen_ppl_1",
+  "entropy_1",
+  "gen_ppl_8_churn",
+  "gen_ppl_1024"
+ ]
 }

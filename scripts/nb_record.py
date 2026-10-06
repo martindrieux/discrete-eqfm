@@ -58,7 +58,9 @@ def record(name, names):
     for k in ("loss.teacher", "train.init", "data.path", "out_dir", "ckpt_dir"):      # keep paths short
         if isinstance(cfg.get(k), str):
             cfg[k] = cfg[k].replace("/data/user_data/mdrieux/deqfm/", "")
-    run = nb.start(subproject=sub, title=title, formula=formula(kind), algo=kind, config=cfg, question=QUESTIONS[sub])
+    titles = json.load(open("jobs/titles.json"))      # name -> [title, formula]
+    run = nb.start(subproject=sub, title=title, formula=titles.get(name, [title, formula(kind)])[1], algo=kind, config=cfg,
+                   question=QUESTIONS[sub])
     last = 0
     for line in open(f"{d}/log.jsonl"):
         r = json.loads(line)

@@ -1,0 +1,146 @@
+{
+ "S_field_timefree": [
+  "Time-free, medium",
+  "$\\hat D$ inputs \\cfg{model.cond}, $t$ by \\cfg{loss.diag_time}, \\cfg{model.depth} blocks of width \\cfg{model.dim}"
+ ],
+ "S_field_timecond": [
+  "Time-conditioned, medium",
+  "$\\hat D$ inputs \\cfg{model.cond}, $t$ by \\cfg{loss.diag_time}, \\cfg{model.depth} blocks of width \\cfg{model.dim}"
+ ],
+ "S_field_timefree_uniform": [
+  "Uniform $t$",
+  "$\\hat D$ inputs \\cfg{model.cond}, $t$ by \\cfg{loss.diag_time}, \\cfg{model.depth} blocks of width \\cfg{model.dim}, $w = 1/(1-t)$"
+ ],
+ "S_field_timefree_loguniform": [
+  "Log-uniform $t$",
+  "$\\hat D$ inputs \\cfg{model.cond}, $t$ by \\cfg{loss.diag_time}, \\cfg{model.depth} blocks of width \\cfg{model.dim}"
+ ],
+ "S_field_timefree_2gpu": [
+  "Two GPUs",
+  "$\\hat D$ inputs \\cfg{model.cond}, $t$ by \\cfg{loss.diag_time}, \\cfg{model.depth} blocks of width \\cfg{model.dim}, batch \\cfg{train.batch_size} per GPU"
+ ],
+ "F_field_timefree": [
+  "Released FLM made time-free",
+  "$\\hat D$ inputs \\cfg{model.cond}, $t$ by \\cfg{loss.diag_time}, \\cfg{model.depth} blocks of width \\cfg{model.dim}, started from \\cfg{train.init}"
+ ],
+ "M_field_timefree": [
+  "Time-free, full size",
+  "$\\hat D$ inputs \\cfg{model.cond}, $t$ by \\cfg{loss.diag_time}, \\cfg{model.depth} blocks of width \\cfg{model.dim}"
+ ],
+ "M_field_timecond": [
+  "Time-conditioned, full size",
+  "$\\hat D$ inputs \\cfg{model.cond}, $t$ by \\cfg{loss.diag_time}, \\cfg{model.depth} blocks of width \\cfg{model.dim}"
+ ],
+ "S_data_semigroup": [
+  "Semigroup",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}"
+ ],
+ "S_data_lagrangian": [
+  "Lagrangian",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}"
+ ],
+ "S_data_eulerian": [
+  "Eulerian",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}"
+ ],
+ "S_data_semigroup_notes": [
+  "Semigroup, uniform jumps",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}"
+ ],
+ "S_data_semigroup_rational": [
+  "Semigroup, rational clock",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}"
+ ],
+ "S_data_lagrangian_wholesemi": [
+  "Lagrangian, semigroup at $\\kappa = 1$",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}"
+ ],
+ "S_data_eulerian_wholesemi": [
+  "Eulerian, semigroup at $\\kappa = 1$",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}"
+ ],
+ "F_tf_data_semigroup": [
+  "Semigroup, full size, pretrained",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}; started from \\cfg{train.init}"
+ ],
+ "Y_data_statetime_semigroup": [
+  "Semigroup, full size, state time",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}"
+ ],
+ "S_distill_semigroup": [
+  "Semigroup, medium",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}; teacher \\cfg{loss.teacher}"
+ ],
+ "S_distill_lagrangian": [
+  "Lagrangian, medium",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}; teacher \\cfg{loss.teacher}"
+ ],
+ "S_distill_eulerian": [
+  "Eulerian, medium",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}; teacher \\cfg{loss.teacher}"
+ ],
+ "S_distill_eulerian_fd": [
+  "Eulerian, finite differences",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}; teacher \\cfg{loss.teacher}; derivative by \\cfg{loss.jvp}"
+ ],
+ "S_fmlm": [
+  "FMLM, medium",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}; teacher \\cfg{loss.teacher}"
+ ],
+ "F_tf_semigroup": [
+  "Semigroup, duration inputs",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}; teacher \\cfg{loss.teacher}"
+ ],
+ "F_tf_lagrangian": [
+  "Lagrangian, duration inputs",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}; teacher \\cfg{loss.teacher}"
+ ],
+ "F_tf_eulerian": [
+  "Eulerian, duration inputs",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}; teacher \\cfg{loss.teacher}"
+ ],
+ "F_tf_semigroup_noboundary": [
+  "Semigroup, no boundary term",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}; teacher \\cfg{loss.teacher}"
+ ],
+ "F_fmlm_replica": [
+  "FMLM, short",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}; teacher \\cfg{loss.teacher}; batch \\cfg{train.batch_size}, \\cfg{train.steps} steps"
+ ],
+ "F_statetime_semigroup": [
+  "State time, short",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}; teacher \\cfg{loss.teacher}; batch \\cfg{train.batch_size}, \\cfg{train.steps} steps"
+ ],
+ "Y_fmlm_replica": [
+  "FMLM, long",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}; teacher \\cfg{loss.teacher}; batch \\cfg{train.batch_size}, \\cfg{train.steps} steps"
+ ],
+ "Y_statetime_semigroup": [
+  "State time, semigroup, long",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}; teacher \\cfg{loss.teacher}; batch \\cfg{train.batch_size}, \\cfg{train.steps} steps"
+ ],
+ "Y_statetime_eulerian_wholesemi": [
+  "State time, Eulerian, long",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}; teacher \\cfg{loss.teacher}; batch \\cfg{train.batch_size}, \\cfg{train.steps} steps"
+ ],
+ "Y_statetime_lagrangian_wholesemi": [
+  "State time, Lagrangian, long",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}; teacher \\cfg{loss.teacher}; batch \\cfg{train.batch_size}, \\cfg{train.steps} steps"
+ ],
+ "X_fmlm_replica": [
+  "FMLM, four GPUs",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}; teacher \\cfg{loss.teacher}; batch \\cfg{train.batch_size} per GPU, \\cfg{train.steps} steps"
+ ],
+ "X_statetime_semigroup": [
+  "State time, semigroup, four GPUs",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}; teacher \\cfg{loss.teacher}; batch \\cfg{train.batch_size} per GPU, \\cfg{train.steps} steps"
+ ],
+ "X_statetime_eulerian_wholesemi": [
+  "State time, Eulerian, four GPUs",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}; teacher \\cfg{loss.teacher}; batch \\cfg{train.batch_size} per GPU, \\cfg{train.steps} steps"
+ ],
+ "S_data_endpoint": [
+  "Endpoint only",
+  "$\\bar\\delta = \\hat\\delta_1 + (x_1 - x) \\cdot \\nabla_x \\hat\\delta_1$ at $\\kappa = 1$ only, no denoiser; boundary target $x_1$ for $t >$ \\cfg{loss.boundary_t}"
+ ]
+}
