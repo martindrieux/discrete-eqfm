@@ -96,6 +96,15 @@ def make_flow_map_loss(cfg, vocab_size, clock, teacher=None, teacher_cond=None):
         with torch.no_grad():
             far = ~near
             target = torch.empty_like(x_o)
+            if L.whole_jump_target == "semigroup" and L.off_diagonal != "semigroup":
+                # The Lagrangian and Eulerian targets do not pin down the whole jump (at kappa = 1 they reduce to
+                # D(delta) = delta and to a zero derivative, which a constant output satisfies): use the semigroup
+                # target, which composes two shorter jumps, for those samples.
+                whole = far & (k3 >= 1 - 1e-6)
+                if whole.any():
+                    kk1 = k1[whole] if k1 is not None else torch.rand(int(whole.sum()), device=dev) * 0.98 + 0.01
+                    target[whole] = TARGETS["semigroup"](f, Dbar, x_o[whole], t_o[whole], k3[whole], kk1)
+                    far = far & ~whole
             if far.any():
                 Dfar = Dbar
                 if L.direction == "data":   # the data point in place of the denoiser: a one-sample estimate

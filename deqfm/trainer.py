@@ -163,6 +163,7 @@ def train(cfg, model, dataset, loss_fn, kind, teacher=None):
         if accelerator.check_trigger():
             if is_main and step < T.steps:
                 save("last.pt")
+                open(os.path.join(cfg.out_dir, "INTERRUPTED"), "w").close()   # a multi-GPU launcher hides the exit code
                 print(f"interrupted at step {step}: checkpoint written, exiting with code 3", flush=True)
             if step < T.steps:
                 accelerator.wait_for_everyone()
