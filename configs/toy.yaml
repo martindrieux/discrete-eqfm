@@ -1,0 +1,8 @@
+# Synthetic check: 8 fixed sequences of length 16 over 16 tokens. Runs on a CPU in a few minutes.
+out_dir: runs/toy
+clock: exponential
+data: {name: toy, seq_len: 16, vocab_size: 16, n_modes: 8}
+model: {dim: 128, depth: 3, heads: 4}
+loss: {diag_time: log_uniform, t_eps: 1.0e-3, off_diagonal: semigroup}
+train: {steps: 3000, batch_size: 128, lr: 1.0e-3, warmup: 200, ema: 0.999, num_workers: 0, log_every: 100, save_every: 1000}
+sample: {steps: 4, num: 512}

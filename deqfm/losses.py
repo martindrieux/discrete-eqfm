@@ -1,0 +1,118 @@
+"""Losses and off-diagonal targets (Algorithms 1 to 4 of the notes).
+
+Notation
+    x        state in R^{B x L x V}
+    f(x, s)  model probabilities delta_hat_s(x) in the product simplex, s in [0, 1]^B
+    Dbar(x)  teacher denoiser probabilities: f(x, 0) when training from data, a frozen model when distilling
+    clock    gives c(sigma), kappa(sigma) and kappa^{-1}
+
+Every target has rows that sum to one, and no gradient flows through a target.
+All losses are averaged over positions and over the batch.
+"""
+import math
+
+import torch
+import torch.nn.functional as F
+
+
+def _b(v):
+    """[B] -> [B, 1, 1] for broadcasting against states."""
+    return v.view(-1, 1, 1)
+
+
+# ----------------------------------------------------------------------------- states and times
+
+def sample_state(tokens, vocab_size, t):
+    """I_t = (1 - t) x_0 + t x_1 with x_0 ~ N(0, I) and x_1 the one-hot matrix of `tokens`. t: [B]."""
+    x1 = F.one_hot(tokens, vocab_size).float()
+    return (1 - _b(t)) * torch.randn_like(x1) + _b(t) * x1
+
+
+def sample_diag_time(batch, mode, t_eps, device):
+    """Time t ~ q and weight 1 / ((1 - t) q(t)) for the diagonal loss.
+
+    uniform     : q = U[0, 1 - t_eps], weight 1 / (1 - t)   (the form in the notes, with a numerical guard)
+    log_uniform : q(t) prop. to 1 / (1 - t) on [0, 1 - t_eps], so the weight is the constant log(1 / t_eps)
+    """
+    u = torch.rand(batch, device=device)
+    if mode == "uniform":
+        t = u * (1 - t_eps)
+        return t, 1 / (1 - t)
+    if mode == "log_uniform":
+        t = 1 - t_eps ** u
+        return t, torch.full_like(t, math.log(1 / t_eps))
+    raise ValueError(f"unknown diag_time '{mode}'")
+
+
+# ----------------------------------------------------------------------------- losses
+
+def soft_cross_entropy(logits, target):
+    """- target . log softmax(logits), averaged over positions and batch.
+
+    When the rows of `target` sum to one, the gradient with respect to the logits is softmax(logits) - target.
+    """
+    return -(target.float() * F.log_softmax(logits.float(), dim=-1)).sum(-1).mean()
+
+
+def diagonal_data_loss(logits, tokens, weight):
+    """Weighted cross-entropy against the data: mean over the batch of weight * (- x_1 . log delta_hat_0(I_t)) / L."""
+    ce = F.cross_entropy(logits.float().flatten(0, 1), tokens.flatten(), reduction="none").view(tokens.shape)
+    return (weight * ce.mean(dim=1)).mean()
+
+
+# ----------------------------------------------------------------------------- Jacobian-vector products
+
+def jvp_forward(f, x, sigma, u, v):
+    """(f(x, sigma), d/de f(x + e u, sigma + e v) at e = 0) by forward-mode differentiation."""
+    return torch.func.jvp(f, (x, sigma), (u, v))
+
+
+def make_jvp_fd(eps):
+    def jvp_fd(f, x, sigma, u, v):
+        """Same, by central finite differences (three evaluations; works with any attention kernel)."""
+        out = f(x, sigma)
+        plus, minus = f(x + eps * u, sigma + eps * v), f(x - eps * u, sigma - eps * v)
+        return out, (plus - minus) / (2 * eps)
+    return jvp_fd
+
+
+# ----------------------------------------------------------------------------- off-diagonal targets
+
+@torch.no_grad()
+def semigroup_target(f, Dbar, x, clock, jvp=None):
+    """Algorithm 2. Returns (sigma_3, target) with target = gamma f(x, s1) + (1 - gamma) f(x', s2)."""
+    B = x.shape[0]
+    s3 = torch.rand(B, device=x.device).sqrt()            # density 2 s3 on [0, 1]
+    s1 = torch.rand(B, device=x.device) * s3              # U[0, s3]
+    k1, k3 = clock.kappa(s1), clock.kappa(s3)
+    k2 = (k3 - k1) / (1 - k1).clamp_min(1e-8)
+    s2 = clock.kappa_inv(k2)
+    gamma = k1 * (1 - k2) / k3.clamp_min(1e-8)
+    d1 = f(x, s1)
+    x_mid = (1 - _b(k1)) * x + _b(k1) * d1
+    d2 = f(x_mid, s2)
+    return s3, _b(gamma) * d1 + (1 - _b(gamma)) * d2
+
+
+@torch.no_grad()
+def lagrangian_target(f, Dbar, x, clock, jvp=jvp_forward):
+    """Algorithm 3. Returns (sigma, target) with target = Dbar(x') - c kappa d/dsigma f(x, sigma)."""
+    s = torch.rand(x.shape[0], device=x.device)
+    k, c = clock.kappa(s), clock.c(s)
+    d, J = jvp(f, x, s, torch.zeros_like(x), torch.ones_like(s))
+    x_end = (1 - _b(k)) * x + _b(k) * d
+    return s, Dbar(x_end) - _b(c * k) * J
+
+
+@torch.no_grad()
+def eulerian_target(f, Dbar, x, clock, jvp=jvp_forward):
+    """Algorithm 4. Returns (sigma, target) with target = (1 - kappa) Dbar(x) + kappa f(x, sigma) + kappa J,
+    where J is the derivative of f at (x, sigma) in the direction (Dbar(x) - x, -c)."""
+    s = torch.rand(x.shape[0], device=x.device)
+    k, c = clock.kappa(s), clock.c(s)
+    Dx = Dbar(x)
+    d, J = jvp(f, x, s, Dx - x, -c)
+    return s, (1 - _b(k)) * Dx + _b(k) * (d + J)
+
+
+TARGETS = {"semigroup": semigroup_target, "lagrangian": lagrangian_target, "eulerian": eulerian_target}

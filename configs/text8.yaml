@@ -1,0 +1,8 @@
+# Character-level text. Put the raw text8 file at data/text8 (vocabulary: 27 characters).
+out_dir: runs/text8
+clock: exponential
+data: {name: text, path: data/text8, seq_len: 256}
+model: {dim: 768, depth: 12, heads: 12}
+loss: {diag_time: uniform, t_eps: 1.0e-4, off_diagonal: semigroup}
+train: {steps: 1000000, batch_size: 128, lr: 3.0e-4, warmup: 2500, precision: bf16, num_workers: 4}
+sample: {steps: 8, num: 8}

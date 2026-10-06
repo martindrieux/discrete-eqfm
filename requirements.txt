@@ -1,0 +1,8 @@
+torch>=2.1
+accelerate>=0.26
+pyyaml
+numpy
+# optional
+# datasets, transformers   (scripts/prepare_hf.py, decoding token files)
+# wandb                    (set wandb.project)
+# pytest                   (tests)

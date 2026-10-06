@@ -1,0 +1,12 @@
+# OpenWebText with the GPT-2 tokeniser (vocabulary 50257, length 1024), model size as in FMLM.
+# Create the token file first:
+#   python scripts/prepare_hf.py --dataset Skylion007/openwebtext --tokenizer gpt2 --out data/owt.bin
+# One state is batch_size x 1024 x 50257 numbers, so keep the per-GPU batch small and use
+# several GPUs (accelerate launch) and train.grad_accum to reach the effective batch size you want.
+out_dir: runs/owt
+clock: exponential
+data: {name: tokens, path: data/owt.bin, seq_len: 1024}
+model: {dim: 768, depth: 12, heads: 12}
+loss: {diag_time: uniform, t_eps: 1.0e-4, off_diagonal: semigroup}
+train: {steps: 1000000, batch_size: 8, grad_accum: 8, lr: 3.0e-4, warmup: 2500, precision: bf16, num_workers: 8}
+sample: {steps: 8, num: 4}
