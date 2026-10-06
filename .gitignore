@@ -6,3 +6,4 @@ data/
 wandb/
 .pytest_cache/
 nohup.out
+logs/

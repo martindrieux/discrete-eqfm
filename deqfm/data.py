@@ -44,6 +44,14 @@ class ToyModes(Dataset):
         hit = (samples[:, None, :].cpu() == self.modes[None]).all(-1).any(-1)
         return hit.float().mean().item()
 
+    def mode_tv(self, samples):
+        """Total variation distance between the mode frequencies among valid samples and the true probabilities."""
+        match = (samples[:, None, :].cpu() == self.modes[None]).all(-1).float()   # [N, n_modes]
+        counts = match.sum(0)
+        if counts.sum() == 0:
+            return 1.0
+        return 0.5 * (counts / counts.sum() - self.probs).abs().sum().item()
+
 
 class TextFile(Dataset):
     """Character-level random crops of a plain text file (for example text8)."""

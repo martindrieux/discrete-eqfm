@@ -88,7 +88,7 @@ Defaults are in `deqfm/config.py`; a YAML file only lists what differs.
 |---|---|---|
 | `clock` | `exponential` | `exponential` ($\kappa = \sigma$, $c = 1-\sigma$) or `rational` ($r_\tau = \tau/(1+\tau)$) |
 | `model.dim / depth / heads` | 256 / 4 / 4 | transformer size |
-| `model.sigma_scale` | 100 | largest frequency of the duration embedding |
+| `model.sigma_scale` | 1 | largest frequency of the duration embedding (radians per unit $\sigma$). Keep it small: at 100 the Lagrangian and Eulerian losses diverged on the toy data, at 1 and 10 they were stable |
 | `loss.diag_time` | `uniform` | `uniform`: $t \sim \mathsf{U}[0, 1-\epsilon]$ with weight $\frac{1}{1-t}$. `log_uniform`: density $\propto \frac{1}{1-t}$, constant weight (same objective, lower variance) |
 | `loss.t_eps` | 1e-4 | $\epsilon$ above: a numerical guard on $t$ near 1 |
 | `loss.off_diagonal` | `semigroup` | `semigroup`, `lagrangian` or `eulerian` |

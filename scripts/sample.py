@@ -35,7 +35,7 @@ def main():
     print(f"\n{ckpt['kind']} | step {ckpt['step']} | {cfg.sample.steps} network evaluations | "
           f"unigram entropy {unigram_entropy(tokens.cpu()):.3f}")
     if hasattr(dataset, "valid_rate"):
-        print(f"valid rate {dataset.valid_rate(tokens):.3f}")
+        print(f"valid rate {dataset.valid_rate(tokens):.3f} | mode TV {dataset.mode_tv(tokens):.3f}")
 
 
 if __name__ == "__main__":

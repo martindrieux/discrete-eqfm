@@ -17,7 +17,7 @@ DEFAULTS = {
         "path": None,
     },
     "model": {"dim": 256, "depth": 4, "heads": 4, "mlp_ratio": 4, "dropout": 0.0,
-              "sigma_scale": 100.0},     # largest frequency of the duration embedding (radians per unit sigma)
+              "sigma_scale": 1.0},       # largest frequency of the duration embedding (radians per unit sigma)
     "loss": {
         # diagonal term: t ~ q, weight 1 / ((1 - t) q(t))
         "diag_time": "uniform",          # uniform: q = U[0, 1 - t_eps] | log_uniform: q prop. to 1/(1-t), constant weight

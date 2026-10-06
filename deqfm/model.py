@@ -59,7 +59,7 @@ class Block(nn.Module):
 
 
 class Denoiser(nn.Module):
-    def __init__(self, vocab_size, seq_len, dim=256, depth=4, heads=4, mlp_ratio=4, dropout=0.0, sigma_scale=100.0):
+    def __init__(self, vocab_size, seq_len, dim=256, depth=4, heads=4, mlp_ratio=4, dropout=0.0, sigma_scale=1.0):
         super().__init__()
         self.vocab_size, self.seq_len, self.dim, self.sigma_scale = vocab_size, seq_len, dim, sigma_scale
         self.embed = nn.Linear(vocab_size, dim, bias=False)
