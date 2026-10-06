@@ -35,3 +35,6 @@ X_fmlm_replica	released-flm-distillation	FMLM, four GPUs
 X_statetime_semigroup	released-flm-distillation	State time, semigroup, four GPUs
 X_statetime_eulerian_wholesemi	released-flm-distillation	State time, Eulerian, four GPUs
 S_data_endpoint	endpoint-only	Endpoint only
+Z_whole25	released-flm-distillation	More whole jumps
+Z_whole25_lr1e4	released-flm-distillation	More whole jumps, lower rate
+Z_lr1e4	released-flm-distillation	Lower learning rate

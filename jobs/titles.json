@@ -142,5 +142,17 @@
  "S_data_endpoint": [
   "Endpoint only",
   "$\\bar\\delta = \\hat\\delta_1 + (x_1 - x) \\cdot \\nabla_x \\hat\\delta_1$ at $\\kappa = 1$ only, no denoiser; boundary target $x_1$ for $t >$ \\cfg{loss.boundary_t}"
+ ],
+ "Z_whole25": [
+  "More whole jumps",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}; teacher \\cfg{loss.teacher}; batch \\cfg{train.batch_size}, \\cfg{train.steps} steps; continued from \\cfg{train.init}; whole-jump probability \\cfg{loss.whole_jump_prob}, $\\eta$ = \\cfg{train.lr}"
+ ],
+ "Z_whole25_lr1e4": [
+  "More whole jumps, lower rate",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}; teacher \\cfg{loss.teacher}; batch \\cfg{train.batch_size}, \\cfg{train.steps} steps; continued from \\cfg{train.init}; whole-jump probability \\cfg{loss.whole_jump_prob}, $\\eta$ = \\cfg{train.lr}"
+ ],
+ "Z_lr1e4": [
+  "Lower learning rate",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}; teacher \\cfg{loss.teacher}; batch \\cfg{train.batch_size}, \\cfg{train.steps} steps; continued from \\cfg{train.init}; whole-jump probability \\cfg{loss.whole_jump_prob}, $\\eta$ = \\cfg{train.lr}"
  ]
 }
