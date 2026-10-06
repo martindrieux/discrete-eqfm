@@ -132,6 +132,7 @@ def train(cfg, model, dataset, loss_fn, kind, teacher=None):
                       f"length {dataset.seq_len}, {accelerator.num_processes} process(es)")
 
     model.train()
+    first_step, rate_tic = step, time.time()
     tic, logs_sum, logs_n = time.time(), {}, 0
     data = iter(loader)
     while step < T.steps:
@@ -160,6 +161,13 @@ def train(cfg, model, dataset, loss_fn, kind, teacher=None):
         ema.update(raw, step)
         if stop["signal"] or (is_main and T.max_minutes and time.time() - started > 60 * T.max_minutes):
             accelerator.set_trigger()
+        if is_main and T.min_rate and step - first_step in (100, 400):      # some nodes synchronise GPUs very slowly
+            if step - first_step == 100:
+                rate_tic = time.time()
+            elif 300 / (time.time() - rate_tic) < T.min_rate:
+                print(f"slow node: {300 / (time.time() - rate_tic):.2f} it/s < {T.min_rate}", flush=True)
+                open(os.path.join(cfg.out_dir, "SLOW"), "w").close()
+                accelerator.set_trigger()
         if accelerator.check_trigger():
             if is_main and step < T.steps:
                 save("last.pt")

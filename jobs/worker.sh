@@ -46,7 +46,7 @@ slot() {   # slot <index> <comma-separated gpu ids>
     [ $GPT -gt 1 ] && launch="$PY -m accelerate.commands.launch --multi_gpu --num_processes $GPT --mixed_precision no"
     log $id "start $picked (budget ${left} min, gpus $gpus)"
     ( export CUDA_VISIBLE_DEVICES=$gpus
-      rm -f runs/$picked/INTERRUPTED
+      rm -f runs/$picked/INTERRUPTED runs/$picked/SLOW
       $launch scripts/$script $args out_dir=runs/$picked ckpt_dir=$DEQ_ROOT/runs/$picked train.max_minutes=$left
       rc=$?; [ -f runs/$picked/INTERRUPTED ] && rc=3
       if [ $rc = 0 ] && [ ! -f runs/$picked/eval.json ]; then   # bounded by the walltime: an unfinished evaluation is redone
@@ -68,6 +68,9 @@ slot() {   # slot <index> <comma-separated gpu ids>
       for i in $(seq 2 $(awk -F'\t' -v n=$picked '$2==n' $TASKS | wc -l)); do resubmit > /dev/null; done
     fi
     rm -rf runs/$picked/.lock
+    if [ -f runs/$picked/SLOW ]; then   # this node is too slow for this task: never use it again, and leave it now
+      hostname >> jobs/bad_nodes.txt; log $id "slow node $(hostname), leaving"; rm -f runs/$picked/SLOW; return 2
+    fi
     log $id "end $picked rc=$rc"
     [ $rc = 3 ] && return 2          # time budget hit or preempted: this job is finished
     [ $rc != 0 ] && { echo "rc=$rc $(date) job=$SLURM_JOB_ID" >> runs/$picked/FAILED; sleep 5; }
@@ -77,7 +80,8 @@ slot() {   # slot <index> <comma-separated gpu ids>
 trap 'trap "" TERM; pkill -TERM -P $$ -f scripts/ ; kill -TERM 0; wait' TERM      # preemption: trainers checkpoint and exit
 echo "host=$(hostname) gpus=$(nvidia-smi --query-gpu=name --format=csv,noheader | paste -sd,) job=$SLURM_JOB_ID part=$SLURM_JOB_PARTITION tasks=$TASKS"
 IDLE_FLAG=/tmp/deq_idle_$SLURM_JOB_ID
-resubmit() { ( for v in $(compgen -e | grep '^SLURM_'); do unset $v; done; sbatch --parsable ${RESUBMIT_ARGS} "$@" jobs/worker.sh ); }
+resubmit() { ( bad=$(sort -u jobs/bad_nodes.txt 2>/dev/null | paste -sd,); for v in $(compgen -e | grep '^SLURM_'); do unset $v; done
+              sbatch --parsable ${RESUBMIT_ARGS} ${bad:+--exclude=$bad} "$@" jobs/worker.sh ); }
 if ! $PY -c "import torch; n=torch.cuda.device_count(); assert n > 0; [torch.ones(1, device=f'cuda:{i}').sum().item() for i in range(n)]" 2>/dev/null; then
   log - "GPU unusable on $(hostname); resubmitting elsewhere"; resubmit --exclude=$(hostname); exit 0
 fi

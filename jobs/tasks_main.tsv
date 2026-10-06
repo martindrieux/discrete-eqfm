@@ -1,3 +1,3 @@
 # Phase 2 long runs: full-size model from random initialisation, 4 GPUs x 128 = batch 512 as in FLM.
-M_field_timefree	-	train_field.py	configs/lm1b.yaml model.cond=duration train.steps=300000 train.keep_every=50000
-M_field_timecond	-	train_field.py	configs/lm1b.yaml model.cond=time train.steps=300000 train.keep_every=50000
+M_field_timefree	-	train_field.py	configs/lm1b.yaml model.cond=duration train.steps=300000 train.keep_every=50000 train.min_rate=1.7
+M_field_timecond	-	train_field.py	configs/lm1b.yaml model.cond=time train.steps=300000 train.keep_every=50000 train.min_rate=1.7

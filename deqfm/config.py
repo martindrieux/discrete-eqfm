@@ -54,6 +54,7 @@ DEFAULTS = {
         "resume": True,                  # continue from out_dir/last.pt if it exists
         "init": None,                    # start from the EMA weights of this checkpoint (or released:<dir>)
         "init_time": 0.5,                # reparameterised time at which a time-conditioned init is frozen (cond = duration)
+        "min_rate": 0,                   # > 0: stop (as if interrupted) if the speed after 400 steps is below this many it/s
         "max_minutes": 0,                # > 0: checkpoint and exit with code 3 after this many minutes (job time limits)
         "keep_every": 0,                 # > 0: also keep step_XXXXXXX.pt (EMA weights only) every this many steps
     },
