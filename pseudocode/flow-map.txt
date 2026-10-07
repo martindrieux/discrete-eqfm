@@ -8,7 +8,7 @@ $L_{\mathrm{diag}}$:
     distillation: $\mathrm{mean}\big[- \frac{1}{L} \sum_l \bar D(I_t)^l \cdot \log \hat\delta_0(I_t)^l\big]$
 off-diagonal half: time $t$, jump fraction $\kappa$ and first leg $\kappa_1 \le \kappa$ by the rule `loss.jump_sampling`:
     notes: $t \sim \mathcal{U}[0,1]$; semigroup: $\sigma_3 = \sqrt{u}$, $\sigma_1 \sim \mathcal{U}[0, \sigma_3]$, $\kappa = \kappa(\sigma_3)$, $\kappa_1 = \kappa(\sigma_1)$; otherwise $\sigma \sim \mathcal{U}[0,1]$, $\kappa = \kappa(\sigma)$
-    reparam: $h \sim \mathcal{U}[0,1]$, $\tau_s \sim \mathcal{U}[0, 1 - h]$, $\tau_e = \tau_s + h$; with probability `loss.whole_jump_prob`: $\tau_s = 0$, $\tau_e = 1$; $t = \tau^{-1}(\tau_s)$, $t' = \tau^{-1}(\tau_e)$, $u = \tau^{-1}(\frac{\tau_s + \tau_e}{2})$, $\kappa = \frac{t' - t}{1 - t}$, $\kappa_1 = \frac{u - t}{1 - t}$
+    reparam: $h \sim \mathcal{U}[0,1]$, $\tau_s \sim \mathcal{U}[0, 1 - h]$, $\tau_e = \tau_s + h$; with probability `loss.whole_jump_prob`: $\tau_s = 0$, $\tau_e = 1$; with probability `loss.end_jump_prob`: $\tau_s \sim \mathcal{U}[0,1]$, $\tau_e = 1$; $t = \tau^{-1}(\tau_s)$, $t' = \tau^{-1}(\tau_e)$, $u = \tau^{-1}(\frac{\tau_s + \tau_e}{2})$, $\kappa = \frac{t' - t}{1 - t}$, $\kappa_1 = \frac{u - t}{1 - t}$
     endpoint: $t \sim \mathcal{U}[0,1]$, $\kappa = 1$
 boundary samples: with probability `loss.boundary_prob`, replace by $t \sim \mathcal{U}[t_b, 1]$, $\kappa = 1$ with probability $\frac12$ else $\kappa \sim \mathcal{U}[0,1]$   // $t_b$ = `loss.boundary_t`
 $x = I_t = (1 - t) x_0 + t x_1$

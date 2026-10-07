@@ -1,6 +1,7 @@
 """Training loop shared by both objectives. Multi-GPU and mixed precision come from `accelerate`."""
 import copy
 import json
+import math
 import os
 import signal
 import sys
@@ -142,6 +143,8 @@ def train(cfg, model, dataset, loss_fn, kind, teacher=None):
             data = iter(loader)
             tokens = next(data)
         lr = T.lr * min(1.0, (step + 1) / max(1, T.warmup))
+        if T.lr_decay == "cosine":
+            lr *= 0.5 * (1 + math.cos(math.pi * min(1.0, step / T.steps)))
         for group in opt.param_groups:
             group["lr"] = lr
         with accelerator.accumulate(model):

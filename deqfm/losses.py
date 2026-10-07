@@ -98,13 +98,14 @@ def make_jvp_fd(eps):
 # ----------------------------------------------------------------------------- jump sampling
 
 @nb.core
-def sample_jumps(batch, mode, clock, device, need_mid, reparam=None, boundary_prob=0.0, stratified=False):
+def sample_jumps(batch, mode, clock, device, need_mid, reparam=None, boundary_prob=0.0, stratified=False, end_prob=0.0):
     """State time t, jump fraction k3 and (for the semigroup loss) first-leg fraction k1, each of shape [batch].
 
     notes   : t ~ U[0, 1]. Semigroup: sigma_3 with density 2 sigma_3, sigma_1 ~ U[0, sigma_3]. Otherwise sigma ~ U[0, 1].
     endpoint: t ~ U[0, 1] and kappa = 1 always: the map to the end of the flow only (not for the semigroup loss).
     reparam : as FMLM, in the reparameterised time tau: h ~ U[0, 1], tau_s ~ U[0, 1 - h], tau_t = tau_s + h, midpoint
-              (tau_s + tau_t) / 2; with probability `boundary_prob` the pair is (0, 1), a whole one-step jump.
+              (tau_s + tau_t) / 2; with probability `boundary_prob` the pair is (0, 1), a whole one-step jump;
+              with probability `end_prob` it is (tau_s, 1) with tau_s ~ U[0, 1], a jump to the end from any time.
     """
     if mode == "notes":
         t = uniform01(batch, device, stratified)
@@ -121,10 +122,16 @@ def sample_jumps(batch, mode, clock, device, need_mid, reparam=None, boundary_pr
         if boundary_prob > 0:
             whole = torch.rand(batch, device=device) < boundary_prob
             tau_s, h = torch.where(whole, torch.zeros_like(h), tau_s), torch.where(whole, torch.ones_like(h), h)
+        if end_prob > 0:      # jumps to the end from a state at any time: tau_s ~ U[0, 1], tau_t = 1
+            end = torch.rand(batch, device=device) < end_prob
+            tau_e = torch.rand(batch, device=device)
+            tau_s, h = torch.where(end, tau_e, tau_s), torch.where(end, 1 - tau_e, h)
         tau_t = (tau_s + h).clamp(max=1.0)
+        exact = tau_t >= 1.0 - 1e-6
         s, e, u = reparam.t(tau_s), reparam.t(tau_t), reparam.t(0.5 * (tau_s + tau_t))
         rem = (1 - s).clamp_min(1e-8)
         k3, k1 = ((e - s) / rem).clamp(0, 1), ((u - s) / rem).clamp(0, 1)
+        k3 = torch.where(exact, torch.ones_like(k3), k3)      # a jump to the end is exactly kappa = 1
         return s, k3, torch.minimum(k1, k3)
     raise ValueError(f"unknown jump_sampling '{mode}'")
 

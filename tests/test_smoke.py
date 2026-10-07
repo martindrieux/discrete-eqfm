@@ -276,3 +276,16 @@ def test_state_time_conditioning_is_differentiable(tmp_path):
         assert torch.allclose(out, f(x, None, s), atol=2e-3)       # same function as the non-differentiable path
     assert jvp_a.abs().max() > 1e-3
     assert torch.allclose(jvp_a, jvp_b, rtol=1e-1, atol=1e-2)
+
+
+def test_end_jumps_and_cosine_decay(tmp_path):
+    from deqfm.reparam import get_reparam
+    t, k3, k1 = sample_jumps(4000, "reparam", build_clock("exponential"), "cpu", True, get_reparam(30522), 0.0, True, end_prob=0.5)
+    end = k3 == 1
+    assert 0.4 < end.float().mean() < 0.6 and t[end].min() < 0.5 and t[end].max() > 0.8 and (k1[end] < 1).all()
+    cfg, dataset, model = tiny(tmp_path, *DIT, "model.cond=state_time", "loss.jump_sampling=reparam", "loss.diag_time=reparam",
+                               "loss.end_jump_prob=0.3", "loss.off_diagonal=eulerian", "loss.whole_jump_target=semigroup",
+                               "loss.boundary_prob=0.1", "train.lr_decay=cosine")
+    model = build_model(cfg.model, dataset.vocab_size, dataset.seq_len, "flow_map")
+    train(cfg, model, dataset, make_flow_map_loss(cfg, dataset.vocab_size, build_clock("exponential")), kind="flow_map")
+    assert all(torch.isfinite(p).all() for p in model.parameters())

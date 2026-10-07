@@ -85,7 +85,7 @@ def make_flow_map_loss(cfg, vocab_size, clock, teacher=None, teacher_cond=None):
 
         # off-diagonal (kappa > 0)
         t_o, k3, k1 = sample_jumps(no, L.jump_sampling, clock, dev, L.off_diagonal == "semigroup", rep,
-                                   L.whole_jump_prob, L.stratified)
+                                   L.whole_jump_prob, L.stratified, L.end_jump_prob)
         near = torch.zeros(no, dtype=torch.bool, device=dev)
         if L.boundary_prob > 0:
             near = torch.rand(no, device=dev) < L.boundary_prob

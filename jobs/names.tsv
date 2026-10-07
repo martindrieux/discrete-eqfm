@@ -38,3 +38,9 @@ S_data_endpoint	endpoint-only	Endpoint only
 Z_whole25	released-flm-distillation	More whole jumps
 Z_whole25_lr1e4	released-flm-distillation	More whole jumps, lower rate
 Z_lr1e4	released-flm-distillation	Lower learning rate
+W_eul_end_cos	released-flm-distillation	Eulerian, end jumps, cosine
+W_eul_end	released-flm-distillation	Eulerian, end jumps
+W_eul_cos	released-flm-distillation	Eulerian, cosine
+W_semi_end_cos	released-flm-distillation	Semigroup, end jumps, cosine
+W_semi_cos	released-flm-distillation	Semigroup, cosine
+W_fmlm_cos	released-flm-distillation	FMLM, cosine

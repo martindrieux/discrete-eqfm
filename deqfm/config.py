@@ -41,13 +41,14 @@ DEFAULTS = {
         "jump_sampling": "notes",        # notes: t and sigma uniform | reparam: as FMLM, uniform in the decoding-error clock
                                          # | endpoint: only the whole jump kappa = 1
         "whole_jump_prob": 0.0,          # reparam: probability of the whole jump from noise (FMLM uses 1/32)
+        "end_jump_prob": 0.0,            # reparam: probability of a jump to the end (kappa = 1) from a state at a uniform tau
         "whole_jump_target": "same",     # same | semigroup: target used for kappa = 1 under the Lagrangian / Eulerian loss
         "boundary_prob": 0.0,            # fraction of off-diagonal samples used for the boundary term (see objectives.py)
         "boundary_t": 0.9, "boundary_target": "denoiser",   # denoiser | data
     },
     "train": {
         "steps": 100000, "batch_size": 64, "grad_accum": 1,
-        "lr": 3.0e-4, "warmup": 2500, "betas": [0.9, 0.999], "weight_decay": 0.0,
+        "lr": 3.0e-4, "warmup": 2500, "lr_decay": "none", "betas": [0.9, 0.999], "weight_decay": 0.0,
         "grad_clip": 1.0, "ema": 0.9999,
         "precision": "no",               # no | fp16 | bf16   (passed to accelerate)
         "num_workers": 4, "log_every": 100, "save_every": 10000,
