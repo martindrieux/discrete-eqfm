@@ -178,5 +178,21 @@
  "W_fmlm_cos": [
   "FMLM, cosine",
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}; teacher \\cfg{loss.teacher}; end-jump probability \\cfg{loss.end_jump_prob}; $\\eta$ decay \\cfg{train.lr_decay}; \\cfg{train.steps} steps"
+ ],
+ "V_semi_ematarget": [
+  "Semigroup, averaged targets",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}; teacher \\cfg{loss.teacher}; end-jump probability \\cfg{loss.end_jump_prob}; $\\eta$ decay \\cfg{train.lr_decay}; \\cfg{train.steps} steps; target weights \\cfg{loss.target_net}, target without dropout \\cfg{loss.target_eval}, start from teacher \\cfg{loss.init_from_teacher}"
+ ],
+ "V_semi_nodroptarget": [
+  "Semigroup, targets without dropout",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}; teacher \\cfg{loss.teacher}; end-jump probability \\cfg{loss.end_jump_prob}; $\\eta$ decay \\cfg{train.lr_decay}; \\cfg{train.steps} steps; target weights \\cfg{loss.target_net}, target without dropout \\cfg{loss.target_eval}, start from teacher \\cfg{loss.init_from_teacher}"
+ ],
+ "V_eul_ematarget": [
+  "Eulerian, averaged targets",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}; teacher \\cfg{loss.teacher}; end-jump probability \\cfg{loss.end_jump_prob}; $\\eta$ decay \\cfg{train.lr_decay}; \\cfg{train.steps} steps; target weights \\cfg{loss.target_net}, target without dropout \\cfg{loss.target_eval}, start from teacher \\cfg{loss.init_from_teacher}"
+ ],
+ "V_semi_randominit": [
+  "Semigroup, random start",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}; teacher \\cfg{loss.teacher}; end-jump probability \\cfg{loss.end_jump_prob}; $\\eta$ decay \\cfg{train.lr_decay}; \\cfg{train.steps} steps; target weights \\cfg{loss.target_net}, target without dropout \\cfg{loss.target_eval}, start from teacher \\cfg{loss.init_from_teacher}"
  ]
 }

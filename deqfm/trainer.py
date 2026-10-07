@@ -113,6 +113,7 @@ def train(cfg, model, dataset, loss_fn, kind, teacher=None):
 
     model, opt, loader = accelerator.prepare(model, opt, loader)
     ema.model.to(accelerator.device)
+    loss_fn.ema = ema.model      # used when loss.target_net = ema
     if teacher is not None:
         teacher.to(accelerator.device).eval().requires_grad_(False)
 

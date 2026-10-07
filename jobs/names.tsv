@@ -44,3 +44,7 @@ W_eul_cos	released-flm-distillation	Eulerian, cosine
 W_semi_end_cos	released-flm-distillation	Semigroup, end jumps, cosine
 W_semi_cos	released-flm-distillation	Semigroup, cosine
 W_fmlm_cos	released-flm-distillation	FMLM, cosine
+V_semi_ematarget	released-flm-distillation	Semigroup, averaged targets
+V_semi_nodroptarget	released-flm-distillation	Semigroup, targets without dropout
+V_eul_ematarget	released-flm-distillation	Eulerian, averaged targets
+V_semi_randominit	released-flm-distillation	Semigroup, random start

@@ -289,3 +289,12 @@ def test_end_jumps_and_cosine_decay(tmp_path):
     model = build_model(cfg.model, dataset.vocab_size, dataset.seq_len, "flow_map")
     train(cfg, model, dataset, make_flow_map_loss(cfg, dataset.vocab_size, build_clock("exponential")), kind="flow_map")
     assert all(torch.isfinite(p).all() for p in model.parameters())
+
+
+def test_ema_targets(tmp_path):
+    cfg, dataset, model = tiny(tmp_path, *DIT, "model.dropout=0.2", "loss.target_net=ema", "loss.target_eval=true")
+    clk = build_clock("exponential")
+    loss_fn = make_flow_map_loss(cfg, dataset.vocab_size, clk)
+    train(cfg, model, dataset, loss_fn, kind="flow_map")
+    assert loss_fn.ema is not model and not loss_fn.ema.training and model.training
+    assert all(torch.isfinite(p).all() for p in model.parameters())

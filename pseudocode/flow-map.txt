@@ -12,6 +12,7 @@ off-diagonal half: time $t$, jump fraction $\kappa$ and first leg $\kappa_1 \le 
     endpoint: $t \sim \mathcal{U}[0,1]$, $\kappa = 1$
 boundary samples: with probability `loss.boundary_prob`, replace by $t \sim \mathcal{U}[t_b, 1]$, $\kappa = 1$ with probability $\frac12$ else $\kappa \sim \mathcal{U}[0,1]$   // $t_b$ = `loss.boundary_t`
 $x = I_t = (1 - t) x_0 + t x_1$
+inside the target, $\hat\delta$ uses the weights `loss.target_net` (online $\theta$ or averaged $\bar\theta$), without dropout if `loss.target_eval`
 target $\bar\delta$ (no gradient) by the rule `loss.off_diagonal`:
     semigroup: $\kappa_2 = \frac{\kappa - \kappa_1}{1 - \kappa_1}$, $\gamma = \frac{\kappa_1 (1 - \kappa_2)}{\kappa}$, $x' = (1 - \kappa_1) x + \kappa_1 \hat\delta_{\kappa_1}(x)$, $\bar\delta = \gamma \hat\delta_{\kappa_1}(x) + (1 - \gamma) \hat\delta_{\kappa_2}(x')$
     lagrangian: $x' = (1 - \kappa) x + \kappa \hat\delta_\kappa(x)$, $\bar\delta = \bar D(x') - c \kappa \partial_\sigma \hat\delta_\sigma(x)$   // $c = c(\sigma)$, $\kappa = \kappa(\sigma)$

@@ -72,7 +72,13 @@ def make_flow_map_loss(cfg, vocab_size, clock, teacher=None, teacher_cond=None):
         else:
             tok_diag = tok_off = tokens
         nd, no = tok_diag.shape[0], tok_off.shape[0]
-        f = probs_fn(make_fn(raw, cfg.model.cond, clock, vocab_size, **({"manual_attn": True} if need_jvp and forward_mode else {})))
+        # network that builds the targets: the trained weights (as FMLM), or their running average, which moves slowly
+        tnet = getattr(loss_fn, "ema", None) if L.target_net == "ema" else raw
+        tnet = raw if tnet is None else tnet
+        was_training = tnet.training
+        if L.target_eval:        # no dropout in the targets
+            tnet.eval()
+        f = probs_fn(make_fn(tnet, cfg.model.cond, clock, vocab_size, **({"manual_attn": True} if need_jvp and forward_mode else {})))
         if teacher is None:
             Dbar = lambda y, t: f(y, t, torch.zeros_like(t))
         else:
@@ -119,6 +125,7 @@ def make_flow_map_loss(cfg, vocab_size, clock, teacher=None, teacher_cond=None):
                     target[near] = Dbar(x_o[near], t_o[near])
             if teacher is not None and use_diag:
                 target_d = Dbar(x_d, t_d)
+        tnet.train(was_training)
 
         fn = make_fn(model, cfg.model.cond, clock, vocab_size)
         logits = fn(torch.cat([x_d, x_o]), torch.cat([t_d, t_o]), torch.cat([torch.zeros_like(t_d), k3]))

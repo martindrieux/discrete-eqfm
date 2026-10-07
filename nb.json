@@ -140,7 +140,9 @@
    "wandb.project": "Weights and Biases project (none: off)",
    "wandb.name": "Weights and Biases run name",
    "loss.end_jump_prob": "probability that an off-diagonal sample is a jump to the end: $\\tau(t) \\sim \\mathcal{U}[0,1]$, $\\kappa = 1$ (reparam sampling)",
-   "train.lr_decay": "none: constant $\\eta$ after warmup; cosine: $\\eta_k = \\frac{\\eta}{2}(1 + \\cos(\\pi k / K_{\\mathrm{train}}))$, $K_{\\mathrm{train}}$ = `train.steps`"
+   "train.lr_decay": "none: constant $\\eta$ after warmup; cosine: $\\eta_k = \\frac{\\eta}{2}(1 + \\cos(\\pi k / K_{\\mathrm{train}}))$, $K_{\\mathrm{train}}$ = `train.steps`",
+   "loss.target_net": "weights used inside the target $\\bar\\delta$: online $\\theta$, or ema $\\bar\\theta$ (the running average, which moves slowly)",
+   "loss.target_eval": "if true, the target $\\bar\\delta$ is computed without dropout"
   },
   "symbols": {
    "x_1": "one-hot matrix in $\\mathbb{R}^{L \\times V}$ of a data sequence $y$ of $L$ tokens from a vocabulary of size $V$",
