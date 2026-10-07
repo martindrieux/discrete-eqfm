@@ -5,62 +5,62 @@
  "headline": "gen_ppl_1",
  "views": [
   {
-   "title": "$\\mathrm{PPL}$ at $K = 1$",
+   "title": "Perplexity of one-step samples",
    "shows": "$\\mathrm{PPL} = \\exp\\big(-\\frac{1}{N}\\sum_n \\log p_{\\mathrm{GPT2L}}(w_n \\mid w_{<n})\\big)$ over the judge tokens $w$ of 1024 samples, sampler with $K = 1$ jump",
    "kind": "curve",
    "metric": "gen_ppl_1",
    "log_y": true,
    "better": "lower",
-   "label": "$\\mathrm{PPL}$ at $K = 1$",
+   "label": "Perplexity of one-step samples",
    "meaning": "perplexity of one-step samples under GPT-2 Large (real text: 52.7)"
   },
   {
-   "title": "$H$ at $K = 1$",
+   "title": "Entropy of one-step samples",
    "shows": "$H$ = mean over 1024 samples of $-\\sum_v q_v \\log q_v$, $q_v$ = frequency of token $v$ in the sample, $K = 1$",
    "kind": "curve",
    "metric": "entropy_1",
    "better": "higher",
-   "label": "$H$ at $K = 1$",
+   "label": "Entropy of one-step samples",
    "meaning": "token entropy inside one sample; below real text (4.31) means repeated tokens"
   },
   {
-   "title": "$\\mathrm{PPL}$ at $K = 8$",
+   "title": "Perplexity of 8-step samples",
    "shows": "$\\mathrm{PPL} = \\exp\\big(-\\frac{1}{N}\\sum_n \\log p_{\\mathrm{GPT2L}}(w_n \\mid w_{<n})\\big)$ over the judge tokens $w$ of 1024 samples, $K = 8$ jumps, churn $g = 0$",
    "kind": "curve",
    "metric": "gen_ppl_8",
    "log_y": true,
    "better": "lower",
-   "label": "$\\mathrm{PPL}$ at $K = 8$",
+   "label": "Perplexity of 8-step samples",
    "meaning": "perplexity of 8-step samples, deterministic sampler"
   },
   {
-   "title": "$\\mathrm{PPL}$ at $K = 8$, $g = 0.8$",
+   "title": "Perplexity of 8-step samples, stochastic sampler",
    "shows": "$\\mathrm{PPL} = \\exp\\big(-\\frac{1}{N}\\sum_n \\log p_{\\mathrm{GPT2L}}(w_n \\mid w_{<n})\\big)$ over the judge tokens $w$ of 1024 samples, $K = 8$ jumps, churn $g = 0.8$",
    "kind": "curve",
    "metric": "gen_ppl_8_churn",
    "log_y": true,
    "better": "lower",
-   "label": "$\\mathrm{PPL}$ at $K = 8$, $g = 0.8$",
+   "label": "Perplexity of 8-step samples, stochastic sampler",
    "meaning": "perplexity of 8-step samples with the stochastic sampler of FMLM"
   },
   {
-   "title": "$\\mathrm{PPL}$ at $K = 1024$",
+   "title": "Perplexity of 1024-step samples (denoisers)",
    "shows": "$\\mathrm{PPL} = \\exp\\big(-\\frac{1}{N}\\sum_n \\log p_{\\mathrm{GPT2L}}(w_n \\mid w_{<n})\\big)$ over the judge tokens $w$ of 1024 samples, Euler sampler of $\\hat D$ with $K = 1024$",
    "kind": "curve",
    "metric": "gen_ppl_1024",
    "log_y": true,
    "better": "lower",
-   "label": "$\\mathrm{PPL}$ at $K = 1024$",
+   "label": "Perplexity of 1024-step samples (denoisers)",
    "meaning": "perplexity of a denoiser sampled with 1024 Euler steps"
   },
   {
-   "title": "$L$",
+   "title": "Training loss",
    "shows": "$L = w_{\\mathrm{diag}} L_{\\mathrm{diag}} + \\alpha L_{\\mathrm{off}}$ (flow map) or $L_{\\mathrm{diag}}$ (denoiser), mean over the last `train.log_every` steps",
    "kind": "curve",
    "metric": "loss",
    "log_y": true,
    "better": "lower",
-   "label": "$L$",
+   "label": "Training loss",
    "meaning": "training loss, averaged over the last log interval"
   }
  ],
@@ -167,6 +167,7 @@
  "table": [
   "gen_ppl_1",
   "entropy_1",
+  "gen_ppl_8",
   "gen_ppl_8_churn",
   "gen_ppl_1024"
  ]

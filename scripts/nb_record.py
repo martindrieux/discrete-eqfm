@@ -1,6 +1,7 @@
 """Record finished runs in the nb experiment tracker: one experiment per run, written when the run is complete.
 
     python scripts/nb_record.py NAME [NAME ...]        (run names under runs/; `--all` for every finished run)
+    python scripts/nb_record.py --stopped NAME [...]   (a run stopped before its last step, with its kept checkpoints)
 
 A run is trained in several jobs (time limits, preemption) and nb.start cannot resume an experiment, so a run is
 recorded once at the end: the training curves come from runs/NAME/log.jsonl and the sample metrics from
@@ -42,10 +43,10 @@ def formula(kind):
             r"teacher \cfg{loss.teacher}, \cfg{train.steps} steps")
 
 
-def record(name, names):
+def record(name, names, stopped=False):
     d = f"runs/{name}"
-    if not os.path.exists(f"{d}/DONE"):
-        return print(f"{name}: not finished, skipped")
+    if not os.path.exists(f"{d}/DONE") and not stopped:
+        return print(f"{name}: not finished, skipped (use --stopped NAME for a run that was stopped for good)")
     if os.path.exists(f"{d}/NB_RECORDED"):
         return print(f"{name}: already recorded")
     if name not in names:
@@ -54,7 +55,7 @@ def record(name, names):
     cfg = flat(json.load(open(f"{d}/config.json")))
     evals = {os.path.basename(p)[4:-5].strip("_"): json.load(open(p)) for p in sorted(glob.glob(f"{d}/eval*.json"))
              if ".tmp" not in p}
-    kind = "flow-map" if evals.get("", {}).get("flow_map") else "denoiser"
+    kind = "flow-map" if any(e.get("flow_map") for e in evals.values()) or cfg.get("loss.off_diagonal") and "field" not in name else "denoiser"
     for k in ("loss.teacher", "train.init", "data.path", "out_dir", "ckpt_dir"):      # keep paths short
         if isinstance(cfg.get(k), str):
             cfg[k] = cfg[k].replace("/data/user_data/mdrieux/deqfm/", "")
@@ -68,7 +69,7 @@ def record(name, names):
             continue
         last = r["step"]
         run.log(step=r["step"], **{k: v for k, v in r.items() if k in ("loss", "diag", "off")})
-    for tag, e in evals.items():
+    for tag, e in sorted(evals.items(), key=lambda kv: kv[1].get("train_step") or last):   # kept checkpoints, then the end
         suffix = "_churn" if "churn" in tag else ""
         metrics = {}
         for k, m in e["steps"].items():
@@ -89,11 +90,13 @@ def main():
             n, sub, title = line.rstrip("\n").split("\t")
             names[n] = (sub, title)
     args = sys.argv[1:]
+    stopped = args[:1] == ["--stopped"]      # runs stopped before their last step: recorded with their kept checkpoints
+    args = args[1:] if stopped else args
     if args == ["--all"]:
         args = [n for n in names if os.path.exists(f"runs/{n}/DONE")]
     for n in args:
         try:
-            record(n, names)
+            record(n, names, stopped)
         except Exception as e:      # noqa: BLE001  the tracker must never break the job pool
             print(f"{n}: not recorded ({type(e).__name__}: {e})")
 

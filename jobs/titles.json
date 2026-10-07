@@ -28,7 +28,7 @@
   "$\\hat D$ inputs \\cfg{model.cond}, $t$ by \\cfg{loss.diag_time}, \\cfg{model.depth} blocks of width \\cfg{model.dim}"
  ],
  "M_field_timecond": [
-  "Time-conditioned, full size",
+  "Time-conditioned, full size, paused at 166k steps",
   "$\\hat D$ inputs \\cfg{model.cond}, $t$ by \\cfg{loss.diag_time}, \\cfg{model.depth} blocks of width \\cfg{model.dim}"
  ],
  "S_data_semigroup": [
@@ -64,7 +64,7 @@
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}; started from \\cfg{train.init}"
  ],
  "Y_data_statetime_semigroup": [
-  "Semigroup, full size, state time",
+  "From data, full size, stopped at 121k steps",
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}"
  ],
  "S_distill_semigroup": [
@@ -112,11 +112,11 @@
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}; teacher \\cfg{loss.teacher}; batch \\cfg{train.batch_size}, \\cfg{train.steps} steps"
  ],
  "Y_fmlm_replica": [
-  "FMLM, long",
+  "FMLM inputs, stopped at 110k steps",
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}; teacher \\cfg{loss.teacher}; batch \\cfg{train.batch_size}, \\cfg{train.steps} steps"
  ],
  "Y_statetime_semigroup": [
-  "State time, semigroup, long",
+  "Time-free semigroup, stopped at 103k steps",
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}; teacher \\cfg{loss.teacher}; batch \\cfg{train.batch_size}, \\cfg{train.steps} steps"
  ],
  "Y_statetime_eulerian_wholesemi": [
@@ -124,19 +124,19 @@
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}; teacher \\cfg{loss.teacher}; batch \\cfg{train.batch_size}, \\cfg{train.steps} steps"
  ],
  "Y_statetime_lagrangian_wholesemi": [
-  "State time, Lagrangian, long",
+  "Time-free Lagrangian, stopped at 63k steps",
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}; teacher \\cfg{loss.teacher}; batch \\cfg{train.batch_size}, \\cfg{train.steps} steps"
  ],
  "X_fmlm_replica": [
-  "FMLM, four GPUs",
+  "FMLM inputs, batch 512, stopped at 53k steps",
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}; teacher \\cfg{loss.teacher}; batch \\cfg{train.batch_size} per GPU, \\cfg{train.steps} steps"
  ],
  "X_statetime_semigroup": [
-  "State time, semigroup, four GPUs",
+  "Time-free semigroup, batch 512, stopped at 61k steps",
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}; teacher \\cfg{loss.teacher}; batch \\cfg{train.batch_size} per GPU, \\cfg{train.steps} steps"
  ],
  "X_statetime_eulerian_wholesemi": [
-  "State time, Eulerian, four GPUs",
+  "Time-free Eulerian, batch 512, paused at 82k steps",
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, at $\\kappa = 1$: \\cfg{loss.whole_jump_target}; inputs \\cfg{model.cond}; jumps by \\cfg{loss.jump_sampling}; boundary probability \\cfg{loss.boundary_prob}; clock \\cfg{clock}; teacher \\cfg{loss.teacher}; batch \\cfg{train.batch_size} per GPU, \\cfg{train.steps} steps"
  ],
  "S_data_endpoint": [
@@ -188,11 +188,11 @@
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, batch \\cfg{train.batch_size}, \\cfg{train.steps} steps; end jumps \\cfg{loss.end_jump_prob}, boundary \\cfg{loss.boundary_prob}, $\\eta$ decay \\cfg{train.lr_decay}; target weights \\cfg{loss.target_net}, no target dropout \\cfg{loss.target_eval}, teacher start \\cfg{loss.init_from_teacher}"
  ],
  "V_eul_ematarget": [
-  "Eulerian, averaged targets",
+  "Eulerian, averaged targets, diverged",
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, batch \\cfg{train.batch_size}, \\cfg{train.steps} steps; end jumps \\cfg{loss.end_jump_prob}, boundary \\cfg{loss.boundary_prob}, $\\eta$ decay \\cfg{train.lr_decay}; target weights \\cfg{loss.target_net}, no target dropout \\cfg{loss.target_eval}, teacher start \\cfg{loss.init_from_teacher}"
  ],
  "V_semi_randominit": [
-  "Semigroup, random start",
+  "Semigroup, random start, stopped at 75k steps",
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, batch \\cfg{train.batch_size}, \\cfg{train.steps} steps; end jumps \\cfg{loss.end_jump_prob}, boundary \\cfg{loss.boundary_prob}, $\\eta$ decay \\cfg{train.lr_decay}; target weights \\cfg{loss.target_net}, no target dropout \\cfg{loss.target_eval}, teacher start \\cfg{loss.init_from_teacher}"
  ],
  "U_eul_end": [
@@ -200,7 +200,7 @@
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, batch \\cfg{train.batch_size}, \\cfg{train.steps} steps; end jumps \\cfg{loss.end_jump_prob}, boundary \\cfg{loss.boundary_prob}, $\\eta$ decay \\cfg{train.lr_decay}; 4 GPUs"
  ],
  "U_semi_end_cos": [
-  "Semigroup, end jumps, cosine, four GPUs",
+  "Semigroup, end jumps, cosine, batch 512, paused at 44k steps",
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, batch \\cfg{train.batch_size}, \\cfg{train.steps} steps; end jumps \\cfg{loss.end_jump_prob}, boundary \\cfg{loss.boundary_prob}, $\\eta$ decay \\cfg{train.lr_decay}; 4 GPUs"
  ],
  "D_eul_end": [

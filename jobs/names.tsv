@@ -6,7 +6,7 @@ S_field_timefree_loguniform	denoiser-training	Log-uniform $t$
 S_field_timefree_2gpu	denoiser-training	Two GPUs
 F_field_timefree	denoiser-training	Released FLM made time-free
 M_field_timefree	denoiser-training	Time-free, full size
-M_field_timecond	denoiser-training	Time-conditioned, full size
+M_field_timecond	denoiser-training	Time-conditioned, full size, paused at 166k steps
 S_data_semigroup	flow-map-from-data	Semigroup
 S_data_lagrangian	flow-map-from-data	Lagrangian
 S_data_eulerian	flow-map-from-data	Eulerian
@@ -15,7 +15,7 @@ S_data_semigroup_rational	flow-map-from-data	Semigroup, rational clock
 S_data_lagrangian_wholesemi	flow-map-from-data	Lagrangian, semigroup at $\kappa = 1$
 S_data_eulerian_wholesemi	flow-map-from-data	Eulerian, semigroup at $\kappa = 1$
 F_tf_data_semigroup	flow-map-from-data	Semigroup, full size, pretrained
-Y_data_statetime_semigroup	flow-map-from-data	Semigroup, full size, state time
+Y_data_statetime_semigroup	flow-map-from-data	From data, full size, stopped at 121k steps
 S_distill_semigroup	flow-map-distillation	Semigroup, medium
 S_distill_lagrangian	flow-map-distillation	Lagrangian, medium
 S_distill_eulerian	flow-map-distillation	Eulerian, medium
@@ -27,13 +27,13 @@ F_tf_eulerian	flow-map-distillation	Eulerian, duration inputs
 F_tf_semigroup_noboundary	flow-map-distillation	Semigroup, no boundary term
 F_fmlm_replica	released-flm-distillation	FMLM, short
 F_statetime_semigroup	released-flm-distillation	State time, short
-Y_fmlm_replica	released-flm-distillation	FMLM, long
-Y_statetime_semigroup	released-flm-distillation	State time, semigroup, long
+Y_fmlm_replica	released-flm-distillation	FMLM inputs, stopped at 110k steps
+Y_statetime_semigroup	released-flm-distillation	Time-free semigroup, stopped at 103k steps
 Y_statetime_eulerian_wholesemi	released-flm-distillation	State time, Eulerian, long
-Y_statetime_lagrangian_wholesemi	released-flm-distillation	State time, Lagrangian, long
-X_fmlm_replica	released-flm-distillation	FMLM, four GPUs
-X_statetime_semigroup	released-flm-distillation	State time, semigroup, four GPUs
-X_statetime_eulerian_wholesemi	released-flm-distillation	State time, Eulerian, four GPUs
+Y_statetime_lagrangian_wholesemi	released-flm-distillation	Time-free Lagrangian, stopped at 63k steps
+X_fmlm_replica	released-flm-distillation	FMLM inputs, batch 512, stopped at 53k steps
+X_statetime_semigroup	released-flm-distillation	Time-free semigroup, batch 512, stopped at 61k steps
+X_statetime_eulerian_wholesemi	released-flm-distillation	Time-free Eulerian, batch 512, paused at 82k steps
 S_data_endpoint	endpoint-only	Endpoint only
 Z_whole25	released-flm-distillation	More whole jumps
 Z_whole25_lr1e4	released-flm-distillation	More whole jumps, lower rate
@@ -46,9 +46,9 @@ W_semi_cos	released-flm-distillation	Semigroup, cosine
 W_fmlm_cos	released-flm-distillation	FMLM, cosine
 V_semi_ematarget	released-flm-distillation	Semigroup, averaged targets
 V_semi_nodroptarget	released-flm-distillation	Semigroup, targets without dropout
-V_eul_ematarget	released-flm-distillation	Eulerian, averaged targets
-V_semi_randominit	released-flm-distillation	Semigroup, random start
+V_eul_ematarget	released-flm-distillation	Eulerian, averaged targets, diverged
+V_semi_randominit	released-flm-distillation	Semigroup, random start, stopped at 75k steps
 U_eul_end	released-flm-distillation	Eulerian, end jumps, four GPUs
-U_semi_end_cos	released-flm-distillation	Semigroup, end jumps, cosine, four GPUs
+U_semi_end_cos	released-flm-distillation	Semigroup, end jumps, cosine, batch 512, paused at 44k steps
 D_eul_end	flow-map-distillation	Eulerian, own denoiser
 D_fmlm	flow-map-distillation	FMLM, own denoiser

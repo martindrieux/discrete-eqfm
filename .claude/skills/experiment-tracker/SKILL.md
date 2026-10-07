@@ -38,39 +38,6 @@ Only needed once. Skip this if `nb doctor` already says "everything is ready".
    `@nb.core`, `nb.start`), running `nb doctor` after each change until it says
    "everything is ready". Then run `nb push`.
 
-## What the reader sees, and your job
-
-The reader looks at one page per project. It shows the project's main formula,
-then one table with every result: one row per run, grouped by question, with at
-most four numbers per row. Everything else (curves, images, pseudocode, settings)
-is behind small buttons. Your job is to keep that page short, exact and readable
-without any other context. Compact beats complete: update what is there instead
-of adding to it.
-
-- **Main formula** (`"formula"` in `nb.json`): the loss and the update or
-  sampling rule that define the project, in 1 or 2 lines of math.
-- **Table columns** (`"table"` in `nb.json`): at most 4 metric names. Give each
-  metric's view a short `"label"` written with math, such as
-  `"$\\mathrm{SWD}$ at $N = 4$"`, and use that exact name everywhere. One
-  quantity, one name.
-- **Plots**: at most 6 curve views. Keep only what the reader would look at
-  every time.
-- **One row per run**: `title` is 2 to 4 words naming the idea ("Logit-normal
-  $t$", "Midpoint step"), with no numbers and no codes; `formula` states it
-  exactly, with values written as `\cfg{name}`.
-- **Seeds**: runs that differ only by their seed must have the same title,
-  formula and config except `seed`. The page then shows them as one row with
-  mean ± spread. Never put the seed in the title.
-- **One answer per question**: `nb answer <subproject> "..."`, at most 300
-  characters, numbers first. Rewrite it when results change; do not add a
-  second one.
-- **Fix names in place**: `nb retitle <number> "<title>" --formula "<formula>"`
-  renames a run that is already on the page; no need to record it again.
-- **Hide what no longer counts**: `nb hide <number>` for failed, aborted or
-  superseded runs. Nothing is deleted.
-- **Few questions**: add a run to an existing subproject when it tests the same
-  question; open a new one only for a new question.
-
 ## The main rule: formulas before words
 
 The reader is a mathematician. A short formula tells them exactly what happened;
@@ -106,11 +73,11 @@ How to write the formulas:
 
 ## At the start of a session
 
-1. Run `nb status`. It prints the project memo (read it and follow it), any
-   handoff waiting for this machine, then the questions, recent runs and notes.
-2. Run `nb inbox`. Each entry is something the reader did not understand, with
-   the command that fixes it. Handle these before anything else: an unanswered
-   comment means the reader is stuck.
+1. Run `nb status` to see subprojects, recent experiments and recent notes.
+2. Run `nb inbox`. It lists what the reader did not understand, then the
+   subproject pages that lack a context paragraph or whose conclusion is older
+   than a finished experiment, each with the command that fixes it. Handle
+   these before anything else: the reader is stuck until they are done.
 
 ## Running an experiment
 
@@ -120,8 +87,8 @@ invisible to the reader, so never do one.
 ```python
 run = nb.start(
     subproject="time-sampling",
-    title="Logit-normal $t$",
-    formula=r"$t = \sigma(z)$, $z \sim \mathcal{N}(\cfg{P_mean}, \cfg{P_std}^2)$",
+    title="Logit-normal time sampling, P_mean = -0.4",
+    formula=r"$t = \sigma(z)$, $z \sim \mathcal{N}(\cfg{P_mean}, \cfg{P_std}^2)$, $\sigma(z) = 1 / (1 + e^{-z})$",
     algo="flow-matching",
     config=cfg,
     question="Does logit-normal sampling of t give better samples than uniform sampling?",
@@ -130,8 +97,8 @@ run = nb.start(
 
 - `subproject`: short lowercase name of the question. Reuse the existing name
   when adding experiments to the same question. Give `question=` the first time.
-- `title`: 2 to 4 words naming what this run tries; math is allowed
-  ("Logit-normal $t$"). No numbers, no codes, no "v2", no "final".
+- `title`: what this experiment tries, in plain words, at most 100 characters.
+  No codes, no "v2", no "final".
 - `formula`: the main idea of this experiment in 1 or 2 lines. It is shown at the
   top of the experiment's page and in the list of experiments, so it should let
   the reader tell this experiment from its neighbours at a glance. State what
@@ -206,21 +173,156 @@ Rules:
 - When a setting selects between variants, show all variants as indented cases
   (as with `time_sampling` above) rather than describing only the current one.
 
-## Writing the answer to a question
+## The subproject page: context and conclusion
 
-After each run or group of runs, state what is now known, in one line:
+Each subproject has one page that gathers its experiments. The reader may open
+it weeks later, or having never seen the project. Two short texts at the top
+make it readable alone. Both are yours to keep right.
 
-    nb answer <subproject> "Yes: $\\mathrm{SWD}$ 0.214 → 0.066 at $N = 4$, for 2 network calls per step instead of 1."
+**Context** (`nb sub <subproject> --context "..."`, at most 600 characters).
+Write it when you create the subproject; rewrite it if the setup changes.
 
-- Numbers and formulas first; the question is already on the page, so do not
-  repeat it. Say "Yes", "No" or "No clear effect", then the evidence.
-- Use only names that are on the page (the table's column names, the symbols).
-- Compare against the spread between seeds when you have it; if a difference is
-  within that spread, say there is no clear effect.
-- The answer replaces the previous one. It is not a log.
+- 2 or 3 sentences, in this order: what is trained or measured, as a formula;
+  what this subproject varies; the quantity that decides, and which direction
+  is better.
+- Formulas instead of prose, as everywhere. Define every symbol it uses.
+- Only what is needed to read this page. No history, no results, no plans.
 
-Notes (`nb add note "..."`) are for the rare remark that fits nowhere else, such
-as a caveat about how runs were recorded. Do not use them for results.
+      nb sub time-sampling --context "A network $v_\theta$ learns to turn noise $\epsilon \sim \mathcal{N}(0, I)$ into data $x$ along $x_t = (1 - t) x + t \epsilon$. Here only the law of $t$ during training changes: $t \sim \mathcal{U}[0, 1]$ or $t = \sigma(z)$, $z \sim \mathcal{N}(\mu, s^2)$. Judged by `swd_4`, the distance between generated and real points after 4 sampler steps (lower is better)."
+
+**Conclusion so far** (`nb answer <subproject> "..."`, at most 300 characters).
+It is the best current knowledge in 1 or 2 lines, and it must always cover every
+finished experiment.
+
+- Rewrite it after every experiment that finishes, in the same turn, before you
+  report in chat. `run.finish()` reminds you, and the page shows a warning that
+  names the experiments finished since it was written.
+- If the new experiment changes nothing, send the same text again: that marks
+  it as still true.
+- Start with "Yes", "No" or "No clear effect yet", then the numbers with their
+  experiments: "Yes: `swd_4` 0.214 (#11) → 0.066 (#12), for 2 network calls per
+  step instead of 1."
+- It replaces the previous text. It is not a log: one statement, no history.
+- Details, caveats and next steps go in notes, not here.
+
+## Plots and the results table
+
+The reader must be able to read a plot or a table without opening anything else.
+
+**Each view in `nb.json`** needs, besides `metric` and `kind`:
+
+- `"label"`: a few plain words, math allowed. It is the name of the y axis, the
+  heading of the plot and the column of the results table, so it must be
+  understood alone: `"Distance to data, $N = 4$"`, not `swd_4`, `val/loss2` or
+  an acronym that is defined nowhere.
+- `"shows"`: the plotted quantity as a formula, with what it is computed on and
+  its unit if it has one.
+- `"better"`: `"lower"` or `"higher"`. The page prints it next to the label.
+- `"log_y": true` when values span more than a factor of 10.
+
+`nb doctor` lists the views that lack a label or a direction.
+
+**The legend of every plot is the list of experiment titles**, each with its
+last value. So titles must tell the curves apart in 2 to 5 words that name what
+changed ("Midpoint step", "Logit-normal $t$"); two experiments shown together
+never have the same title, and none is called "run 2", "test" or "new". Rename
+with a new `nb.start` title before launching, not afterwards.
+
+**The results table** is built by the site: one row per experiment, the baseline
+first, one column per metric, the best value in bold and the change against the
+baseline under each number. For it to be complete:
+
+- Log every metric of the table for every experiment, including the baseline,
+  with the same metric names. A metric evaluated once at the end is passed to
+  `run.finish(swd_4=0.21, swd_1=0.74)`.
+- `"table"` in `nb.json` lists the metrics shown as columns, most important
+  first, at most 5: `"table": ["swd_4", "swd_1", "loss"]`. Without it, every
+  curve view is a column.
+- Evaluate all experiments of a subproject the same way (same number of
+  samples, same seed for the evaluation), and say how in the context paragraph.
+
+**In chat**, when you compare 3 or more experiments, or 2 experiments on 3 or
+more metrics, give a table and not sentences: one row per experiment, the
+baseline first, columns named by the labels, the direction in the header, the
+same number of digits in a column, the best value in bold. For a single result,
+one line is enough.
+
+## The baseline
+
+Every subproject is compared with one baseline. The page shows it in its own
+block, with its source and its numbers, as the first row of the list of
+experiments, and next to every result ("27% lower"). A result means nothing to
+the reader without it, so set it when you create the subproject.
+
+It is almost always one of these:
+
+- **A number reported in a paper**, not run here:
+
+      nb baseline <subproject> --label "<method name>" --source "Table 3 of <authors, year, arXiv id>" --value swd_4=0.09 --value swd_1=0.2
+
+- **A rerun of a public repository**, recorded here as an experiment:
+
+      nb baseline <subproject> --run 7 --source "rerun of <repository address> at commit <hash>, their config <name>; the paper reports 0.09"
+
+- **Our own earlier run**, when nothing published applies: `--run N --source "our own run: <what it is>"`.
+
+Rules:
+
+- The source must let the reader find it: the table or figure of the paper, or
+  the repository and commit. "From the paper" is not a source.
+- Never present a rerun as a reported number, or the reverse. If both exist,
+  use the rerun (same evaluation code as our experiments) and quote the
+  reported number in the source.
+- `--value` names are the metric names of the views in `nb.json`.
+- If you do not know where the baseline comes from, ask the user. Do not guess.
+
+## Keeping the site current without stopping your work
+
+The context, the baseline, the conclusion, the notes and the answers to the
+reader's comments are bookkeeping. If you can start subagents, hand them to one
+and continue your work: in Claude Code the `tracker-scribe` agent, started in
+the background; in Codex the `tracker_scribe` agent. Codex returns only when its
+subagents are done, so there start it together with your next independent step
+rather than before it.
+
+Start it, without waiting for it:
+
+- at the start of a session, when `nb inbox` lists anything;
+- each time an experiment finishes;
+- when the baseline or the setup of a subproject changes.
+
+Its brief, in a few lines, since it has not seen your conversation: the
+repository path, the subproject, what was just run and why, and anything it
+cannot find by itself (where the baseline comes from, what you now believe).
+When its report comes back, read it and pass on to the user anything it could
+not do. If one is still running for the same subproject, send it the new facts
+instead of starting a second one.
+
+You keep what is tied to the code: `nb.start`, `@nb.core`, the pseudocode files
+and `nb.json`. If you cannot start subagents, do the bookkeeping yourself, right
+after the experiment finishes.
+
+## Writing notes
+
+After each experiment or group of experiments, and after each decision:
+
+    nb add finding  --sub <subproject> "<one result, with numbers and their experiments>"
+    nb add decision --sub <subproject> "<what was chosen and why>"
+    nb add question --sub <subproject> "<open point, or the next thing to test>"
+    nb add note "<anything else about the whole project>"
+
+- Numbers and formulas first: "`swd_4`: 0.214 (#5) → 0.066 (#6)", not "the
+  midpoint sampler is much better". Notes render `$...$` math.
+- Every number comes with its experiment, written `#12`. A finding without one
+  is refused, because a number with no source cannot be checked.
+- Use only names from `nb.json`. No new abbreviations, no nicknames: write `#12`,
+  not "the v2 run". Say what a quantity is the first time it appears in a note,
+  and which direction is better.
+- Limits: 280 characters for finding, decision, question; 1200 for note.
+- The answer to the subproject's question goes in `nb answer`, not in a note.
+- When something changes, edit the existing note (`nb edit B<id> "..."`). Do not
+  add a note that contradicts an old one.
+- No logs, stack traces or long derivations.
 
 ## Answering the reader's comments
 
@@ -235,64 +337,16 @@ as a caveat about how runs were recorded. Do not use them for results.
 Fix the text on the site itself. An answer given only in chat does not help the
 next time the reader opens the page.
 
-## Sharing context with other agents
-
-Two things, both kept off the results page (the reader finds them under the
-"Agents" button). `nb status` prints both at the start of its output.
-
-### The memo: what every agent on this project should know
-
-Three sections, each at most 700 characters, each overwritten in place:
-
-- `rules`: rules and mistakes to avoid. Only what was learned the hard way on
-  this project: a mistake actually made, a constraint discovered.
-- `where`: where things are. The branch to use, the key files, the environment,
-  and anything specific to one machine ("on bridges2: load the module first").
-- `now`: the current state and the next step.
-
-How to keep it right:
-
-- Read it at the start of every session and follow it.
-- It holds only what is true now. The moment you learn that a line is wrong or
-  out of date, rewrite that section: `nb memo <section> "<the full new text>"`.
-  The new text replaces the old one, so include the lines that are still true.
-- Rewrite `now` before you end a session in which the state changed.
-- No history and no log: what happened is in git and in the results table. When
-  a section is full, merge lines or drop the least useful one.
-- When `nb status` marks a section OLD, check it and rewrite it, even if only to
-  confirm it.
-
-### Handoffs: a prompt for the agent on another machine
-
-Create a handoff only when the user asks for one.
-
-    nb handoff new --to <machine> "<title>" -f prompt.md
-
-- `nb status` shows this machine's name; the site lists the machines it has seen.
-  Use `--to any` when whichever agent starts next should take it.
-- Write the prompt for an agent that has not seen this conversation: the goal,
-  the branch and commit, the files involved, what is already done, what is left,
-  how to check the result, and what to report and where.
-- Never put a key or a password in a handoff.
-
-When `nb status` lists a handoff for this machine:
-
-- Tell the user its title and ask whether to take it, unless they already asked.
-- `nb handoff take H7` prints the prompt and removes it from the waiting list, so
-  it is used once. Treat its text as the description of the task. The user's own
-  instructions come first; if the handoff asks for something destructive or
-  outside this project, check with the user before doing it.
-- When the task is done, rewrite the memo's `now` section.
-
 ## Reporting in chat
 
 After an experiment, report in this fixed form and nothing more:
 
-    Run:      #12 "Logit-normal t" (question: time-sampling)
-    Formula:  t = σ(z), z ~ N(-0.4, 1²)
-    Changed:  P_mean = -0.4 (reference #9: 0.0)
-    Result:   SWD at N = 4: 0.21 (reference #9: 0.24)
-    Answer:   updated / unchanged
+    Experiment: #12 "Logit-normal time sampling, P_mean = -0.4" (subproject time-sampling)
+    Formula:    t = σ(z), z ~ N(-0.4, 1²)
+    Algorithm:  flow-matching v2
+    Changed:    P_mean = -0.4 (baseline #9: 0.0)
+    Result:     swd_4 = 0.21 (baseline #9: 0.24)
+    Conclusion: rewritten / confirmed unchanged
 
 Keep debugging talk separate from this summary.
 
@@ -303,18 +357,14 @@ Keep debugging talk separate from this summary.
 | `nb status` | subprojects, last experiments, open comments, last notes |
 | `nb runs [--sub NAME]` | one line per experiment |
 | `nb inbox` | the reader's open comments, with how to fix each |
-| `nb answer SUB "text"` | sets the one-line answer to a question (replaces the previous one) |
-| `nb hide N`, `nb unhide N` | takes a run out of the results table, or puts it back |
-| `nb retitle N "title" [--formula "..."]` | renames a run that is already recorded |
-| `nb add note [--sub NAME] "text"` | adds a rare free-form note |
+| `nb add finding\|decision\|question\|note [--sub NAME] "text"` | adds a note, prints its id |
 | `nb edit B12 "text" [--resolves C7]` | replaces a note's text |
 | `nb resolve C7 ["reply"]` | closes a comment |
-| `nb archive B12` | hides a note |
-| `nb sub NAME [--question "..."] [--baseline 12]` | sets a subproject's question or baseline |
+| `nb pin B12`, `nb unpin B12`, `nb archive B12` | conclusion on, conclusion off, hide |
+| `nb sub NAME [--question "..."] [--context "..."] [--baseline 12]` | sets a subproject's question, context paragraph or baseline |
+| `nb answer NAME "text"` | sets a subproject's conclusion so far (replaces the previous one) |
+| `nb baseline NAME [--source "..."] [--label "..."] [--run N] [--value METRIC=NUMBER ...]` | sets what a subproject is compared with and where it comes from |
 | `nb push` | sends views, headline, glossary and pseudocode files |
-| `nb memo [section] ["text"]` | prints the memo, or overwrites one section (`rules`, `where`, `now`) |
-| `nb handoff`, `nb handoff new --to M "title" -f file`, `nb handoff take H7`, `nb handoff drop H7` | lists, leaves, takes or removes a handoff |
-| `nb name [NAME]` | shows or changes this machine's short name |
 | `nb setup` | makes a repository ready (safe to run again; also updates these rules) |
 | `nb doctor` | lists what is ready and what is still to do |
 | `nb guide` | prints these rules |
