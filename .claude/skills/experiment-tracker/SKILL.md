@@ -247,6 +247,22 @@ baseline first, columns named by the labels, the direction in the header, the
 same number of digits in a column, the best value in bold. For a single result,
 one line is enough.
 
+## Correcting what is already recorded
+
+Recorded experiments are never deleted, but two things can be changed:
+
+- `nb retitle <number> "<new title>" [--formula "<new formula>"]` corrects the
+  title or the formula. Use it when a title is unclear, wrong, or the same as
+  another one in the plots.
+- `nb hide <number> [<number> ...]` takes experiments out of the list, the table,
+  the plots and the "best" marks; `nb unhide` puts them back. Hide a run that
+  failed, collapsed, was launched with a wrong setting, or is superseded by a
+  rerun. A hidden run stays reachable under "Hidden experiments".
+
+Hide a run whose numbers are void (a collapsed model with a near-perfect score)
+instead of leaving it to be read as the best result. If its failure is itself a
+result, say so in the conclusion with its number, then hide it.
+
 ## The baseline
 
 Every subproject is compared with one baseline. The page shows it in its own
@@ -363,6 +379,8 @@ Keep debugging talk separate from this summary.
 | `nb pin B12`, `nb unpin B12`, `nb archive B12` | conclusion on, conclusion off, hide |
 | `nb sub NAME [--question "..."] [--context "..."] [--baseline 12]` | sets a subproject's question, context paragraph or baseline |
 | `nb answer NAME "text"` | sets a subproject's conclusion so far (replaces the previous one) |
+| `nb retitle N "title" [--formula "..."]` | corrects the title or formula of a recorded experiment |
+| `nb hide N [N ...]`, `nb unhide N [N ...]` | takes experiments out of the lists, tables and plots, or puts them back |
 | `nb baseline NAME [--source "..."] [--label "..."] [--run N] [--value METRIC=NUMBER ...]` | sets what a subproject is compared with and where it comes from |
 | `nb push` | sends views, headline, glossary and pseudocode files |
 | `nb setup` | makes a repository ready (safe to run again; also updates these rules) |
