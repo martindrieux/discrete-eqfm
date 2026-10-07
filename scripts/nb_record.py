@@ -17,6 +17,8 @@ import nb
 
 import deqfm.losses, deqfm.reparam, deqfm.sampling  # noqa: E401,F401  the @nb.core functions must be imported before nb.start
 
+COLLAPSE_ENTROPY = 3.9      # real LM1B text: 4.31
+
 QUESTIONS = {
     "denoiser-training": "Does a denoiser without a time input train as well as a time-conditioned one, and which law of $t$ is best?",
     "flow-map-from-data": "Which off-diagonal loss, clock and sampling of jumps train a flow map from data alone?",
@@ -59,6 +61,13 @@ def record(name, names, stopped=False):
     for k in ("loss.teacher", "train.init", "data.path", "out_dir", "ckpt_dir"):      # keep paths short
         if isinstance(cfg.get(k), str):
             cfg[k] = cfg[k].replace("/data/user_data/mdrieux/deqfm/", "")
+    # Collapse: samples that repeat one token have entropy near 0 and a perplexity near 1, which the results table
+    # would print as the best value. Such a perplexity is void: it is not logged, and the title says so.
+    collapsed = sorted({int(k) for e in evals.values() for k, m in e["steps"].items()
+                        if k.isdigit() and m["entropy"] < COLLAPSE_ENTROPY and (e.get("train_step") or 0) == max(
+                            (x.get("train_step") or 0) for x in evals.values())})
+    if collapsed:
+        title = (title + ": collapsed at " + ", ".join(str(k) for k in collapsed) + " step" + ("s" if collapsed != [1] else ""))[:100]
     titles = json.load(open("jobs/titles.json"))      # name -> [title, formula]
     run = nb.start(subproject=sub, title=title, formula=titles.get(name, [title, formula(kind)])[1], algo=kind, config=cfg,
                    question=QUESTIONS[sub])
@@ -75,7 +84,8 @@ def record(name, names, stopped=False):
         for k, m in e["steps"].items():
             if suffix and k == "1":     # one step has no churn: same number as the deterministic sampler
                 continue
-            metrics[f"gen_ppl_{k}{suffix}"] = m["gen_ppl"]
+            if m["entropy"] >= COLLAPSE_ENTROPY:
+                metrics[f"gen_ppl_{k}{suffix}"] = m["gen_ppl"]
             metrics[f"entropy_{k}{suffix}"] = m["entropy"]
         run.log(step=e.get("train_step") or last, **metrics)
     run.finish()
