@@ -34,11 +34,11 @@ def time_grid(steps, kind="uniform", vocab_size=None):
 
 @nb.core
 @torch.no_grad()
-def sample_grid(model, cond, clock, num, grid, flow_map=True, churn=0.0, device="cpu", return_state=False):
+def sample_grid(model, cond, clock, num, grid, flow_map=True, churn=0.0, device="cpu", return_state=False, noise_scale=1.0):
     """Token ids [num, seq_len] from a time grid. `churn` is the gamma of the FMLM sampler: each step jumps a
     little past its target time and fresh noise brings the state back to it (0: deterministic)."""
     f = probs_fn(make_fn(model, cond, clock, model.vocab_size))
-    x = torch.randn(num, model.seq_len, model.vocab_size, device=device)
+    x = noise_scale * torch.randn(num, model.seq_len, model.vocab_size, device=device)   # scale != 1: entropy knob
     for t0, t1 in zip(grid[:-1], grid[1:]):
         t = torch.full((num,), float(t0), device=device)
         last = t1 >= 1.0

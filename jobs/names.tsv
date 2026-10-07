@@ -48,3 +48,5 @@ V_semi_ematarget	released-flm-distillation	Semigroup, averaged targets
 V_semi_nodroptarget	released-flm-distillation	Semigroup, targets without dropout
 V_eul_ematarget	released-flm-distillation	Eulerian, averaged targets
 V_semi_randominit	released-flm-distillation	Semigroup, random start
+U_eul_end	released-flm-distillation	Eulerian, end jumps, four GPUs
+U_semi_end_cos	released-flm-distillation	Semigroup, end jumps, cosine, four GPUs

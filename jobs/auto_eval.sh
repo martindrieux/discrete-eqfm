@@ -7,7 +7,8 @@ while true; do
     n=$(basename $d); ok=0; for p in $1; do [[ $n == $p* ]] && ok=1; done; [ $ok = 1 ] || continue
     every=$(grep -o '"keep_every": [0-9]*' $d/config.json 2>/dev/null | grep -o '[0-9]*$'); [ -z "$every" ] || [ "$every" = 0 ] && continue
     last=$(grep -a '^step' $d/train.log 2>/dev/null | tail -n 1 | awk '{print $2}'); [ -z "$last" ] && continue
-    for ((s = every; s <= last; s += every)); do
+    total=$(grep -o '"steps": [0-9]*' $d/config.json | head -1 | grep -o '[0-9]*$')
+    for ((s = every; s <= last && s < total; s += every)); do      # the last step is not a kept checkpoint (last.pt is evaluated by the worker)
       [ -f $d/eval_step$s.json ] && { [ -f $d/eval_step${s}_churn0.8.json ] || ! grep -q '"flow_map": true' $d/eval_step$s.json; } && continue
       [ -f logs/.evsub/$n.$s ] && [ $(( $(date +%s) - $(stat -c %Y logs/.evsub/$n.$s) )) -lt 7200 ] && continue
       args=""; grep -q '"kind": "field"' $d/config.json 2>/dev/null

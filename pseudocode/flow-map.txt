@@ -30,7 +30,7 @@ by the rule `model.cond`:
 
 == Generating samples
 input: number of steps $K$, times $t_0 = 0 < \dots < t_K = 1$ by the rule `eval.grid`, churn $g \in [0, 1)$
-$x \sim \mathcal{N}(0, I)$
+$x \sim \mathcal{N}(0, a^2 I)$   // $a$ = noise scale of the sampler, 1 unless stated
 for $k = 0, \dots, K - 1$:
     $s = (1 - t_{k+1}) \sqrt{1 - g^2}$, $\kappa_k = 1 - \frac{s}{1 - t_k}$   // $g = 0$: $\kappa_k = \frac{t_{k+1} - t_k}{1 - t_k}$
     $p = \hat\delta_{\kappa_k}(x)$

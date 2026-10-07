@@ -1,7 +1,7 @@
 """Generative perplexity and entropy of samples from a checkpoint, for several numbers of sampling steps.
 
     python scripts/eval_lm.py CKPT out=results.json [eval.steps=[1,2,4,8]] [eval.num=1024] [eval.grid=reparam]
-                              [churn=0.0] [cond=...] [flow_map=true|false] [seed=1]
+                              [churn=0.0] [noise_scale=1.0] [cond=...] [flow_map=true|false] [seed=1]
 
 CKPT is a checkpoint written by this repository, or one of
     released:flm:<dir>    released:fmlm:<dir>     (FLM-B-LM1B / FMLM-B-LM1B from the FLM authors, model.safetensors)
@@ -60,7 +60,8 @@ def main():
         for steps in E.steps:
             tic = time.time()
             grid = time_grid(steps, E.grid, model.vocab_size)
-            tokens = torch.cat([sample_grid(model, cond, clock, min(E.batch, E.num - i), grid, flow_map, churn, device).cpu()
+            tokens = torch.cat([sample_grid(model, cond, clock, min(E.batch, E.num - i), grid, flow_map, churn, device,
+                                            noise_scale=float(opts.get("noise_scale", 1.0))).cpu()
                                 for i in range(0, E.num, E.batch)])
             result["steps"][str(steps)], texts = text_metrics(tokens, tok, E.judge, device)
             result["steps"][str(steps)]["seconds"] = time.time() - tic

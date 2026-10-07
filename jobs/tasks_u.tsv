@@ -1,0 +1,3 @@
+# Batch 512 (4 GPUs) versions of the two best batch-128 recipes.
+U_eul_end	-	train_flow_map.py	configs/lm1b.yaml model.cond=state_time loss.teacher=released:$DEQ_ROOT/ckpt/released/FLM-B-LM1B loss.teacher_cond=state_time train.betas=[0.9,0.95] loss.end_jump_prob=0.25 loss.boundary_prob=0.1 train.min_rate=0.8 loss.off_diagonal=eulerian loss.whole_jump_target=semigroup train.steps=100000 train.keep_every=25000
+U_semi_end_cos	-	train_flow_map.py	configs/lm1b.yaml model.cond=state_time loss.teacher=released:$DEQ_ROOT/ckpt/released/FLM-B-LM1B loss.teacher_cond=state_time train.betas=[0.9,0.95] loss.end_jump_prob=0.25 loss.boundary_prob=0.1 train.min_rate=0.8 train.lr_decay=cosine train.steps=50000 train.keep_every=12500
