@@ -5,14 +5,14 @@
  "headline": "gen_ppl_1",
  "views": [
   {
-   "title": "Perplexity of one-step samples",
+   "title": "Perplexity of one-step samples (void if entropy < 3.9)",
    "shows": "$\\mathrm{PPL} = \\exp\\big(-\\frac{1}{N}\\sum_n \\log p_{\\mathrm{GPT2L}}(w_n \\mid w_{<n})\\big)$ over the judge tokens $w$ of 1024 samples, sampler with $K = 1$ jump",
    "kind": "curve",
    "metric": "gen_ppl_1",
    "log_y": true,
    "better": "lower",
-   "label": "Perplexity of one-step samples",
-   "meaning": "perplexity of one-step samples under GPT-2 Large (real text: 52.7)"
+   "label": "Perplexity of one-step samples (void if entropy < 3.9)",
+   "meaning": "perplexity of one-step samples under GPT-2 Large (real text: 52.7). Void when the entropy of the same samples is below 3.9: the samples repeat one token, which GPT-2 predicts easily, so a value near 1 is a collapse, not a good result."
   },
   {
    "title": "Entropy of one-step samples",
@@ -21,37 +21,37 @@
    "metric": "entropy_1",
    "better": "higher",
    "label": "Entropy of one-step samples",
-   "meaning": "token entropy inside one sample; below real text (4.31) means repeated tokens"
+   "meaning": "token entropy inside one sample; real text is 4.31. Below 3.9 the samples are repetitive and their perplexity is void; near 0 the model outputs one repeated token."
   },
   {
-   "title": "Perplexity of 8-step samples",
+   "title": "Perplexity of 8-step samples (void if entropy < 3.9)",
    "shows": "$\\mathrm{PPL} = \\exp\\big(-\\frac{1}{N}\\sum_n \\log p_{\\mathrm{GPT2L}}(w_n \\mid w_{<n})\\big)$ over the judge tokens $w$ of 1024 samples, $K = 8$ jumps, churn $g = 0$",
    "kind": "curve",
    "metric": "gen_ppl_8",
    "log_y": true,
    "better": "lower",
-   "label": "Perplexity of 8-step samples",
-   "meaning": "perplexity of 8-step samples, deterministic sampler"
+   "label": "Perplexity of 8-step samples (void if entropy < 3.9)",
+   "meaning": "perplexity of 8-step samples, deterministic sampler. Void when the entropy of the same samples is below 3.9: the samples repeat one token, which GPT-2 predicts easily, so a value near 1 is a collapse, not a good result."
   },
   {
-   "title": "Perplexity of 8-step samples, stochastic sampler",
+   "title": "Perplexity of 8-step samples, stochastic sampler (void if entropy < 3.9)",
    "shows": "$\\mathrm{PPL} = \\exp\\big(-\\frac{1}{N}\\sum_n \\log p_{\\mathrm{GPT2L}}(w_n \\mid w_{<n})\\big)$ over the judge tokens $w$ of 1024 samples, $K = 8$ jumps, churn $g = 0.8$",
    "kind": "curve",
    "metric": "gen_ppl_8_churn",
    "log_y": true,
    "better": "lower",
-   "label": "Perplexity of 8-step samples, stochastic sampler",
-   "meaning": "perplexity of 8-step samples with the stochastic sampler of FMLM"
+   "label": "Perplexity of 8-step samples, stochastic sampler (void if entropy < 3.9)",
+   "meaning": "perplexity of 8-step samples with the stochastic sampler of FMLM. Void when the entropy of the same samples is below 3.9: the samples repeat one token, which GPT-2 predicts easily, so a value near 1 is a collapse, not a good result."
   },
   {
-   "title": "Perplexity of 1024-step samples (denoisers)",
+   "title": "Perplexity of 1024-step samples (void if entropy < 3.9)",
    "shows": "$\\mathrm{PPL} = \\exp\\big(-\\frac{1}{N}\\sum_n \\log p_{\\mathrm{GPT2L}}(w_n \\mid w_{<n})\\big)$ over the judge tokens $w$ of 1024 samples, Euler sampler of $\\hat D$ with $K = 1024$",
    "kind": "curve",
    "metric": "gen_ppl_1024",
    "log_y": true,
    "better": "lower",
-   "label": "Perplexity of 1024-step samples (denoisers)",
-   "meaning": "perplexity of a denoiser sampled with 1024 Euler steps"
+   "label": "Perplexity of 1024-step samples (void if entropy < 3.9)",
+   "meaning": "perplexity of a denoiser sampled with 1024 Euler steps. Void when the entropy of the same samples is below 3.9: the samples repeat one token, which GPT-2 predicts easily, so a value near 1 is a collapse, not a good result."
   },
   {
    "title": "Training loss",
