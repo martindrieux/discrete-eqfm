@@ -298,3 +298,25 @@ def test_ema_targets(tmp_path):
     train(cfg, model, dataset, loss_fn, kind="flow_map")
     assert loss_fn.ema is not model and not loss_fn.ema.training and model.training
     assert all(torch.isfinite(p).all() for p in model.parameters())
+
+
+def test_state_time_student_from_time_free_teacher(tmp_path):
+    """A state_time flow map started from a duration-conditioned (time-free) denoiser equals it before training."""
+    import subprocess
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    run = lambda script, *a: subprocess.run([sys.executable, os.path.join(root, "scripts", script), *TINY, *DIT, *a],
+                                            check=True, capture_output=True, text=True)
+    run("train_field.py", f"out_dir={tmp_path}/field")
+    run("train_flow_map.py", f"out_dir={tmp_path}/map", "model.cond=state_time", f"loss.teacher={tmp_path}/field/last.pt",
+        "loss.jump_sampling=reparam", "loss.diag_time=reparam", "train.steps=0")
+    from deqfm.trainer import load_model
+    teacher, _ = load_model(f"{tmp_path}/field/last.pt", use_ema=True)
+    cfg, dataset, student = tiny(tmp_path, *DIT, "model.cond=state_time")
+    student = build_model(cfg.model, dataset.vocab_size, dataset.seq_len, "flow_map")
+    student.load_state_dict(teacher.state_dict(), strict=False)
+    sys.path.insert(0, os.path.join(root, "scripts"))
+    from train_flow_map import flatten_duration
+    flatten_duration(student)
+    x = torch.randn(3, dataset.seq_len, dataset.vocab_size)
+    with torch.no_grad():
+        assert torch.allclose(student(x, torch.rand(3), torch.rand(3)), teacher(x, torch.zeros(3)), atol=1e-5)

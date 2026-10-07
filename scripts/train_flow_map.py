@@ -21,7 +21,7 @@ from deqfm.objectives import make_flow_map_loss
 from deqfm.trainer import load_model, train
 
 
-COMPATIBLE = {"duration": ("duration",), "state_time": ("state_time", "time"), "time": ("time", "state_time")}
+COMPATIBLE = {"duration": ("duration",), "state_time": ("state_time", "time", "duration"), "time": ("time", "state_time")}
 
 
 def flatten_duration(model):
@@ -46,6 +46,8 @@ def main():
             model.load_state_dict(teacher.state_dict(), strict=False)   # a second time input, if any, starts at zero
             if cfg.model.arch == "dit" and cfg.model.cond == "duration" and cfg.loss.flat_init:
                 flatten_duration(model)
+            if cfg.model.cond == "state_time" and trained_cond == "duration":
+                flatten_duration(model)   # the teacher never used its input: start equal to it for every state time
     if cfg.train.init:      # takes precedence over the teacher's weights
         init_from(model, cfg, "flow_map")
     loss_fn = make_flow_map_loss(cfg, dataset.vocab_size, build_clock(cfg.clock), teacher, teacher_cond)

@@ -202,5 +202,13 @@
  "U_semi_end_cos": [
   "Semigroup, end jumps, cosine, four GPUs",
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, batch \\cfg{train.batch_size}, \\cfg{train.steps} steps; end jumps \\cfg{loss.end_jump_prob}, boundary \\cfg{loss.boundary_prob}, $\\eta$ decay \\cfg{train.lr_decay}; 4 GPUs"
+ ],
+ "D_eul_end": [
+  "Eulerian, own denoiser",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, batch \\cfg{train.batch_size}, \\cfg{train.steps} steps; end jumps \\cfg{loss.end_jump_prob}, boundary \\cfg{loss.boundary_prob}, $\\eta$ decay \\cfg{train.lr_decay}; teacher \\cfg{loss.teacher}"
+ ],
+ "D_fmlm": [
+  "FMLM, own denoiser",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, inputs \\cfg{model.cond}, batch \\cfg{train.batch_size} per GPU on 4 GPUs, \\cfg{train.steps} steps; teacher \\cfg{loss.teacher}"
  ]
 }
