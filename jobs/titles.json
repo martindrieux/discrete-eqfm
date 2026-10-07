@@ -196,7 +196,7 @@
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, batch \\cfg{train.batch_size}, \\cfg{train.steps} steps; end jumps \\cfg{loss.end_jump_prob}, boundary \\cfg{loss.boundary_prob}, $\\eta$ decay \\cfg{train.lr_decay}; target weights \\cfg{loss.target_net}, no target dropout \\cfg{loss.target_eval}, teacher start \\cfg{loss.init_from_teacher}"
  ],
  "U_eul_end": [
-  "Eulerian, end jumps, four GPUs",
+  "Time from state norm: eulerian, end jumps, four GPUs",
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, batch \\cfg{train.batch_size}, \\cfg{train.steps} steps; end jumps \\cfg{loss.end_jump_prob}, boundary \\cfg{loss.boundary_prob}, $\\eta$ decay \\cfg{train.lr_decay}; 4 GPUs"
  ],
  "U_semi_end_cos": [
@@ -204,7 +204,7 @@
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, batch \\cfg{train.batch_size}, \\cfg{train.steps} steps; end jumps \\cfg{loss.end_jump_prob}, boundary \\cfg{loss.boundary_prob}, $\\eta$ decay \\cfg{train.lr_decay}; 4 GPUs"
  ],
  "D_eul_end": [
-  "Eulerian, own denoiser",
+  "Time from state norm: eulerian, own denoiser",
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, batch \\cfg{train.batch_size}, \\cfg{train.steps} steps; end jumps \\cfg{loss.end_jump_prob}, boundary \\cfg{loss.boundary_prob}, $\\eta$ decay \\cfg{train.lr_decay}; teacher \\cfg{loss.teacher}"
  ],
  "D_fmlm": [
