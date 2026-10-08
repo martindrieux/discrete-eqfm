@@ -210,5 +210,25 @@
  "D_fmlm": [
   "FMLM, own denoiser",
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, inputs \\cfg{model.cond}, batch \\cfg{train.batch_size} per GPU on 4 GPUs, \\cfg{train.steps} steps; teacher \\cfg{loss.teacher}"
+ ],
+ "T_ref_b512": [
+  "Full size, reference recipe, batch 512",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, no teacher, \\cfg{model.depth} blocks of width \\cfg{model.dim}, batch \\cfg{train.batch_size}, \\cfg{train.steps} steps; dropout \\cfg{model.dropout}, end jumps \\cfg{loss.end_jump_prob}; 4 GPUs"
+ ],
+ "T_ref": [
+  "Full size, reference recipe",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, no teacher, \\cfg{model.depth} blocks of width \\cfg{model.dim}, batch \\cfg{train.batch_size}, \\cfg{train.steps} steps; dropout \\cfg{model.dropout}, end jumps \\cfg{loss.end_jump_prob}"
+ ],
+ "T_dropout": [
+  "Full size, with dropout",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, no teacher, \\cfg{model.depth} blocks of width \\cfg{model.dim}, batch \\cfg{train.batch_size}, \\cfg{train.steps} steps; dropout \\cfg{model.dropout}, end jumps \\cfg{loss.end_jump_prob}"
+ ],
+ "T_semigroup": [
+  "Full size, semigroup target",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, no teacher, \\cfg{model.depth} blocks of width \\cfg{model.dim}, batch \\cfg{train.batch_size}, \\cfg{train.steps} steps; dropout \\cfg{model.dropout}, end jumps \\cfg{loss.end_jump_prob}"
+ ],
+ "T_endjumps": [
+  "Full size, with end jumps",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, no teacher, \\cfg{model.depth} blocks of width \\cfg{model.dim}, batch \\cfg{train.batch_size}, \\cfg{train.steps} steps; dropout \\cfg{model.dropout}, end jumps \\cfg{loss.end_jump_prob}"
  ]
 }

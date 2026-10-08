@@ -1,0 +1,5 @@
+# Same, one GPU (batch 128): the reference recipe and one change each.
+T_ref	-	train_flow_map.py	configs/lm1b.yaml model.cond=duration model.dropout=0 loss.off_diagonal=eulerian loss.whole_jump_target=semigroup train.steps=100000 train.keep_every=12500
+T_dropout	-	train_flow_map.py	configs/lm1b.yaml model.cond=duration model.dropout=0 loss.off_diagonal=eulerian loss.whole_jump_target=semigroup train.steps=100000 train.keep_every=12500 model.dropout=0.1
+T_semigroup	-	train_flow_map.py	configs/lm1b.yaml model.cond=duration model.dropout=0 loss.off_diagonal=eulerian loss.whole_jump_target=semigroup train.steps=100000 train.keep_every=12500 loss.off_diagonal=semigroup loss.whole_jump_target=same
+T_endjumps	-	train_flow_map.py	configs/lm1b.yaml model.cond=duration model.dropout=0 loss.off_diagonal=eulerian loss.whole_jump_target=semigroup train.steps=100000 train.keep_every=12500 loss.end_jump_prob=0.25

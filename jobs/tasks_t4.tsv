@@ -1,0 +1,3 @@
+# Teacher-free pure EqFM at full size (12 blocks, width 768), against published DBTM (201.2 / 4.03 in one step, 200k steps at batch 512).
+# Reference recipe = the best medium run (S_data_eulerian_wholesemi): duration inputs, Eulerian target with semigroup at kappa = 1, decoding-clock sampling, boundary term 0.1, no dropout.
+T_ref_b512	-	train_flow_map.py	configs/lm1b.yaml model.cond=duration model.dropout=0 loss.off_diagonal=eulerian loss.whole_jump_target=semigroup train.steps=100000 train.keep_every=12500 train.min_rate=0.6

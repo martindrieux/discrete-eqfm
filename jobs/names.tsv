@@ -52,3 +52,8 @@ U_eul_end	released-flm-distillation	Time from state norm: eulerian, end jumps, f
 U_semi_end_cos	released-flm-distillation	Semigroup, end jumps, cosine, batch 512, paused at 44k steps
 D_eul_end	flow-map-distillation	Time from state norm: eulerian, own denoiser
 D_fmlm	flow-map-distillation	FMLM, own denoiser
+T_ref_b512	flow-map-from-data	Full size, reference recipe, batch 512
+T_ref	flow-map-from-data	Full size, reference recipe
+T_dropout	flow-map-from-data	Full size, with dropout
+T_semigroup	flow-map-from-data	Full size, semigroup target
+T_endjumps	flow-map-from-data	Full size, with end jumps
