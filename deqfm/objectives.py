@@ -5,8 +5,10 @@
 """
 import torch
 
-from .losses import (TARGETS, diagonal_data_loss, jvp_forward, make_jvp_fd, sample_diag_time, sample_jumps,
-                     sample_state, soft_cross_entropy, uniform01)
+import copy
+
+from .losses import (TARGETS, diagonal_data_loss, jvp_forward, make_jvp_fd, partial_context, refinement_rollout_loss,
+                     sample_diag_time, sample_jumps, sample_state, soft_cross_entropy, uniform01)
 from .nets import make_fn, probs_fn
 from .reparam import get_reparam
 
@@ -59,6 +61,8 @@ def make_flow_map_loss(cfg, vocab_size, clock, teacher=None, teacher_cond=None):
     forward_mode = L.jvp == "forward"
     jvp = jvp_forward if forward_mode else make_jvp_fd(L.fd_eps)
     need_jvp = L.off_diagonal != "semigroup"
+    if L.partial_context or L.ril_frac > 0:
+        assert cfg.model.cond == "duration", "partial context and refinement need a network that is told no time"
     use_diag = L.diag_weight > 0
     if L.direction == "data":
         assert L.off_diagonal == "eulerian", "loss.direction = data is only defined for the Eulerian loss"
@@ -87,7 +91,8 @@ def make_flow_map_loss(cfg, vocab_size, clock, teacher=None, teacher_cond=None):
 
         # diagonal (kappa = 0)
         t_d, w_d = sample_diag_time(nd, L.diag_time, L.t_eps, dev, rep, L.stratified)
-        x_d = sample_state(tok_diag, vocab_size, t_d)
+        ctx = L.partial_context      # DBTM: some positions are clean context (time 1); the network is told no time
+        x_d = sample_state(tok_diag, vocab_size, partial_context(t_d, tok_diag.shape[1]) if ctx and nd else t_d)
 
         # off-diagonal (kappa > 0)
         t_o, k3, k1 = sample_jumps(no, L.jump_sampling, clock, dev, L.off_diagonal == "semigroup", rep,
@@ -98,7 +103,7 @@ def make_flow_map_loss(cfg, vocab_size, clock, teacher=None, teacher_cond=None):
             t_o = torch.where(near, L.boundary_t + (1 - L.boundary_t) * torch.rand(no, device=dev), t_o)
             u = torch.rand(no, device=dev)
             k3 = torch.where(near, torch.where(u < 0.5, torch.ones_like(u), 2 * u - 1), k3)
-        x_o = sample_state(tok_off, vocab_size, t_o)
+        x_o = sample_state(tok_off, vocab_size, partial_context(t_o, tok_off.shape[1]) if ctx else t_o)
         with torch.no_grad():
             far = ~near
             target = torch.empty_like(x_o)
@@ -138,6 +143,21 @@ def make_flow_map_loss(cfg, vocab_size, clock, teacher=None, teacher_cond=None):
         loss_off = soft_cross_entropy(logits[nd:], target)
 
         loss = L.diag_weight * loss_diag + L.alpha * loss_off
-        return loss, {"loss": loss.item(), "diag": loss_diag.item(), "off": loss_off.item()}
+        logs = {"diag": loss_diag.item(), "off": loss_off.item()}
+        if L.ril_frac > 0:       # refinement in the loop (DBTM), on the whole jump kappa = 1
+            step = getattr(loss_fn, "step", 0)
+            distill = L.ril_distill_weight > 0 and step >= L.ril_distill_start
+            if distill and (getattr(loss_fn, "snapshot", None) is None or step - loss_fn.snapshot_step >= L.ril_refresh):
+                loss_fn.snapshot = copy.deepcopy(raw).eval().requires_grad_(False)       # frozen teacher, refreshed
+                loss_fn.snapshot_step = step
+            tok_r = tokens[:max(2, int(L.ril_frac * B))]
+            ones, zeros = torch.ones(tok_r.shape[0], device=dev), torch.zeros(tok_r.shape[0], device=dev)
+            whole = lambda y: fn(y, zeros, ones)
+            snap = make_fn(loss_fn.snapshot, cfg.model.cond, clock, vocab_size) if distill else None
+            ril_c, semi_r = refinement_rollout_loss(whole, tok_r, vocab_size, L.ril_depth, L.ril_threshold, L.ril_ot,
+                                                    (lambda y: snap(y, zeros, ones)) if distill else None, L.ril_distill_temp)
+            loss = loss + L.ril_weight * ril_c + L.ril_distill_weight * semi_r
+            logs.update(ril=ril_c.item(), ril_distill=semi_r.item())
+        return loss, {"loss": loss.item(), **logs}
 
     return loss_fn

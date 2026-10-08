@@ -142,7 +142,17 @@
    "loss.end_jump_prob": "probability that an off-diagonal sample is a jump to the end: $\\tau(t) \\sim \\mathcal{U}[0,1]$, $\\kappa = 1$ (reparam sampling)",
    "train.lr_decay": "none: constant $\\eta$ after warmup; cosine: $\\eta_k = \\frac{\\eta}{2}(1 + \\cos(\\pi k / K_{\\mathrm{train}}))$, $K_{\\mathrm{train}}$ = `train.steps`",
    "loss.target_net": "weights used inside the target $\\bar\\delta$: online $\\theta$, or ema $\\bar\\theta$ (the running average, which moves slowly)",
-   "loss.target_eval": "if true, the target $\\bar\\delta$ is computed without dropout"
+   "loss.target_eval": "if true, the target $\\bar\\delta$ is computed without dropout",
+   "loss.partial_context": "if true, per sample a fraction $f \\sim \\mathcal{U}[0,1]$ of the positions is clean context: $t^l = 1$ with probability $f$, else $t^l = t$ (DBTM)",
+   "loss.ril_frac": "fraction of the batch used for refinement in the loop (DBTM); 0: off",
+   "loss.ril_depth": "$k$: number of refinement rounds in the training rollout",
+   "loss.ril_threshold": "commit threshold: a position is committed when the probability of its token is at least this value",
+   "loss.ril_weight": "weight of the refinement loss $L_{\\mathrm{ril}}$ in the total loss",
+   "loss.ril_ot": "if true, noise and data of the rollout are paired by minibatch optimal transport",
+   "loss.ril_distill_weight": "weight of the self-distillation loss of the rollout (target: a frozen copy of the model at the last round)",
+   "loss.ril_distill_start": "training step at which the self-distillation loss starts",
+   "loss.ril_distill_temp": "temperature $T$ of the self-distillation target, softmax(logits $/ T$)",
+   "loss.ril_refresh": "steps between two refreshes of the frozen copy used as self-distillation teacher"
   },
   "symbols": {
    "x_1": "one-hot matrix in $\\mathbb{R}^{L \\times V}$ of a data sequence $y$ of $L$ tokens from a vocabulary of size $V$",

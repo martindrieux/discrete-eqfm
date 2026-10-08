@@ -150,6 +150,7 @@ def train(cfg, model, dataset, loss_fn, kind, teacher=None):
             group["lr"] = lr
         with accelerator.accumulate(model):
             with accelerator.autocast():
+                loss_fn.step = step
                 loss, logs = loss_fn(model, raw, tokens)
             accelerator.backward(loss)
             if accelerator.sync_gradients and T.grad_clip:

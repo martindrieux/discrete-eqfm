@@ -79,7 +79,7 @@ def record(name, names, stopped=False):
         last = r["step"]
         run.log(step=r["step"], **{k: v for k, v in r.items() if k in ("loss", "diag", "off")})
     for tag, e in sorted(evals.items(), key=lambda kv: kv[1].get("train_step") or last):   # kept checkpoints, then the end
-        suffix = "_churn" if "churn" in tag else ""
+        suffix = "_churn" if "churn" in tag else ("_refine" if "refine" in tag else "")   # refine: DBTM sampler
         metrics = {}
         for k, m in e["steps"].items():
             if suffix and k == "1":     # one step has no churn: same number as the deterministic sampler

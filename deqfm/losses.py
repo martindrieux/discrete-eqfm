@@ -20,17 +20,26 @@ import torch.nn.functional as F
 from .track import nb
 
 def _b(v):
-    """[B] -> [B, 1, 1] for broadcasting against states."""
-    return v.view(-1, 1, 1)
+    """[B] -> [B, 1, 1] (or [B, L] -> [B, L, 1], one time per position) for broadcasting against states."""
+    return v.unsqueeze(-1) if v.dim() == 2 else v.view(-1, 1, 1)
 
 
 # ----------------------------------------------------------------------------- states and times
 
 @nb.core
 def sample_state(tokens, vocab_size, t):
-    """I_t = (1 - t) x_0 + t x_1 with x_0 ~ N(0, I) and x_1 the one-hot matrix of `tokens`. t: [B]."""
+    """I_t = (1 - t) x_0 + t x_1 with x_0 ~ N(0, I) and x_1 the one-hot matrix of `tokens`. t: [B], or [B, L]."""
     x1 = F.one_hot(tokens, vocab_size).float()
     return (1 - _b(t)) * torch.randn_like(x1) + _b(t) * x1
+
+
+@nb.core
+def partial_context(t, seq_len):
+    """Partial-context interpolant of Discrete Beckmann Transport Models: per sample, a fraction f ~ U[0, 1] of the
+    positions (each with probability f) is clean context, t = 1; the others keep the sample's time. Returns [B, L]."""
+    f = torch.rand(t.shape[0], 1, device=t.device)
+    clean = torch.rand(t.shape[0], seq_len, device=t.device) < f
+    return torch.where(clean, torch.ones_like(f), t.view(-1, 1).expand(-1, seq_len))
 
 
 def uniform01(batch, device, stratified=False):
@@ -184,3 +193,67 @@ def eulerian_target(f, Dbar, x, t, k3, k1=None, clock=None, jvp=jvp_forward):
 
 
 TARGETS = {"semigroup": semigroup_target, "lagrangian": lagrangian_target, "eulerian": eulerian_target}
+
+
+# ----------------------------------------------------------------------------- refinement (Discrete Beckmann Transport Models)
+
+def ot_coupling(x0, tokens):
+    """Minibatch optimal transport between noise and data: reorders x0 [B, L, V] to minimise sum_i |x0_i - x1_i|^2.
+    Up to terms that do not depend on the pairing, the cost of (i, j) is -2 sum_l x0_i[l, tokens_j[l]]."""
+    from scipy.optimize import linear_sum_assignment
+    pos = torch.arange(tokens.shape[1], device=tokens.device)
+    gain = torch.stack([x0[:, pos, tok].sum(-1) for tok in tokens], dim=1)       # [B (noise), B (data)]
+    rows, cols = linear_sum_assignment(-gain.double().cpu().numpy())
+    perm = torch.empty(len(rows), dtype=torch.long)
+    perm[torch.as_tensor(cols)] = torch.as_tensor(rows)
+    return x0[perm.to(x0.device)]
+
+
+def commit_step(score, committed, round_index, depth, threshold):
+    """Positions committed in one refinement round: every uncommitted position whose score reaches `threshold`, and
+    at least ceil(uncommitted / (depth - round + 1)) of the best ones, so that the last round commits everything."""
+    unc = ~committed
+    n_r = torch.ceil(unc.sum(-1).float() / (depth - round_index + 1)).long().clamp_min(1)        # [B]
+    masked = score.masked_fill(committed, -1.0)
+    ranked = masked + 1e-6 * torch.rand_like(masked)          # equal scores (an untrained model) are ranked at random
+    kth = ranked.sort(dim=-1, descending=True).values.gather(-1, (n_r - 1).unsqueeze(-1))        # n_r-th best score
+    return committed | (unc & ((masked >= threshold) | (ranked >= kth)))
+
+
+@nb.core
+def refinement_rollout_loss(whole_jump, tokens, vocab_size, depth, threshold, ot=True, teacher=None, temperature=1.0):
+    """Refinement-in-loop losses of DBTM (their Algorithm 3, commit mode).
+
+    whole_jump(x) -> logits of the map to the end (kappa = 1). The model is rolled out for `depth` rounds from noise:
+    each round the map is applied, the positions where it gives the data token a probability >= threshold (and at
+    least an equal share of the rest) are committed to the data token, and the others go back to their own noise.
+    Every round is trained to recover the data on its uncommitted positions (ril-c). With a `teacher` (a frozen copy
+    of the model), every round is also trained towards the teacher's sharpened output at the last round (semi-r).
+    Returns (ril_c, semi_r)."""
+    x1 = F.one_hot(tokens, vocab_size).float()
+    x0 = torch.randn_like(x1)
+    if ot:
+        x0 = ot_coupling(x0, tokens)
+    committed = torch.zeros(tokens.shape, dtype=torch.bool, device=tokens.device)
+    x, logits, masks = x0, [], []
+    for r in range(1, depth + 1):
+        last_state = x
+        out = whole_jump(x)
+        logits.append(out)
+        with torch.no_grad():
+            q = out.float().softmax(-1).gather(-1, tokens.unsqueeze(-1)).squeeze(-1)     # confidence on the data token
+            committed = commit_step(q, committed, r, depth, threshold)
+            x = torch.where(committed.unsqueeze(-1), x1, x0)
+        masks.append(~committed)       # as in DBTM: the loss of round r is on the positions still uncommitted after it
+
+    def masked_mean(per_position, mask):
+        return (per_position * mask).sum() / mask.sum().clamp_min(1)
+
+    ril_c = sum(masked_mean(F.cross_entropy(o.float().flatten(0, 1), tokens.flatten(), reduction="none").view(tokens.shape), m)
+                for o, m in zip(logits, masks)) / depth
+    semi_r = ril_c.new_zeros(())
+    if teacher is not None:
+        with torch.no_grad():
+            target = (teacher(last_state).float() / temperature).softmax(-1)
+        semi_r = sum(masked_mean(-(target * F.log_softmax(o.float(), -1)).sum(-1), m) for o, m in zip(logits, masks)) / depth
+    return ril_c, semi_r

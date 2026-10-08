@@ -57,3 +57,5 @@ T_ref	flow-map-from-data	Full size, reference recipe
 T_dropout	flow-map-from-data	Full size, with dropout
 T_semigroup	flow-map-from-data	Full size, semigroup target
 T_endjumps	flow-map-from-data	Full size, with end jumps
+R_dropout	flow-map-from-data	Beckmann refinement, from the dropout run
+R_endjumps	flow-map-from-data	Beckmann refinement, from the end-jumps run

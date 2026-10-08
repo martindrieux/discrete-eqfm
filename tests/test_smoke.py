@@ -320,3 +320,42 @@ def test_state_time_student_from_time_free_teacher(tmp_path):
     x = torch.randn(3, dataset.seq_len, dataset.vocab_size)
     with torch.no_grad():
         assert torch.allclose(student(x, torch.rand(3), torch.rand(3)), teacher(x, torch.zeros(3)), atol=1e-5)
+
+
+def test_dbtm_refinement(tmp_path):
+    """Partial context, commit rule, optimal-transport pairing, refinement-in-loop losses and the refinement sampler."""
+    from deqfm.losses import commit_step, ot_coupling, partial_context, refinement_rollout_loss
+    from deqfm.sampling import sample_refine
+    tl = partial_context(torch.full((2000,), 0.3), 10)
+    assert set(tl.unique().tolist()) == {0.30000001192092896, 1.0} and 0.4 < (tl == 1).float().mean() < 0.6
+    score = torch.rand(5, 12); committed = torch.zeros(5, 12, dtype=torch.bool)
+    for r in range(1, 5):
+        new = commit_step(score, committed, r, 4, 0.9)
+        assert (new | ~committed).all() and (new.sum(-1) >= committed.sum(-1) + 1).all()
+        committed = new
+    assert committed.all()                                   # the last round commits everything
+    V, L, B = 9, 6, 8
+    tokens = torch.randint(0, V, (B, L)); x1 = torch.nn.functional.one_hot(tokens, V).float(); x0 = torch.randn(B, L, V)
+    y0 = ot_coupling(x0, tokens)
+    assert sorted(y0.flatten(1).sum(1).tolist()) == pytest.approx(sorted(x0.flatten(1).sum(1).tolist()), abs=1e-4)   # a permutation
+    assert ((y0 - x1) ** 2).sum() <= ((x0 - x1) ** 2).sum() + 1e-4
+    cfg, dataset, model = tiny(tmp_path, *DIT, "model.dropout=0.1", "loss.jump_sampling=reparam", "loss.diag_time=reparam",
+                               "loss.off_diagonal=eulerian", "loss.whole_jump_target=semigroup", "loss.boundary_prob=0.1",
+                               "loss.partial_context=true", "loss.ril_frac=0.5", "loss.ril_distill_weight=1.0",
+                               "loss.ril_distill_start=2", "loss.ril_refresh=1", "train.steps=4")
+    clk = build_clock("exponential")
+    whole = lambda y: model(y, torch.ones(y.shape[0]))
+    toks = torch.stack([dataset[i] for i in range(4)])
+    ril, semi = refinement_rollout_loss(whole, toks, dataset.vocab_size, 4, 0.9, True, whole, 0.7)
+    assert ril.requires_grad and torch.isfinite(ril) and torch.isfinite(semi) and semi > 0
+    loss_fn = make_flow_map_loss(cfg, dataset.vocab_size, clk)
+    train(cfg, model, dataset, loss_fn, kind="flow_map")
+    assert loss_fn.snapshot is not None and all(torch.isfinite(p).all() for p in model.parameters())
+    model.eval()
+    for rounds in (1, 2, 4):
+        out = sample_refine(model, "duration", clk, 3, rounds, 0.9)
+        assert out.shape == (3, dataset.seq_len) and out.min() >= 0
+    torch.manual_seed(0); a = sample_refine(model, "duration", clk, 3, 1)
+    from deqfm.sampling import sample_grid
+    torch.manual_seed(0); b = sample_grid(model, "duration", clk, 3, [0.0, 1.0], True)
+    assert torch.equal(a, b)                                 # one refinement round is the one-step sample

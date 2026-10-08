@@ -1,7 +1,7 @@
 """Generative perplexity and entropy of samples from a checkpoint, for several numbers of sampling steps.
 
     python scripts/eval_lm.py CKPT out=results.json [eval.steps=[1,2,4,8]] [eval.num=1024] [eval.grid=reparam]
-                              [churn=0.0] [noise_scale=1.0] [cond=...] [flow_map=true|false] [seed=1]
+                              [churn=0.0] [noise_scale=1.0] [sampler=refine threshold=0.9] [cond=...] [flow_map=true|false] [seed=1]
 
 CKPT is a checkpoint written by this repository, or one of
     released:flm:<dir>    released:fmlm:<dir>     (FLM-B-LM1B / FMLM-B-LM1B from the FLM authors, model.safetensors)
@@ -22,7 +22,7 @@ import torch
 from deqfm.clocks import build_clock
 from deqfm.config import load_config
 from deqfm.evaluation import text_metrics
-from deqfm.sampling import sample_grid, time_grid
+from deqfm.sampling import sample_grid, sample_refine, time_grid
 from deqfm.trainer import load_model
 
 
@@ -60,9 +60,14 @@ def main():
         for steps in E.steps:
             tic = time.time()
             grid = time_grid(steps, E.grid, model.vocab_size)
-            tokens = torch.cat([sample_grid(model, cond, clock, min(E.batch, E.num - i), grid, flow_map, churn, device,
-                                            noise_scale=float(opts.get("noise_scale", 1.0))).cpu()
-                                for i in range(0, E.num, E.batch)])
+            if opts.get("sampler") == "refine":      # DBTM sampler: `steps` rounds of commit and renoise
+                tokens = torch.cat([sample_refine(model, cond, clock, min(E.batch, E.num - i), steps,
+                                                  float(opts.get("threshold", 0.9)), device).cpu()
+                                    for i in range(0, E.num, E.batch)])
+            else:
+                tokens = torch.cat([sample_grid(model, cond, clock, min(E.batch, E.num - i), grid, flow_map, churn, device,
+                                                noise_scale=float(opts.get("noise_scale", 1.0))).cpu()
+                                    for i in range(0, E.num, E.batch)])
             result["steps"][str(steps)], texts = text_metrics(tokens, tok, E.judge, device)
             result["steps"][str(steps)]["seconds"] = time.time() - tic
             result.setdefault("samples", {})[str(steps)] = texts[:4]

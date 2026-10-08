@@ -11,7 +11,7 @@ off-diagonal half: time $t$, jump fraction $\kappa$ and first leg $\kappa_1 \le 
     reparam: $h \sim \mathcal{U}[0,1]$, $\tau_s \sim \mathcal{U}[0, 1 - h]$, $\tau_e = \tau_s + h$; with probability `loss.whole_jump_prob`: $\tau_s = 0$, $\tau_e = 1$; with probability `loss.end_jump_prob`: $\tau_s \sim \mathcal{U}[0,1]$, $\tau_e = 1$; $t = \tau^{-1}(\tau_s)$, $t' = \tau^{-1}(\tau_e)$, $u = \tau^{-1}(\frac{\tau_s + \tau_e}{2})$, $\kappa = \frac{t' - t}{1 - t}$, $\kappa_1 = \frac{u - t}{1 - t}$
     endpoint: $t \sim \mathcal{U}[0,1]$, $\kappa = 1$
 boundary samples: with probability `loss.boundary_prob`, replace by $t \sim \mathcal{U}[t_b, 1]$, $\kappa = 1$ with probability $\frac12$ else $\kappa \sim \mathcal{U}[0,1]$   // $t_b$ = `loss.boundary_t`
-$x = I_t = (1 - t) x_0 + t x_1$
+$x = I_t = (1 - t) x_0 + t x_1$; if `loss.partial_context`: per position $t^l = 1$ with probability $f$, $f \sim \mathcal{U}[0,1]$, else $t^l = t$   // clean context, also on the diagonal half
 inside the target, $\hat\delta$ uses the weights `loss.target_net` (online $\theta$ or averaged $\bar\theta$), without dropout if `loss.target_eval`
 target $\bar\delta$ (no gradient) by the rule `loss.off_diagonal`:
     semigroup: $\kappa_2 = \frac{\kappa - \kappa_1}{1 - \kappa_1}$, $\gamma = \frac{\kappa_1 (1 - \kappa_2)}{\kappa}$, $x' = (1 - \kappa_1) x + \kappa_1 \hat\delta_{\kappa_1}(x)$, $\bar\delta = \gamma \hat\delta_{\kappa_1}(x) + (1 - \gamma) \hat\delta_{\kappa_2}(x')$
@@ -21,6 +21,7 @@ target $\bar\delta$ (no gradient) by the rule `loss.off_diagonal`:
     boundary samples: $\bar\delta = \bar D(x)$, or $x_1$ if `loss.boundary_target` = data
 $L_{\mathrm{off}} = \mathrm{mean}\big[- \frac{1}{L} \sum_l \bar\delta^l \cdot \log \hat\delta_\kappa(x)^l\big]$
 $L(\theta) = w_{\mathrm{diag}} L_{\mathrm{diag}} + \alpha L_{\mathrm{off}}$   // $w_{\mathrm{diag}}$ = `loss.diag_weight`, $\alpha$ = `loss.alpha`
+if `loss.ril_frac` $> 0$: add $L_{\mathrm{ril}}$ and $L_{\mathrm{distill}}$ of the part below, with weights `loss.ril_weight`, `loss.ril_distill_weight`
 
 == What the network receives for $\hat\delta_\kappa(x)$, with $x$ at time $t$
 by the rule `model.cond`:
@@ -37,3 +38,23 @@ for $k = 0, \dots, K - 1$:
     if $k = K - 1$: $x \leftarrow p$
     else: $x \leftarrow (1 - \kappa_k) x + \kappa_k p + (s - (1 - t_{k+1})) p + g (1 - t_{k+1}) \xi$, $\xi \sim \mathcal{N}(0, I)$
 return $\arg\max_v x^l_v$ for every position $l$
+
+== Refinement in the loop (from Discrete Beckmann Transport Models), on the whole jump $T(x) = \hat\delta_1(x)$
+input: a fraction `loss.ril_frac` of the batch, depth $k$ = `loss.ril_depth`, threshold $q^*$ = `loss.ril_threshold`
+$x_0 \sim \mathcal{N}(0, I)$, paired with the data by minibatch optimal transport if `loss.ril_ot`
+$\hat x \leftarrow x_0$, committed set $C \leftarrow \emptyset$
+for $r = 1, \dots, k$:
+    $p = T(\hat x)$, $q^l = p^l_{y^l}$   // probability of the data token
+    commit the uncommitted positions with $q^l \ge q^*$, and at least $\lceil (L - |C|)/(k - r + 1) \rceil$ of the highest $q^l$
+    $L_r = \mathrm{mean}_{l \notin C}\big[-\log p^l_{y^l}\big]$   // on the positions still uncommitted
+    $\hat x^l \leftarrow x_1^l$ for $l \in C$, $\hat x^l \leftarrow x_0^l$ otherwise   // same noise, no fresh draw
+$L_{\mathrm{ril}} = \frac{1}{k} \sum_r L_r$
+if step $\ge$ `loss.ril_distill_start`: $L_{\mathrm{distill}} = \frac{1}{k} \sum_r \mathrm{mean}_{l \notin C_r}\big[- \bar p^l \cdot \log T(\hat x_{r-1})^l\big]$, $\bar p$ = softmax of a frozen copy's logits at the last round's input divided by `loss.ril_distill_temp`; the copy is refreshed every `loss.ril_refresh` steps
+
+== Generating samples with refinement (DBTM sampler)
+input: rounds $K$, threshold $q^*$
+$x \sim \mathcal{N}(0, I)$, $C \leftarrow \emptyset$
+for $r = 1, \dots, K$:
+    $p = \hat\delta_1(x)$; commit the uncommitted positions with $\max_v p^l_v \ge q^*$, and at least $\lceil (L - |C|)/(K - r + 1) \rceil$ of the most confident, to $\arg\max_v p^l_v$
+    $x^l \leftarrow$ one-hot of the committed token for $l \in C$, fresh $\mathcal{N}(0, I)$ otherwise
+return the committed tokens   // $K = 1$ is the one-step sample

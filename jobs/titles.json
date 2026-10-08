@@ -230,5 +230,13 @@
  "T_endjumps": [
   "Full size, with end jumps",
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, no teacher, \\cfg{model.depth} blocks of width \\cfg{model.dim}, batch \\cfg{train.batch_size}, \\cfg{train.steps} steps; dropout \\cfg{model.dropout}, end jumps \\cfg{loss.end_jump_prob}"
+ ],
+ "R_dropout": [
+  "Beckmann refinement, from the dropout run",
+  "continued from \\cfg{train.init} with DBTM refinement: partial context \\cfg{loss.partial_context}, rollout of depth \\cfg{loss.ril_depth} on a fraction \\cfg{loss.ril_frac} of the batch, threshold \\cfg{loss.ril_threshold}, self-distillation from step \\cfg{loss.ril_distill_start}; $\\bar\\delta$ by \\cfg{loss.off_diagonal}, dropout \\cfg{model.dropout}, end jumps \\cfg{loss.end_jump_prob}"
+ ],
+ "R_endjumps": [
+  "Beckmann refinement, from the end-jumps run",
+  "continued from \\cfg{train.init} with DBTM refinement: partial context \\cfg{loss.partial_context}, rollout of depth \\cfg{loss.ril_depth} on a fraction \\cfg{loss.ril_frac} of the batch, threshold \\cfg{loss.ril_threshold}, self-distillation from step \\cfg{loss.ril_distill_start}; $\\bar\\delta$ by \\cfg{loss.off_diagonal}, dropout \\cfg{model.dropout}, end jumps \\cfg{loss.end_jump_prob}"
  ]
 }

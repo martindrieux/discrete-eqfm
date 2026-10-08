@@ -41,6 +41,11 @@ DEFAULTS = {
         "jump_sampling": "notes",        # notes: t and sigma uniform | reparam: as FMLM, uniform in the decoding-error clock
                                          # | endpoint: only the whole jump kappa = 1
         "whole_jump_prob": 0.0,          # reparam: probability of the whole jump from noise (FMLM uses 1/32)
+        # Discrete Beckmann Transport Models: partial context and refinement in the loop (deqfm/losses.py)
+        "partial_context": False,        # per sample, a fraction f ~ U[0, 1] of the positions is clean
+        "ril_frac": 0.0,                 # fraction of the batch rolled out through the refinement rounds (0: off)
+        "ril_depth": 4, "ril_threshold": 0.9, "ril_weight": 1.0, "ril_ot": True,
+        "ril_distill_weight": 0.0, "ril_distill_start": 0, "ril_distill_temp": 0.7, "ril_refresh": 5000,
         "target_net": "online",          # online | ema: weights used to build the off-diagonal targets
         "target_eval": False,            # build the targets without dropout
         "end_jump_prob": 0.0,            # reparam: probability of a jump to the end (kappa = 1) from a state at a uniform tau

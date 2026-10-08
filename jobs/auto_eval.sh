@@ -9,7 +9,8 @@ while true; do
     last=$(grep -a '^step' $d/train.log 2>/dev/null | tail -n 1 | awk '{print $2}'); [ -z "$last" ] && continue
     total=$(grep -o '"steps": [0-9]*' $d/config.json | head -1 | grep -o '[0-9]*$')
     for ((s = every; s <= last && s < total; s += every)); do      # the last step is not a kept checkpoint (last.pt is evaluated by the worker)
-      [ -f $d/eval_step$s.json ] && { [ -f $d/eval_step${s}_churn0.8.json ] || ! grep -q '"flow_map": true' $d/eval_step$s.json; } && continue
+      [ -f $d/eval_step$s.json ] && { [ -f $d/eval_step${s}_churn0.8.json ] || ! grep -q '"flow_map": true' $d/eval_step$s.json; } \
+        && { [[ $n != T_* && $n != R_* ]] || [ -f $d/eval_step${s}_refine.json ]; } && continue
       [ -f logs/.evsub/$n.$s ] && [ $(( $(date +%s) - $(stat -c %Y logs/.evsub/$n.$s) )) -lt 7200 ] && continue
       args=""; grep -q '"kind": "field"' $d/config.json 2>/dev/null
       [[ $n == *field* ]] && args="EVAL_ARGS='eval.steps=[32,256,1024]'"
