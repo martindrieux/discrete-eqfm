@@ -15,6 +15,10 @@ one() { # step  [timeout seconds]
   if [[ $n == T_* || $n == R_* || $n == P_* ]] && [ ! -f ${o}_refine.json ]; then
     timeout ${t}s $PY -u scripts/eval_lm.py $ck out=${o}_refine.tmp.json sampler=refine threshold=0.9 && mv ${o}_refine.tmp.json ${o}_refine.json || return 1
   fi
+  # same sampler, but uncommitted positions keep their own noise instead of a fresh draw
+  if [[ $n == P_* || $n == T_* ]] && [ ! -f ${o}_keepnoise.json ]; then
+    timeout ${t}s $PY -u scripts/eval_lm.py $ck out=${o}_keepnoise.tmp.json sampler=refine threshold=0.9 fresh=false && mv ${o}_keepnoise.tmp.json ${o}_keepnoise.json || return 1
+  fi
 }
 if [ "$2" = all ]; then
   end=$(( $(date +%s) + ${3:-600} ))

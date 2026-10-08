@@ -57,7 +57,7 @@ def sample_grid(model, cond, clock, num, grid, flow_map=True, churn=0.0, device=
 
 @nb.core
 @torch.no_grad()
-def sample_refine(model, cond, clock, num, rounds, threshold=0.9, device="cpu", noise_scale=1.0):
+def sample_refine(model, cond, clock, num, rounds, threshold=0.9, device="cpu", noise_scale=1.0, fresh=True):
     """Sampler with refinement of DBTM (their Algorithm 2, commit mode, softmax confidence, fresh noise).
 
     Each round applies the whole jump (kappa = 1) to the current state, commits the positions whose largest
@@ -67,7 +67,7 @@ def sample_refine(model, cond, clock, num, rounds, threshold=0.9, device="cpu", 
     from .losses import commit_step
     f = probs_fn(make_fn(model, cond, clock, model.vocab_size))
     ones, zeros = torch.ones(num, device=device), torch.zeros(num, device=device)
-    x = noise_scale * torch.randn(num, model.seq_len, model.vocab_size, device=device)
+    x = x0 = noise_scale * torch.randn(num, model.seq_len, model.vocab_size, device=device)
     committed = torch.zeros(num, model.seq_len, dtype=torch.bool, device=device)
     tokens = torch.zeros(num, model.seq_len, dtype=torch.long, device=device)
     for r in range(1, rounds + 1):
@@ -77,7 +77,7 @@ def sample_refine(model, cond, clock, num, rounds, threshold=0.9, device="cpu", 
         committed = committed | new
         if committed.all():
             break
-        noise = noise_scale * torch.randn_like(x)
+        noise = noise_scale * torch.randn_like(x) if fresh else x0      # fresh=False: uncommitted positions keep their noise
         x = torch.where(committed.unsqueeze(-1), torch.nn.functional.one_hot(tokens, model.vocab_size).float(), noise)
     return tokens
 

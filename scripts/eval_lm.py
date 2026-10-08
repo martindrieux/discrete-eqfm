@@ -62,7 +62,8 @@ def main():
             grid = time_grid(steps, E.grid, model.vocab_size)
             if opts.get("sampler") == "refine":      # DBTM sampler: `steps` rounds of commit and renoise
                 tokens = torch.cat([sample_refine(model, cond, clock, min(E.batch, E.num - i), steps,
-                                                  float(opts.get("threshold", 0.9)), device).cpu()
+                                                  float(opts.get("threshold", 0.9)), device,
+                                                  fresh=opts.get("fresh", "true") == "true").cpu()
                                     for i in range(0, E.num, E.batch)])
             else:
                 tokens = torch.cat([sample_grid(model, cond, clock, min(E.batch, E.num - i), grid, flow_map, churn, device,
