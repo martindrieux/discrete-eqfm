@@ -62,3 +62,5 @@ R_endjumps	flow-map-from-data	Beckmann refinement, first attempt, from the end-j
 P_context	flow-map-from-data	Partial context only
 P_selfdistill	flow-map-from-data	Partial context, self-distilled rollouts
 P_paper	flow-map-from-data	Partial context, Beckmann rollout losses
+P_selfdistill_early	flow-map-from-data	Partial context, self-distilled rollouts, early start
+P_paper_early	flow-map-from-data	Partial context, Beckmann rollout losses, early start
