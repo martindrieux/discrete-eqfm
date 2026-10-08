@@ -342,7 +342,7 @@ def test_dbtm_refinement(tmp_path):
     cfg, dataset, model = tiny(tmp_path, *DIT, "model.dropout=0.1", "loss.jump_sampling=reparam", "loss.diag_time=reparam",
                                "loss.off_diagonal=eulerian", "loss.whole_jump_target=semigroup", "loss.boundary_prob=0.1",
                                "loss.partial_context=true", "loss.ril_frac=0.5", "loss.ril_distill_weight=1.0",
-                               "loss.ril_distill_start=2", "loss.ril_refresh=1", "train.steps=4")
+                               "loss.ril_distill_start=2", "loss.ril_refresh=1", "loss.ril_start=1", "loss.ril_adaptive_r=0.5", "train.steps=4")
     clk = build_clock("exponential")
     whole = lambda y: model(y, torch.ones(y.shape[0]))
     toks = torch.stack([dataset[i] for i in range(4)])

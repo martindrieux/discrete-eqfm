@@ -40,15 +40,15 @@ for $k = 0, \dots, K - 1$:
 return $\arg\max_v x^l_v$ for every position $l$
 
 == Refinement in the loop (from Discrete Beckmann Transport Models), on the whole jump $T(x) = \hat\delta_1(x)$
-input: a fraction `loss.ril_frac` of the batch, depth $k$ = `loss.ril_depth`, threshold $q^*$ = `loss.ril_threshold`
-$x_0 \sim \mathcal{N}(0, I)$, paired with the data by minibatch optimal transport if `loss.ril_ot`
+input: a fraction `loss.ril_frac` of the batch, depth $k$ = `loss.ril_depth`, threshold $q^*$ = `loss.ril_threshold`; active from step `loss.ril_start`
+$x_0 \sim \mathcal{N}(0, I)$, paired with the data by minibatch optimal transport if `loss.ril_ot` (pairing over the whole batch)
 $\hat x \leftarrow x_0$, committed set $C \leftarrow \emptyset$
 for $r = 1, \dots, k$:
-    $p = T(\hat x)$, $q^l = p^l_{y^l}$   // probability of the data token
+    $p = T(\hat x)$, $q^l = p^l_{y^l}$   // probability of the data token; if `loss.ril_commit` = model: $q^l = \max_v p^l_v$ and the committed token is $\arg\max_v p^l_v$
     commit the uncommitted positions with $q^l \ge q^*$, and at least $\lceil (L - |C|)/(k - r + 1) \rceil$ of the highest $q^l$
     $L_r = \mathrm{mean}_{l \notin C}\big[-\log p^l_{y^l}\big]$   // on the positions still uncommitted
     $\hat x^l \leftarrow x_1^l$ for $l \in C$, $\hat x^l \leftarrow x_0^l$ otherwise   // same noise, no fresh draw
-$L_{\mathrm{ril}} = \frac{1}{k} \sum_r L_r$
+$L_{\mathrm{ril}} = \frac{1}{k} \sum_r L_r$; each sequence's loss $\ell$ is multiplied by $(\ell + c)^{-r}$ with $c$ = `loss.ril_adaptive_c`, $r$ = `loss.ril_adaptive_r`
 if step $\ge$ `loss.ril_distill_start`: $L_{\mathrm{distill}} = \frac{1}{k} \sum_r \mathrm{mean}_{l \notin C_r}\big[- \bar p^l \cdot \log T(\hat x_{r-1})^l\big]$, $\bar p$ = softmax of a frozen copy's logits at the last round's input divided by `loss.ril_distill_temp`; the copy is refreshed every `loss.ril_refresh` steps
 
 == Generating samples with refinement (DBTM sampler)

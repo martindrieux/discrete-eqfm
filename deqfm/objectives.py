@@ -7,8 +7,9 @@ import torch
 
 import copy
 
-from .losses import (TARGETS, diagonal_data_loss, jvp_forward, make_jvp_fd, partial_context, refinement_rollout_loss,
-                     sample_diag_time, sample_jumps, sample_state, soft_cross_entropy, uniform01)
+from .losses import (TARGETS, diagonal_data_loss, jvp_forward, make_jvp_fd, ot_coupling, partial_context,
+                     refinement_rollout, refinement_round_loss, sample_diag_time, sample_jumps, sample_state,
+                     soft_cross_entropy, uniform01)
 from .nets import make_fn, probs_fn
 from .reparam import get_reparam
 
@@ -144,20 +145,34 @@ def make_flow_map_loss(cfg, vocab_size, clock, teacher=None, teacher_cond=None):
 
         loss = L.diag_weight * loss_diag + L.alpha * loss_off
         logs = {"diag": loss_diag.item(), "off": loss_off.item()}
-        if L.ril_frac > 0:       # refinement in the loop (DBTM), on the whole jump kappa = 1
-            step = getattr(loss_fn, "step", 0)
-            distill = L.ril_distill_weight > 0 and step >= L.ril_distill_start
+        step = getattr(loss_fn, "step", 0)
+        if L.ril_frac > 0 and step >= L.ril_start:       # refinement in the loop (DBTM), on the whole jump kappa = 1
+            distill = L.ril_distill_weight > 0 and step >= max(L.ril_start, L.ril_distill_start)
             if distill and (getattr(loss_fn, "snapshot", None) is None or step - loss_fn.snapshot_step >= L.ril_refresh):
                 loss_fn.snapshot = copy.deepcopy(raw).eval().requires_grad_(False)       # frozen teacher, refreshed
                 loss_fn.snapshot_step = step
-            tok_r = tokens[:max(2, int(L.ril_frac * B))]
-            ones, zeros = torch.ones(tok_r.shape[0], device=dev), torch.zeros(tok_r.shape[0], device=dev)
+            n = max(2, int(L.ril_frac * B))
+            x0 = torch.randn(B, tokens.shape[1], vocab_size, device=dev)
+            if L.ril_ot:                                  # pairing over the whole batch, then a part of it is rolled out
+                x0 = ot_coupling(x0, tokens)
+            tok_r, x0 = tokens[:n], x0[:n]
+            ones, zeros = torch.ones(n, device=dev), torch.zeros(n, device=dev)
             whole = lambda y: fn(y, zeros, ones)
-            snap = make_fn(loss_fn.snapshot, cfg.model.cond, clock, vocab_size) if distill else None
-            ril_c, semi_r = refinement_rollout_loss(whole, tok_r, vocab_size, L.ril_depth, L.ril_threshold, L.ril_ot,
-                                                    (lambda y: snap(y, zeros, ones)) if distill else None, L.ril_distill_temp)
-            loss = loss + L.ril_weight * ril_c + L.ril_distill_weight * semi_r
-            logs.update(ril=ril_c.item(), ril_distill=semi_r.item())
+            states, masks = refinement_rollout(whole, tok_r, x0, vocab_size, L.ril_depth, L.ril_threshold, L.ril_commit)
+            target = None
+            if distill:
+                snap = make_fn(loss_fn.snapshot, cfg.model.cond, clock, vocab_size)
+                with torch.no_grad():
+                    target = (snap(states[-1], zeros, ones).float() / L.ril_distill_temp).softmax(-1)
+            adaptive = (L.ril_adaptive_c, L.ril_adaptive_r) if L.ril_adaptive_r > 0 else None
+            ril_c = semi_r = 0.0
+            for x_r, m_r in zip(states, masks):           # one round at a time, so that only one graph is in memory
+                out = whole(x_r)
+                c_r = refinement_round_loss(out, tok_r, m_r, None, adaptive) if L.ril_weight > 0 else out.new_zeros(())
+                d_r = refinement_round_loss(out, tok_r, m_r, target, adaptive) if distill else out.new_zeros(())
+                ((L.ril_weight * c_r + L.ril_distill_weight * d_r) / L.ril_depth).backward()
+                ril_c, semi_r = ril_c + c_r.item() / L.ril_depth, semi_r + d_r.item() / L.ril_depth
+            logs.update(ril=ril_c, ril_distill=semi_r)
         return loss, {"loss": loss.item(), **logs}
 
     return loss_fn

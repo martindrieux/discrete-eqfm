@@ -44,7 +44,11 @@ DEFAULTS = {
         # Discrete Beckmann Transport Models: partial context and refinement in the loop (deqfm/losses.py)
         "partial_context": False,        # per sample, a fraction f ~ U[0, 1] of the positions is clean
         "ril_frac": 0.0,                 # fraction of the batch rolled out through the refinement rounds (0: off)
+        "ril_commit": "data",            # data: commit data tokens by the confidence on them (DBTM training) | model: commit
+                                         # the model's own argmax tokens by their confidence (as at sampling time)
+        "ril_start": 0,                  # training step at which the refinement losses are switched on
         "ril_depth": 4, "ril_threshold": 0.9, "ril_weight": 1.0, "ril_ot": True,
+        "ril_adaptive_r": 0.0, "ril_adaptive_c": 1.0,   # each sequence's refinement loss is weighted by (loss + c)^(-r)
         "ril_distill_weight": 0.0, "ril_distill_start": 0, "ril_distill_temp": 0.7, "ril_refresh": 5000,
         "target_net": "online",          # online | ema: weights used to build the off-diagonal targets
         "target_eval": False,            # build the targets without dropout

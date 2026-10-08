@@ -221,39 +221,60 @@ def commit_step(score, committed, round_index, depth, threshold):
 
 
 @nb.core
-def refinement_rollout_loss(whole_jump, tokens, vocab_size, depth, threshold, ot=True, teacher=None, temperature=1.0):
-    """Refinement-in-loop losses of DBTM (their Algorithm 3, commit mode).
+@torch.no_grad()
+def refinement_rollout(whole_jump, tokens, x0, vocab_size, depth, threshold, commit="data"):
+    """Rollout of DBTM (their Algorithm 2, commit mode, used on-policy in training, no gradient).
 
-    whole_jump(x) -> logits of the map to the end (kappa = 1). The model is rolled out for `depth` rounds from noise:
-    each round the map is applied, the positions where it gives the data token a probability >= threshold (and at
-    least an equal share of the rest) are committed to the data token, and the others go back to their own noise.
-    Every round is trained to recover the data on its uncommitted positions (ril-c). With a `teacher` (a frozen copy
-    of the model), every round is also trained towards the teacher's sharpened output at the last round (semi-r).
-    Returns (ril_c, semi_r)."""
-    x1 = F.one_hot(tokens, vocab_size).float()
-    x0 = torch.randn_like(x1)
+    whole_jump(x) -> logits of the map to the end (kappa = 1). From the noise x0, each round applies the map, commits
+    the positions where it gives the data token a probability >= threshold (and at least an equal share of the rest)
+    to the data token, and puts the others back to their own noise. Returns the input state of every round and, for
+    every round, the mask of the positions still uncommitted after it (where its loss is taken).
+
+    commit="model" does not use the data: positions are scored by the largest probability and committed to the
+    model's own argmax token, as at sampling time. The rollout is then a function of the noise alone."""
+    committed = torch.zeros(tokens.shape, dtype=torch.bool, device=tokens.device)
+    kept = tokens.clone()
+    x, states, masks = x0, [], []
+    for r in range(1, depth + 1):
+        states.append(x)
+        p = whole_jump(x).float().softmax(-1)
+        if commit == "model":
+            q, arg = p.max(-1)
+        else:
+            q, arg = p.gather(-1, tokens.unsqueeze(-1)).squeeze(-1), tokens      # confidence on the data token
+        new = commit_step(q, committed, r, depth, threshold)
+        kept = torch.where(new & ~committed, arg, kept)
+        committed = new
+        x = torch.where(committed.unsqueeze(-1), F.one_hot(kept, vocab_size).float(), x0)
+        masks.append(~committed)
+    return states, masks
+
+
+@nb.core
+def refinement_round_loss(logits, tokens, mask, target=None, adaptive=None):
+    """Loss of one refinement round on its uncommitted positions: cross-entropy to the data (ril-c), or to a soft
+    `target` (self-distillation, semi-r). `adaptive` = (c, r) weights each sequence by (loss + c)^(-r), no gradient
+    through the weight, as DBTM does for its losses."""
+    logp = F.log_softmax(logits.float(), dim=-1)
+    per = -logp.gather(-1, tokens.unsqueeze(-1)).squeeze(-1) if target is None else -(target * logp).sum(-1)
+    per = (per * mask).sum(-1) / mask.sum(-1).clamp_min(1)                  # one value per sequence
+    if adaptive is not None:
+        per = per * (per.detach() + adaptive[0]) ** (-adaptive[1])
+    return per.mean()
+
+
+def refinement_rollout_loss(whole_jump, tokens, vocab_size, depth, threshold, ot=True, teacher=None, temperature=1.0,
+                            adaptive=None):
+    """Both refinement-in-loop losses of DBTM in one graph (small batches and tests). Returns (ril_c, semi_r)."""
+    x0 = torch.randn(*tokens.shape, vocab_size, device=tokens.device)
     if ot:
         x0 = ot_coupling(x0, tokens)
-    committed = torch.zeros(tokens.shape, dtype=torch.bool, device=tokens.device)
-    x, logits, masks = x0, [], []
-    for r in range(1, depth + 1):
-        last_state = x
-        out = whole_jump(x)
-        logits.append(out)
-        with torch.no_grad():
-            q = out.float().softmax(-1).gather(-1, tokens.unsqueeze(-1)).squeeze(-1)     # confidence on the data token
-            committed = commit_step(q, committed, r, depth, threshold)
-            x = torch.where(committed.unsqueeze(-1), x1, x0)
-        masks.append(~committed)       # as in DBTM: the loss of round r is on the positions still uncommitted after it
-
-    def masked_mean(per_position, mask):
-        return (per_position * mask).sum() / mask.sum().clamp_min(1)
-
-    ril_c = sum(masked_mean(F.cross_entropy(o.float().flatten(0, 1), tokens.flatten(), reduction="none").view(tokens.shape), m)
-                for o, m in zip(logits, masks)) / depth
+    states, masks = refinement_rollout(whole_jump, tokens, x0, vocab_size, depth, threshold)
+    logits = [whole_jump(x) for x in states]
+    ril_c = sum(refinement_round_loss(o, tokens, m, None, adaptive) for o, m in zip(logits, masks)) / depth
     semi_r = ril_c.new_zeros(())
     if teacher is not None:
         with torch.no_grad():
-            target = (teacher(last_state).float() / temperature).softmax(-1)
-        semi_r = sum(masked_mean(-(target * F.log_softmax(o.float(), -1)).sum(-1), m) for o, m in zip(logits, masks)) / depth
+            target = (teacher(states[-1]).float() / temperature).softmax(-1)
+        semi_r = sum(refinement_round_loss(o, tokens, m, target, adaptive) for o, m in zip(logits, masks)) / depth
     return ril_c, semi_r

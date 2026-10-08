@@ -232,11 +232,23 @@
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, no teacher, \\cfg{model.depth} blocks of width \\cfg{model.dim}, batch \\cfg{train.batch_size}, \\cfg{train.steps} steps; dropout \\cfg{model.dropout}, end jumps \\cfg{loss.end_jump_prob}"
  ],
  "R_dropout": [
-  "Beckmann refinement, from the dropout run",
+  "Beckmann refinement, first attempt, from the dropout run",
   "continued from \\cfg{train.init} with DBTM refinement: partial context \\cfg{loss.partial_context}, rollout of depth \\cfg{loss.ril_depth} on a fraction \\cfg{loss.ril_frac} of the batch, threshold \\cfg{loss.ril_threshold}, self-distillation from step \\cfg{loss.ril_distill_start}; $\\bar\\delta$ by \\cfg{loss.off_diagonal}, dropout \\cfg{model.dropout}, end jumps \\cfg{loss.end_jump_prob}"
  ],
  "R_endjumps": [
-  "Beckmann refinement, from the end-jumps run",
+  "Beckmann refinement, first attempt, from the end-jumps run",
   "continued from \\cfg{train.init} with DBTM refinement: partial context \\cfg{loss.partial_context}, rollout of depth \\cfg{loss.ril_depth} on a fraction \\cfg{loss.ril_frac} of the batch, threshold \\cfg{loss.ril_threshold}, self-distillation from step \\cfg{loss.ril_distill_start}; $\\bar\\delta$ by \\cfg{loss.off_diagonal}, dropout \\cfg{model.dropout}, end jumps \\cfg{loss.end_jump_prob}"
+ ],
+ "P_context": [
+  "Partial context only",
+  "continued from \\cfg{train.init}; partial context \\cfg{loss.partial_context}; rollouts from step \\cfg{loss.ril_start} on a fraction \\cfg{loss.ril_frac} of the batch, commit \\cfg{loss.ril_commit}, data loss weight \\cfg{loss.ril_weight}, self-distillation weight \\cfg{loss.ril_distill_weight} at temperature \\cfg{loss.ril_distill_temp}; dropout \\cfg{model.dropout}"
+ ],
+ "P_selfdistill": [
+  "Partial context, self-distilled rollouts",
+  "continued from \\cfg{train.init}; partial context \\cfg{loss.partial_context}; rollouts from step \\cfg{loss.ril_start} on a fraction \\cfg{loss.ril_frac} of the batch, commit \\cfg{loss.ril_commit}, data loss weight \\cfg{loss.ril_weight}, self-distillation weight \\cfg{loss.ril_distill_weight} at temperature \\cfg{loss.ril_distill_temp}; dropout \\cfg{model.dropout}"
+ ],
+ "P_paper": [
+  "Partial context, Beckmann rollout losses",
+  "continued from \\cfg{train.init}; partial context \\cfg{loss.partial_context}; rollouts from step \\cfg{loss.ril_start} on a fraction \\cfg{loss.ril_frac} of the batch, commit \\cfg{loss.ril_commit}, data loss weight \\cfg{loss.ril_weight}, self-distillation weight \\cfg{loss.ril_distill_weight} at temperature \\cfg{loss.ril_distill_temp}; dropout \\cfg{model.dropout}"
  ]
 }

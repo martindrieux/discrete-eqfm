@@ -152,7 +152,11 @@
    "loss.ril_distill_weight": "weight of the self-distillation loss of the rollout (target: a frozen copy of the model at the last round)",
    "loss.ril_distill_start": "training step at which the self-distillation loss starts",
    "loss.ril_distill_temp": "temperature $T$ of the self-distillation target, softmax(logits $/ T$)",
-   "loss.ril_refresh": "steps between two refreshes of the frozen copy used as self-distillation teacher"
+   "loss.ril_refresh": "steps between two refreshes of the frozen copy used as self-distillation teacher",
+   "loss.ril_start": "training step at which the refinement losses are switched on",
+   "loss.ril_adaptive_r": "$r$: each sequence's refinement loss $\\ell$ is multiplied by $(\\ell + c)^{-r}$, no gradient through the factor (0: off)",
+   "loss.ril_adaptive_c": "$c$ in the factor $(\\ell + c)^{-r}$ of the refinement losses",
+   "loss.ril_commit": "which tokens a training rollout commits: data (the data token, scored by its probability, as DBTM) or model (the model's own most likely token, scored by its probability, as at sampling time)"
   },
   "symbols": {
    "x_1": "one-hot matrix in $\\mathbb{R}^{L \\times V}$ of a data sequence $y$ of $L$ tokens from a vocabulary of size $V$",
