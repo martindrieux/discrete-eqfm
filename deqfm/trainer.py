@@ -74,7 +74,7 @@ def _atomic_save(state, path):
     os.replace(path + ".tmp", path)
 
 
-def train(cfg, model, dataset, loss_fn, kind, teacher=None):
+def train(cfg, model, dataset, loss_fn, kind, teacher=None, val_fn=None):
     """loss_fn(model, raw, tokens) -> (loss, logs). `kind` ('field' or 'flow_map') is stored in the checkpoint."""
     T = cfg.train
     started = time.time()
@@ -133,6 +133,9 @@ def train(cfg, model, dataset, loss_fn, kind, teacher=None):
     accelerator.print(f"{kind}: {n_params / 1e6:.2f}M parameters, vocab {dataset.vocab_size}, "
                       f"length {dataset.seq_len}, {accelerator.num_processes} process(es)")
 
+    best, val_log = float("inf"), os.path.join(cfg.out_dir, "val.jsonl")
+    if os.path.exists(val_log):      # a resumed run keeps its best held-out loss
+        best = min([json.loads(l)["val"] for l in open(val_log) if l.strip()] + [best])
     model.train()
     first_step, rate_tic = step, time.time()
     tic, logs_sum, logs_n = time.time(), {}, 0
@@ -195,6 +198,14 @@ def train(cfg, model, dataset, loss_fn, kind, teacher=None):
             if os.environ.get("DEQ_REPORT_MEM") and torch.cuda.is_available():
                 print(f"peak memory {torch.cuda.max_memory_allocated() / 2**30:.1f} GB", flush=True)
             tic, logs_sum, logs_n = time.time(), {}, 0
+        if val_fn is not None and T.val_every and (step % T.val_every == 0 or step == T.steps):
+            v = val_fn(ema.model)      # held-out denoising loss of the averaged weights
+            best = min(best, v)
+            print(f"step {step:>8d} | val {v:.4f} | best {best:.4f}", flush=True)
+            with open(os.path.join(cfg.out_dir, "val.jsonl"), "a") as f:
+                f.write(json.dumps({"step": step, "val": v}) + "\n")
+            if v <= best:
+                save("best.pt", full=False)
         if step % T.save_every == 0 or step == T.steps:
             save("last.pt")
         if T.keep_every and step % T.keep_every == 0 and step < T.steps:

@@ -184,3 +184,36 @@ def make_flow_map_loss(cfg, vocab_size, clock, teacher=None, teacher_cond=None):
         return loss, {"loss": loss.item(), **logs}
 
     return loss_fn
+
+
+def make_val_loss(cfg, vocab_size, clock):
+    """Held-out denoising loss: returns val(model) -> mean cross-entropy (nats per token) of the denoiser (kappa = 0)
+    on `eval.val_num` sequences of `eval.val_path`, at times spread uniformly in the decoding-error clock, with fixed
+    noise. The same number for every model that is told the same things, so curves and runs can be compared."""
+    import numpy as np
+    if not cfg.eval.val_path:
+        return None
+    data = np.load(cfg.eval.val_path, mmap_mode="r")
+    tokens = torch.from_numpy(np.asarray(data[:cfg.eval.val_num]).astype(np.int64))
+    rep = get_reparam(vocab_size)
+    n = tokens.shape[0]
+    times = rep.t((torch.arange(n, dtype=torch.float64) + 0.5) / n).float()[torch.randperm(n, generator=torch.Generator().manual_seed(0))]
+
+    @torch.no_grad()
+    def val(model):
+        dev = next(model.parameters()).device
+        was_training = model.training
+        model.eval()
+        fn = make_fn(model, cfg.model.cond, clock, vocab_size)
+        gen = torch.Generator(device=dev).manual_seed(0)
+        total = 0.0
+        for i in range(0, n, 128):
+            tok, t = tokens[i:i + 128].to(dev), times[i:i + 128].to(dev)
+            x1 = torch.nn.functional.one_hot(tok, vocab_size).float()
+            x = (1 - t.view(-1, 1, 1)) * torch.randn(x1.shape, device=dev, generator=gen) + t.view(-1, 1, 1) * x1
+            logits = fn(x, t, torch.zeros_like(t))
+            total += torch.nn.functional.cross_entropy(logits.float().flatten(0, 1), tok.flatten(), reduction="sum").item()
+        model.train(was_training)
+        return total / tokens.numel()
+
+    return val

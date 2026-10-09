@@ -1,6 +1,7 @@
 """Generative perplexity and entropy of samples from a checkpoint, for several numbers of sampling steps.
 
     python scripts/eval_lm.py CKPT out=results.json [eval.steps=[1,2,4,8]] [eval.num=1024] [eval.grid=reparam]
+                              [train=<blocks file>: also report the copy rate against it]
                               [churn=0.0] [noise_scale=1.0] [sampler=refine threshold=0.9] [cond=...] [flow_map=true|false] [seed=1]
 
 CKPT is a checkpoint written by this repository, or one of
@@ -36,6 +37,10 @@ def main():
     torch.backends.cuda.matmul.allow_tf32 = True
     from transformers import AutoTokenizer
     result = {"source": src, "eval": dict(E), "opts": opts, "steps": {}}
+    train_keys = None          # small training sets only: how much of each sample is copied from them
+    if "train" in opts and os.path.getsize(opts["train"]) < 200e6:
+        from deqfm.evaluation import ngram_keys
+        train_keys = np.unique(ngram_keys(np.load(opts["train"], mmap_mode="r")))
 
     if src.startswith("data:"):
         path = src[5:]
@@ -43,13 +48,16 @@ def main():
         idx = np.sort(np.random.default_rng(0).choice(len(data), E.num, replace=False))
         tokens = torch.from_numpy(data[idx].astype(np.int64))
         tok = AutoTokenizer.from_pretrained(json.load(open(path + ".json"))["tokenizer"])
-        result["steps"]["data"], texts = text_metrics(tokens, tok, E.judge, device)
+        result["steps"]["data"], texts = text_metrics(tokens, tok, E.judge, device, train_keys)
         result["samples"] = texts[:8]
     else:
         model, ckpt = load_model(src, device, use_ema=opts.get("ema", "true") == "true")
         c = ckpt["cfg"]
         cond, flow_map, clock, step = c["model"]["cond"], ckpt["kind"] == "flow_map", build_clock(c["clock"]), ckpt["step"]
         tok_name = "bert-base-uncased" if src.startswith("released:") else json.load(open(c["data"]["path"] + ".json"))["tokenizer"]
+        if "train" not in opts and not src.startswith("released:") and os.path.getsize(c["data"]["path"]) < 200e6:
+            from deqfm.evaluation import ngram_keys
+            train_keys = np.unique(ngram_keys(np.load(c["data"]["path"], mmap_mode="r")))
         if not flow_map and not any(a.startswith("eval.steps") for a in sys.argv[2:]):
             E["steps"] = [8, 32, 128, 1024]   # a field is integrated with many small steps
         cond = opts.get("cond", cond)
@@ -69,7 +77,7 @@ def main():
                 tokens = torch.cat([sample_grid(model, cond, clock, min(E.batch, E.num - i), grid, flow_map, churn, device,
                                                 noise_scale=float(opts.get("noise_scale", 1.0))).cpu()
                                     for i in range(0, E.num, E.batch)])
-            result["steps"][str(steps)], texts = text_metrics(tokens, tok, E.judge, device)
+            result["steps"][str(steps)], texts = text_metrics(tokens, tok, E.judge, device, train_keys)
             result["steps"][str(steps)]["seconds"] = time.time() - tic
             result.setdefault("samples", {})[str(steps)] = texts[:4]
             print(f"{steps:>5d} steps | gen ppl {result['steps'][str(steps)]['gen_ppl']:.2f} | "

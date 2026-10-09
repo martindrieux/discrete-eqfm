@@ -278,5 +278,45 @@
  "C_twostage": [
   "Clean run: distilled from our own denoiser",
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, random start, batch \\cfg{train.batch_size} per GPU on 4 GPUs, \\cfg{train.steps} steps, $\\eta$ decay \\cfg{train.lr_decay}, dropout \\cfg{model.dropout}; teacher \\cfg{loss.teacher}"
+ ],
+ "W2_flm": [
+  "FLM denoiser (time-conditioned)",
+  "$\\hat D$ inputs \\cfg{model.cond}, $t$ by \\cfg{loss.diag_time}, \\cfg{model.depth} blocks of width \\cfg{model.dim}, dropout \\cfg{model.dropout}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, best held-out loss kept"
+ ],
+ "W2_fmlm": [
+  "FMLM flow map, distilled from FLM",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}"
+ ],
+ "W2_denoiser_timefree": [
+  "Time-free denoiser",
+  "$\\hat D$ inputs \\cfg{model.cond}, $t$ by \\cfg{loss.diag_time}, \\cfg{model.depth} blocks of width \\cfg{model.dim}, dropout \\cfg{model.dropout}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, best held-out loss kept"
+ ],
+ "W2_eqfm_data_semigroup": [
+  "EqFM from data, semigroup",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}"
+ ],
+ "W2_eqfm_data_lagrangian": [
+  "EqFM from data, Lagrangian",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}"
+ ],
+ "W2_eqfm_data_eulerian": [
+  "EqFM from data, Eulerian",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}"
+ ],
+ "W2_eqfm_data_semigroup_repodefault": [
+  "EqFM from data, semigroup, repository defaults",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}"
+ ],
+ "W2_eqfm_distill_semigroup": [
+  "EqFM distilled, semigroup",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}"
+ ],
+ "W2_eqfm_distill_lagrangian": [
+  "EqFM distilled, Lagrangian",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}"
+ ],
+ "W2_eqfm_distill_eulerian": [
+  "EqFM distilled, Eulerian",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}"
  ]
 }

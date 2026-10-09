@@ -158,7 +158,10 @@
    "loss.ril_adaptive_c": "$c$ in the factor $(\\ell + c)^{-r}$ of the refinement losses",
    "loss.ril_commit": "which tokens a training rollout commits: data (the data token, scored by its probability, as DBTM) or model (the model's own most likely token, scored by its probability, as at sampling time)",
    "loss.ril_distill_target": "target of the self-distillation loss: soft (probabilities of a frozen copy at the last round's input) or sample (the tokens the rollout ends with, a function of the noise alone)",
-   "loss.ril_rollout_net": "network that plays the training rollout (applies the map and commits): online (the trained weights) or snapshot (the frozen copy, refreshed every `loss.ril_refresh` steps)"
+   "loss.ril_rollout_net": "network that plays the training rollout (applies the map and commits): online (the trained weights) or snapshot (the frozen copy, refreshed every `loss.ril_refresh` steps)",
+   "train.val_every": "steps between two evaluations of the held-out denoising loss; the averaged weights with the lowest value are kept",
+   "eval.val_path": "held-out sequences for the denoising loss during training",
+   "eval.val_num": "number of held-out sequences used for that loss"
   },
   "symbols": {
    "x_1": "one-hot matrix in $\\mathbb{R}^{L \\times V}$ of a data sequence $y$ of $L$ tokens from a vocabulary of size $V$",

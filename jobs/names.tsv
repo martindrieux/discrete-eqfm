@@ -69,3 +69,13 @@ Q_soft	flow-map-from-data	Self-distilled rollouts, soft target
 Q_sample_frozen	flow-map-from-data	Self-distilled rollouts, sample target, frozen rollout
 C_onestage	flow-map-from-data	Clean run: one stage from data
 C_twostage	flow-map-distillation	Clean run: distilled from our own denoiser
+W2_flm	wt2-fmlm	FLM denoiser (time-conditioned)
+W2_fmlm	wt2-fmlm	FMLM flow map, distilled from FLM
+W2_denoiser_timefree	wt2-eqfm	Time-free denoiser
+W2_eqfm_data_semigroup	wt2-eqfm	EqFM from data, semigroup
+W2_eqfm_data_lagrangian	wt2-eqfm	EqFM from data, Lagrangian
+W2_eqfm_data_eulerian	wt2-eqfm	EqFM from data, Eulerian
+W2_eqfm_data_semigroup_repodefault	wt2-eqfm	EqFM from data, semigroup, repository defaults
+W2_eqfm_distill_semigroup	wt2-eqfm	EqFM distilled, semigroup
+W2_eqfm_distill_lagrangian	wt2-eqfm	EqFM distilled, Lagrangian
+W2_eqfm_distill_eulerian	wt2-eqfm	EqFM distilled, Eulerian

@@ -45,8 +45,27 @@ def generative_perplexity(texts, max_length, judge="gpt2-large", device="cuda", 
     return float(torch.tensor(total / count).exp()), int(count)
 
 
-def text_metrics(tokens, tokenizer, judge="gpt2-large", device="cuda"):
+def ngram_keys(tokens, n=8):
+    """Every run of n consecutive tokens of every row, as one integer key each. tokens: integer array [N, L]."""
+    import numpy as np
+    t = np.ascontiguousarray(np.asarray(tokens)).astype(np.uint64)
+    key = np.zeros((t.shape[0], t.shape[1] - n + 1), dtype=np.uint64)
+    for j in range(n):
+        key = key * np.uint64(1000003) + t[:, j:t.shape[1] - n + 1 + j]
+    return key.ravel()
+
+
+def copy_rate(tokens, train_keys, n=8):
+    """Fraction of the n-token runs of the samples that occur verbatim in the training set (0: nothing copied)."""
+    import numpy as np
+    return float(np.isin(ngram_keys(tokens.cpu().numpy(), n), train_keys).mean())
+
+
+def text_metrics(tokens, tokenizer, judge="gpt2-large", device="cuda", train_keys=None):
     """tokens: LongTensor [N, L] in the model's vocabulary."""
     texts = tokenizer.batch_decode(tokens.cpu())
     ppl, n = generative_perplexity(texts, tokens.shape[1], judge, device)
-    return {"gen_ppl": ppl, "entropy": unigram_entropy(tokens.cpu()), "judge_tokens": n, "num": len(texts)}, texts
+    out = {"gen_ppl": ppl, "entropy": unigram_entropy(tokens.cpu()), "judge_tokens": n, "num": len(texts)}
+    if train_keys is not None:
+        out["copy8"] = copy_rate(tokens, train_keys)
+    return out, texts

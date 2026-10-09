@@ -50,7 +50,9 @@ slot() {   # slot <index> <comma-separated gpu ids>
       $launch scripts/$script $args out_dir=runs/$picked ckpt_dir=$DEQ_ROOT/runs/$picked train.max_minutes=$left
       rc=$?; [ -f runs/$picked/INTERRUPTED ] && rc=3
       if [ $rc = 0 ] && [ ! -f runs/$picked/eval.json ]; then   # bounded by the walltime: an unfinished evaluation is redone
-        timeout $(( END - $(date +%s) - 150 ))s $PY -u scripts/eval_lm.py $DEQ_ROOT/runs/$picked/last.pt out=runs/$picked/eval.tmp.json
+        ck=$DEQ_ROOT/runs/$picked/last.pt      # a denoiser with a held-out loss is evaluated at its best checkpoint
+        [ $script = train_field.py ] && [ -f $DEQ_ROOT/runs/$picked/best.pt ] && ck=$DEQ_ROOT/runs/$picked/best.pt
+        timeout $(( END - $(date +%s) - 150 ))s $PY -u scripts/eval_lm.py $ck out=runs/$picked/eval.tmp.json
         rc=$?; [ $rc = 124 ] && rc=3; [ $rc != 0 ] && [ $rc != 3 ] && rc=4
         [ $rc = 0 ] && mv runs/$picked/eval.tmp.json runs/$picked/eval.json
       fi

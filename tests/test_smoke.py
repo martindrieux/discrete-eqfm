@@ -372,3 +372,23 @@ def test_self_distilled_rollout_with_sample_target(tmp_path):
     loss, logs = loss_fn(model, model, torch.stack([dataset[i] for i in range(8)]))
     assert logs["ril"] == 0.0 and logs["ril_distill"] > 0 and torch.isfinite(loss)
     assert any(p.grad is not None and p.grad.abs().sum() > 0 for p in model.parameters())   # the rollout loss was backpropagated
+
+
+def test_validation_loss_and_copy_rate(tmp_path):
+    import numpy as np
+    from deqfm.evaluation import copy_rate, ngram_keys
+    from deqfm.objectives import make_val_loss
+    rng = np.random.default_rng(0)
+    train_tokens = rng.integers(0, 50, (20, 16)).astype(np.uint16)
+    np.save(open(tmp_path / "val.bin", "wb"), train_tokens)
+    keys = np.unique(ngram_keys(train_tokens))
+    assert copy_rate(torch.from_numpy(train_tokens.astype(np.int64)), keys) == 1.0
+    assert copy_rate(torch.from_numpy(rng.integers(0, 50, (20, 16))), keys) < 0.01
+    cfg, dataset, model = tiny(tmp_path, *DIT, "data.seq_len=16", "data.vocab_size=50", f"eval.val_path={tmp_path}/val.bin",
+                               "eval.val_num=20", "train.val_every=2", "loss.diag_time=reparam")
+    clk = build_clock("exponential")
+    val = make_val_loss(cfg, 50, clk)
+    a, b = val(model), val(model)
+    assert a == b and abs(a - np.log(50)) < 0.2            # deterministic; an untrained model predicts uniformly
+    train(cfg, model, dataset, make_field_loss(cfg, 50, clk), kind="field", val_fn=val)
+    assert (tmp_path / "best.pt").exists() and (tmp_path / "val.jsonl").exists()

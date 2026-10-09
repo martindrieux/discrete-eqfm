@@ -24,6 +24,9 @@ QUESTIONS = {
     "flow-map-from-data": "Which off-diagonal loss, clock and sampling of jumps train a flow map from data alone?",
     "flow-map-distillation": "Which off-diagonal loss and which network inputs distil a denoiser into the best one-step flow map?",
     "released-flm-distillation": "Starting from the FLM checkpoint of its authors, does a time-free flow map match FMLM?",
+    "wt2-fmlm": "On WikiText-2, how good are FLM and FMLM when trained to convergence with this code?",
+    "wt2-beckmann": "On WikiText-2, how good is the Beckmann transport map, plain and with refinement in the loop?",
+    "wt2-eqfm": "On WikiText-2, how does pure EqFM (network told the duration only) compare with FMLM and Beckmann?",
     "endpoint-only": "Does learning only the whole jump $\\kappa = 1$ (as in Discrete Beckmann Transport Models) work in this framework?",
 }
 

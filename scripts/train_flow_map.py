@@ -17,7 +17,7 @@ from deqfm.config import parse_cli
 from deqfm.data import build_dataset
 from deqfm.model import build_model
 from deqfm.nets import flatten_first_input, init_from
-from deqfm.objectives import make_flow_map_loss
+from deqfm.objectives import make_flow_map_loss, make_val_loss
 from deqfm.trainer import load_model, train
 
 
@@ -50,8 +50,9 @@ def main():
                 flatten_duration(model)   # the teacher never used its input: start equal to it for every state time
     if cfg.train.init:      # takes precedence over the teacher's weights
         init_from(model, cfg, "flow_map")
-    loss_fn = make_flow_map_loss(cfg, dataset.vocab_size, build_clock(cfg.clock), teacher, teacher_cond)
-    train(cfg, model, dataset, loss_fn, kind="flow_map", teacher=teacher)
+    clock = build_clock(cfg.clock)
+    loss_fn = make_flow_map_loss(cfg, dataset.vocab_size, clock, teacher, teacher_cond)
+    train(cfg, model, dataset, loss_fn, kind="flow_map", teacher=teacher, val_fn=make_val_loss(cfg, dataset.vocab_size, clock))
 
 
 if __name__ == "__main__":

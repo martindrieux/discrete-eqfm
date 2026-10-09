@@ -69,6 +69,8 @@ DEFAULTS = {
         "resume": True,                  # continue from out_dir/last.pt if it exists
         "init": None,                    # start from the EMA weights of this checkpoint (or released:<dir>)
         "init_time": 0.5,                # reparameterised time at which a time-conditioned init is frozen (cond = duration)
+        "val_every": 0,                  # > 0: held-out denoising loss every this many steps (needs eval.val_path); the
+                                         # averaged weights with the lowest value are kept as best.pt
         "min_rate": 0,                   # > 0: stop (as if interrupted) if the speed after 400 steps is below this many it/s
         "max_minutes": 0,                # > 0: checkpoint and exit with code 3 after this many minutes (job time limits)
         "keep_every": 0,                 # > 0: also keep step_XXXXXXX.pt (EMA weights only) every this many steps
@@ -76,7 +78,8 @@ DEFAULTS = {
     "ckpt_dir": None,                    # where checkpoints go (default: out_dir); logs and results stay in out_dir
     "sample": {"steps": 8, "num": 16},
     "eval": {"steps": [1, 2, 4, 8], "num": 1024, "batch": 128, "grid": "reparam",   # grid: reparam | uniform
-             "judge": "gpt2-large", "at_end": False},
+             "judge": "gpt2-large", "at_end": False,
+             "val_path": None, "val_num": 1024},   # held-out sequences for train.val_every
     "wandb": {"project": None, "name": None},
 }
 

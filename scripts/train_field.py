@@ -13,7 +13,7 @@ from deqfm.config import parse_cli
 from deqfm.data import build_dataset
 from deqfm.model import build_model
 from deqfm.nets import init_from
-from deqfm.objectives import make_field_loss
+from deqfm.objectives import make_field_loss, make_val_loss
 from deqfm.trainer import train
 
 
@@ -23,7 +23,9 @@ def main():
     model = build_model(cfg.model, dataset.vocab_size, dataset.seq_len, "field")
     if cfg.train.init:
         init_from(model, cfg, "field")
-    train(cfg, model, dataset, make_field_loss(cfg, dataset.vocab_size, build_clock(cfg.clock)), kind="field")
+    clock = build_clock(cfg.clock)
+    train(cfg, model, dataset, make_field_loss(cfg, dataset.vocab_size, clock), kind="field",
+          val_fn=make_val_loss(cfg, dataset.vocab_size, clock))
 
 
 if __name__ == "__main__":
