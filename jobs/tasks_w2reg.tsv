@@ -1,0 +1,10 @@
+# WikiText-2 has 18096 training sequences: the first runs reached their best held-out loss at about 2k steps and then overfitted.
+# Regularisation sweep on the FLM denoiser, to fix model size, dropout and weight decay for every method.
+W2R_flm_m_drop0.1	-	train_field.py	configs/wt2.yaml model.cond=time train.steps=8000 train.warmup=500 train.val_every=250 train.keep_every=0 train.save_every=1000 model.dim=512 model.depth=8 model.heads=8 model.dropout=0.1
+W2R_flm_m_drop0.3	-	train_field.py	configs/wt2.yaml model.cond=time train.steps=8000 train.warmup=500 train.val_every=250 train.keep_every=0 train.save_every=1000 model.dim=512 model.depth=8 model.heads=8 model.dropout=0.3
+W2R_flm_m_drop0.5	-	train_field.py	configs/wt2.yaml model.cond=time train.steps=8000 train.warmup=500 train.val_every=250 train.keep_every=0 train.save_every=1000 model.dim=512 model.depth=8 model.heads=8 model.dropout=0.5
+W2R_flm_s_drop0.1	-	train_field.py	configs/wt2.yaml model.cond=time train.steps=8000 train.warmup=500 train.val_every=250 train.keep_every=0 train.save_every=1000 model.dim=384 model.depth=6 model.heads=6 model.dropout=0.1
+W2R_flm_s_drop0.3	-	train_field.py	configs/wt2.yaml model.cond=time train.steps=8000 train.warmup=500 train.val_every=250 train.keep_every=0 train.save_every=1000 model.dim=384 model.depth=6 model.heads=6 model.dropout=0.3
+W2R_flm_s_drop0.5	-	train_field.py	configs/wt2.yaml model.cond=time train.steps=8000 train.warmup=500 train.val_every=250 train.keep_every=0 train.save_every=1000 model.dim=384 model.depth=6 model.heads=6 model.dropout=0.5
+W2R_flm_m_drop0.3_wd0.1	-	train_field.py	configs/wt2.yaml model.cond=time train.steps=8000 train.warmup=500 train.val_every=250 train.keep_every=0 train.save_every=1000 model.dropout=0.3 train.weight_decay=0.1
+W2R_flm_m_drop0.5_wd0.1	-	train_field.py	configs/wt2.yaml model.cond=time train.steps=8000 train.warmup=500 train.val_every=250 train.keep_every=0 train.save_every=1000 model.dropout=0.5 train.weight_decay=0.1
