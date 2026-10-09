@@ -72,12 +72,20 @@ C_twostage	flow-map-distillation	Clean run: distilled from our own denoiser
 W2_flm	wt2-fmlm	FLM denoiser (time-conditioned)
 W2_fmlm	wt2-fmlm	FMLM flow map, distilled from FLM
 W2_denoiser_timefree	wt2-eqfm	Time-free denoiser
-W2_eqfm_data_semigroup	wt2-eqfm	EqFM from data, semigroup
-W2_eqfm_data_lagrangian	wt2-eqfm	EqFM from data, Lagrangian
-W2_eqfm_data_eulerian	wt2-eqfm	EqFM from data, Eulerian
+W2_eqfm_data_semigroup	wt2-eqfm	EqFM from data, semigroup, with boundary term
+W2_eqfm_data_lagrangian	wt2-eqfm	EqFM from data, Lagrangian, with boundary term
+W2_eqfm_data_eulerian	wt2-eqfm	EqFM from data, Eulerian, with boundary term
 W2_eqfm_data_semigroup_repodefault	wt2-eqfm	EqFM from data, semigroup, repository defaults
-W2_eqfm_distill_semigroup	wt2-eqfm	EqFM distilled, semigroup
-W2_eqfm_distill_lagrangian	wt2-eqfm	EqFM distilled, Lagrangian
-W2_eqfm_distill_eulerian	wt2-eqfm	EqFM distilled, Eulerian
+W2_eqfm_distill_semigroup	wt2-eqfm	EqFM distilled, semigroup, with boundary term
+W2_eqfm_distill_lagrangian	wt2-eqfm	EqFM distilled, Lagrangian, with boundary term
+W2_eqfm_distill_eulerian	wt2-eqfm	EqFM distilled, Eulerian, with boundary term
 W2_dbtm	wt2-beckmann	Beckmann transport map, plain
 W2_dbtm_ril	wt2-beckmann	Beckmann transport map, refinement in the loop
+W2_eqfm_data_semigroup_noaux	wt2-eqfm	EqFM from data, semigroup, no auxiliary loss
+W2_eqfm_distill_semigroup_noaux	wt2-eqfm	EqFM distilled, semigroup, no auxiliary loss
+W2_eqfm_data_lagrangian_noaux	wt2-eqfm	EqFM from data, Lagrangian, no auxiliary loss
+W2_eqfm_distill_lagrangian_noaux	wt2-eqfm	EqFM distilled, Lagrangian, no auxiliary loss
+W2_eqfm_data_lagrangian_repodefault	wt2-eqfm	EqFM from data, Lagrangian, repository defaults
+W2_eqfm_data_eulerian_noaux	wt2-eqfm	EqFM from data, Eulerian, no auxiliary loss
+W2_eqfm_distill_eulerian_noaux	wt2-eqfm	EqFM distilled, Eulerian, no auxiliary loss
+W2_eqfm_data_eulerian_repodefault	wt2-eqfm	EqFM from data, Eulerian, repository defaults

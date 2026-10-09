@@ -292,15 +292,15 @@
   "$\\hat D$ inputs \\cfg{model.cond}, $t$ by \\cfg{loss.diag_time}, \\cfg{model.depth} blocks of width \\cfg{model.dim}, dropout \\cfg{model.dropout}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, best held-out loss kept"
  ],
  "W2_eqfm_data_semigroup": [
-  "EqFM from data, semigroup",
+  "EqFM from data, semigroup, with boundary term",
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}"
  ],
  "W2_eqfm_data_lagrangian": [
-  "EqFM from data, Lagrangian",
+  "EqFM from data, Lagrangian, with boundary term",
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}"
  ],
  "W2_eqfm_data_eulerian": [
-  "EqFM from data, Eulerian",
+  "EqFM from data, Eulerian, with boundary term",
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}"
  ],
  "W2_eqfm_data_semigroup_repodefault": [
@@ -308,15 +308,15 @@
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}"
  ],
  "W2_eqfm_distill_semigroup": [
-  "EqFM distilled, semigroup",
+  "EqFM distilled, semigroup, with boundary term",
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}"
  ],
  "W2_eqfm_distill_lagrangian": [
-  "EqFM distilled, Lagrangian",
+  "EqFM distilled, Lagrangian, with boundary term",
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}"
  ],
  "W2_eqfm_distill_eulerian": [
-  "EqFM distilled, Eulerian",
+  "EqFM distilled, Eulerian, with boundary term",
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}"
  ],
  "W2_dbtm": [
@@ -326,5 +326,37 @@
  "W2_dbtm_ril": [
   "Beckmann transport map, refinement in the loop",
   "$T(x)$ trained on transport + anchor ($t >$ \\cfg{dbtm.t_anchor}) + boundary losses, partial context \\cfg{dbtm.partial_context}, optimal-transport pairing \\cfg{dbtm.ot}; refinement in the loop \\cfg{dbtm.ril} from step \\cfg{dbtm.ril_start}; \\cfg{train.steps} steps of batch \\cfg{train.batch_size}"
+ ],
+ "W2_eqfm_data_semigroup_noaux": [
+  "EqFM from data, semigroup, no auxiliary loss",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}"
+ ],
+ "W2_eqfm_distill_semigroup_noaux": [
+  "EqFM distilled, semigroup, no auxiliary loss",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}"
+ ],
+ "W2_eqfm_data_lagrangian_noaux": [
+  "EqFM from data, Lagrangian, no auxiliary loss",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}"
+ ],
+ "W2_eqfm_distill_lagrangian_noaux": [
+  "EqFM distilled, Lagrangian, no auxiliary loss",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}"
+ ],
+ "W2_eqfm_data_lagrangian_repodefault": [
+  "EqFM from data, Lagrangian, repository defaults",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}"
+ ],
+ "W2_eqfm_data_eulerian_noaux": [
+  "EqFM from data, Eulerian, no auxiliary loss",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}"
+ ],
+ "W2_eqfm_distill_eulerian_noaux": [
+  "EqFM distilled, Eulerian, no auxiliary loss",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}"
+ ],
+ "W2_eqfm_data_eulerian_repodefault": [
+  "EqFM from data, Eulerian, repository defaults",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}"
  ]
 }

@@ -12,3 +12,11 @@ W2_fmlm	W2_flm	train_flow_map.py	configs/wt2.yaml model.cond=time loss.teacher=$
 W2_eqfm_distill_semigroup	W2_denoiser_timefree	train_flow_map.py	configs/wt2.yaml loss.teacher=$DEQ_ROOT/runs/W2_denoiser_timefree/best.pt train.betas=[0.9,0.95] loss.off_diagonal=semigroup
 W2_eqfm_distill_lagrangian	W2_denoiser_timefree	train_flow_map.py	configs/wt2.yaml loss.teacher=$DEQ_ROOT/runs/W2_denoiser_timefree/best.pt train.betas=[0.9,0.95] loss.off_diagonal=lagrangian
 W2_eqfm_distill_eulerian	W2_denoiser_timefree	train_flow_map.py	configs/wt2.yaml loss.teacher=$DEQ_ROOT/runs/W2_denoiser_timefree/best.pt train.betas=[0.9,0.95] loss.off_diagonal=eulerian
+W2_eqfm_data_semigroup_noaux	-	train_flow_map.py	configs/wt2.yaml loss.off_diagonal=semigroup loss.boundary_prob=0
+W2_eqfm_data_lagrangian_noaux	-	train_flow_map.py	configs/wt2.yaml loss.off_diagonal=lagrangian loss.boundary_prob=0
+W2_eqfm_data_eulerian_noaux	-	train_flow_map.py	configs/wt2.yaml loss.off_diagonal=eulerian loss.boundary_prob=0
+W2_eqfm_data_lagrangian_repodefault	-	train_flow_map.py	configs/wt2.yaml loss.off_diagonal=lagrangian loss.diag_time=uniform loss.stratified=false loss.jump_sampling=notes loss.boundary_prob=0 loss.whole_jump_prob=0
+W2_eqfm_data_eulerian_repodefault	-	train_flow_map.py	configs/wt2.yaml loss.off_diagonal=eulerian loss.diag_time=uniform loss.stratified=false loss.jump_sampling=notes loss.boundary_prob=0 loss.whole_jump_prob=0
+W2_eqfm_distill_semigroup_noaux	W2_denoiser_timefree	train_flow_map.py	configs/wt2.yaml loss.teacher=$DEQ_ROOT/runs/W2_denoiser_timefree/best.pt train.betas=[0.9,0.95] loss.off_diagonal=semigroup loss.boundary_prob=0
+W2_eqfm_distill_lagrangian_noaux	W2_denoiser_timefree	train_flow_map.py	configs/wt2.yaml loss.teacher=$DEQ_ROOT/runs/W2_denoiser_timefree/best.pt train.betas=[0.9,0.95] loss.off_diagonal=lagrangian loss.boundary_prob=0
+W2_eqfm_distill_eulerian_noaux	W2_denoiser_timefree	train_flow_map.py	configs/wt2.yaml loss.teacher=$DEQ_ROOT/runs/W2_denoiser_timefree/best.pt train.betas=[0.9,0.95] loss.off_diagonal=eulerian loss.boundary_prob=0
