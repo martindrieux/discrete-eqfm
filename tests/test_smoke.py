@@ -359,3 +359,16 @@ def test_dbtm_refinement(tmp_path):
     from deqfm.sampling import sample_grid
     torch.manual_seed(0); b = sample_grid(model, "duration", clk, 3, [0.0, 1.0], True)
     assert torch.equal(a, b)                                 # one refinement round is the one-step sample
+
+
+def test_self_distilled_rollout_with_sample_target(tmp_path):
+    cfg, dataset, model = tiny(tmp_path, *DIT, "loss.jump_sampling=reparam", "loss.diag_time=reparam", "loss.partial_context=true",
+                               "loss.ril_frac=0.5", "loss.ril_commit=model", "loss.ril_ot=false", "loss.ril_weight=0",
+                               "loss.ril_distill_weight=1.0", "loss.ril_distill_target=sample", "train.steps=3")
+    loss_fn = make_flow_map_loss(cfg, dataset.vocab_size, build_clock("exponential"))
+    for p in model.parameters():
+        torch.nn.init.normal_(p, std=0.1)
+    loss_fn.step = 0
+    loss, logs = loss_fn(model, model, torch.stack([dataset[i] for i in range(8)]))
+    assert logs["ril"] == 0.0 and logs["ril_distill"] > 0 and torch.isfinite(loss)
+    assert any(p.grad is not None and p.grad.abs().sum() > 0 for p in model.parameters())   # the rollout loss was backpropagated

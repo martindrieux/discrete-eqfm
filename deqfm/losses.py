@@ -247,6 +247,7 @@ def refinement_rollout(whole_jump, tokens, x0, vocab_size, depth, threshold, com
         committed = new
         x = torch.where(committed.unsqueeze(-1), F.one_hot(kept, vocab_size).float(), x0)
         masks.append(~committed)
+    refinement_rollout.final_tokens = kept      # commit="model": the sequence the rollout ends with, a function of x0
     return states, masks
 
 

@@ -160,7 +160,10 @@ def make_flow_map_loss(cfg, vocab_size, clock, teacher=None, teacher_cond=None):
             whole = lambda y: fn(y, zeros, ones)
             states, masks = refinement_rollout(whole, tok_r, x0, vocab_size, L.ril_depth, L.ril_threshold, L.ril_commit)
             target = None
-            if distill:
+            if distill and L.ril_distill_target == "sample":
+                # the tokens the rollout itself ends with: the multi-round sample from this noise, as a hard target
+                target = torch.nn.functional.one_hot(refinement_rollout.final_tokens, vocab_size).float()
+            elif distill:
                 snap = make_fn(loss_fn.snapshot, cfg.model.cond, clock, vocab_size)
                 with torch.no_grad():
                     target = (snap(states[-1], zeros, ones).float() / L.ril_distill_temp).softmax(-1)

@@ -49,7 +49,7 @@ for $r = 1, \dots, k$:
     $L_r = \mathrm{mean}_{l \notin C}\big[-\log p^l_{y^l}\big]$   // on the positions still uncommitted
     $\hat x^l \leftarrow x_1^l$ for $l \in C$, $\hat x^l \leftarrow x_0^l$ otherwise   // same noise, no fresh draw
 $L_{\mathrm{ril}} = \frac{1}{k} \sum_r L_r$; each sequence's loss $\ell$ is multiplied by $(\ell + c)^{-r}$ with $c$ = `loss.ril_adaptive_c`, $r$ = `loss.ril_adaptive_r`
-if step $\ge$ `loss.ril_distill_start`: $L_{\mathrm{distill}} = \frac{1}{k} \sum_r \mathrm{mean}_{l \notin C_r}\big[- \bar p^l \cdot \log T(\hat x_{r-1})^l\big]$, $\bar p$ = softmax of a frozen copy's logits at the last round's input divided by `loss.ril_distill_temp`; the copy is refreshed every `loss.ril_refresh` steps
+if step $\ge$ `loss.ril_distill_start`: $L_{\mathrm{distill}} = \frac{1}{k} \sum_r \mathrm{mean}_{l \notin C_r}\big[- \bar p^l \cdot \log T(\hat x_{r-1})^l\big]$, $\bar p$ = softmax of a frozen copy's logits at the last round's input divided by `loss.ril_distill_temp`; the copy is refreshed every `loss.ril_refresh` steps; if `loss.ril_distill_target` = sample: $\bar p$ = one-hot of the tokens committed by the end of the rollout
 
 == Generating samples with refinement (DBTM sampler)
 input: rounds $K$, threshold $q^*$
