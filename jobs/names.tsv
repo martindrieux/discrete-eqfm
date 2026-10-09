@@ -79,3 +79,5 @@ W2_eqfm_data_semigroup_repodefault	wt2-eqfm	EqFM from data, semigroup, repositor
 W2_eqfm_distill_semigroup	wt2-eqfm	EqFM distilled, semigroup
 W2_eqfm_distill_lagrangian	wt2-eqfm	EqFM distilled, Lagrangian
 W2_eqfm_distill_eulerian	wt2-eqfm	EqFM distilled, Eulerian
+W2_dbtm	wt2-beckmann	Beckmann transport map, plain
+W2_dbtm_ril	wt2-beckmann	Beckmann transport map, refinement in the loop

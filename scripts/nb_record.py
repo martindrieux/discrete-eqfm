@@ -61,6 +61,7 @@ def record(name, names, stopped=False):
     evals = {os.path.basename(p)[4:-5].strip("_"): json.load(open(p)) for p in sorted(glob.glob(f"{d}/eval*.json"))
              if ".tmp" not in p}
     kind = "flow-map" if any(e.get("flow_map") for e in evals.values()) or cfg.get("loss.off_diagonal") and "field" not in name else "denoiser"
+    kind = "dbtm" if "dbtm" in name else ("denoiser" if "denoiser" in name or name.endswith("_flm") else kind)
     for k in ("loss.teacher", "train.init", "data.path", "out_dir", "ckpt_dir"):      # keep paths short
         if isinstance(cfg.get(k), str):
             cfg[k] = cfg[k].replace("/data/user_data/mdrieux/deqfm/", "")

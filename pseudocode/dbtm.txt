@@ -1,0 +1,19 @@
+== Training step (Discrete Beckmann Transport Model, baseline)
+input: batch of $B$ = `train.batch_size` token sequences $y$, time-free softmax network $T(x)$
+$x_1$ = one-hot of $y$, $x_0 \sim \mathcal{N}(0, I)$, paired with the data by minibatch optimal transport if `dbtm.ot`
+$t \sim \mathcal{U}[0, 1]$; if `dbtm.partial_context`: per position $t^l = 1$ with probability $f$, $f \sim \mathcal{U}[0,1]$, else $t^l = t$
+$I^l = (1 - t^l) x_0^l + t^l x_1^l$, $\dot I^l = x_1^l - x_0^l$ on noisy positions, $0$ on clean ones
+$L_{\mathrm{transport}} = \mathrm{mean}_{l: t^l < 1} \lVert T(I)^l - \mathrm{sg}\big(T(I)^l + (\dot I \cdot \nabla T(I))^l\big) \rVert^2$
+$L_{\mathrm{anchor}} = \mathrm{mean}_{l: t^l > t_{\mathrm{anchor}}} \big[-\log T(I)^l_{y^l}\big]$   // $t_{\mathrm{anchor}}$ = `dbtm.t_anchor`
+$L_{\mathrm{bnd}} = \mathrm{mean}_l \big[-\log T(x_1)^l_{y^l}\big]$
+each sequence's transport and anchor loss $\ell$ is multiplied by $(\ell + c)^{-r}$   // $c$ = `dbtm.adaptive_c`, $r$ = `dbtm.adaptive_r`
+$L = L_{\mathrm{transport}} + \lambda_a L_{\mathrm{anchor}} + \lambda_b L_{\mathrm{bnd}}$   // `dbtm.lambda_anchor`, `dbtm.lambda_bnd`
+if `dbtm.ril` and step $\ge$ `dbtm.ril_start`: add the refinement-in-loop losses (rollout of depth `dbtm.ril_depth`, data-token commits at threshold `dbtm.ril_threshold`, cross-entropy to the data on uncommitted positions, and to a frozen copy's output at the last round with temperature `dbtm.ril_distill_temp`)
+
+== Generating samples
+input: rounds $K$, threshold $q^*$
+$x \sim \mathcal{N}(0, I)$, $C \leftarrow \emptyset$
+for $r = 1, \dots, K$:
+    $p = T(x)$; commit the uncommitted positions with $\max_v p^l_v \ge q^*$, and at least $\lceil (L - |C|)/(K - r + 1) \rceil$ of the most confident, to $\arg\max_v p^l_v$
+    $x^l \leftarrow$ one-hot of the committed token for $l \in C$, fresh $\mathcal{N}(0, I)$ otherwise
+return the committed tokens   // $K = 1$: $\arg\max_v T(x_0)^l_v$

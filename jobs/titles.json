@@ -318,5 +318,13 @@
  "W2_eqfm_distill_eulerian": [
   "EqFM distilled, Eulerian",
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}"
+ ],
+ "W2_dbtm": [
+  "Beckmann transport map, plain",
+  "$T(x)$ trained on transport + anchor ($t >$ \\cfg{dbtm.t_anchor}) + boundary losses, partial context \\cfg{dbtm.partial_context}, optimal-transport pairing \\cfg{dbtm.ot}; refinement in the loop \\cfg{dbtm.ril} from step \\cfg{dbtm.ril_start}; \\cfg{train.steps} steps of batch \\cfg{train.batch_size}"
+ ],
+ "W2_dbtm_ril": [
+  "Beckmann transport map, refinement in the loop",
+  "$T(x)$ trained on transport + anchor ($t >$ \\cfg{dbtm.t_anchor}) + boundary losses, partial context \\cfg{dbtm.partial_context}, optimal-transport pairing \\cfg{dbtm.ot}; refinement in the loop \\cfg{dbtm.ril} from step \\cfg{dbtm.ril_start}; \\cfg{train.steps} steps of batch \\cfg{train.batch_size}"
  ]
 }

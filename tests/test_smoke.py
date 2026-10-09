@@ -392,3 +392,26 @@ def test_validation_loss_and_copy_rate(tmp_path):
     assert a == b and abs(a - np.log(50)) < 0.2            # deterministic; an untrained model predicts uniformly
     train(cfg, model, dataset, make_field_loss(cfg, 50, clk), kind="field", val_fn=val)
     assert (tmp_path / "best.pt").exists() and (tmp_path / "val.jsonl").exists()
+
+
+def test_dbtm_baseline(tmp_path):
+    """Beckmann transport baseline: losses are finite and give gradients; forward-mode and finite-difference targets agree."""
+    from deqfm.dbtm import dbtm_base_losses, make_dbtm_loss
+    cfg, dataset, _ = tiny(tmp_path, *DIT, "model.dropout=0.0", "dbtm.ril=true", "dbtm.ril_start=2", "dbtm.ril_frac=0.5",
+                           "dbtm.ril_refresh=1", "train.steps=4")
+    model = build_model(cfg.model, dataset.vocab_size, dataset.seq_len, "flow_map")
+    for p in model.parameters():
+        torch.nn.init.normal_(p, std=0.2)
+    tokens = torch.stack([dataset[i] for i in range(6)])
+    V = dataset.vocab_size
+    x0 = torch.randn(6, dataset.seq_len, V)
+    t_pos = torch.rand(6, 1).expand(-1, dataset.seq_len).clone(); t_pos[:, 0] = 1.0
+    T = lambda y: model(y, torch.ones(y.shape[0]), manual_attn=True)
+    torch.manual_seed(0); a = dbtm_base_losses(T, tokens, x0, t_pos, V, 0.75, (1.0, 0.5), "forward")
+    torch.manual_seed(0); b = dbtm_base_losses(T, tokens, x0, t_pos, V, 0.75, (1.0, 0.5), "fd", 1e-3)
+    assert a[0] > 0 and torch.isfinite(a[0]) and torch.isfinite(a[1]) and abs(a[0].item() - b[0].item()) < 0.05 * a[0].item() + 1e-3
+    loss_fn = make_dbtm_loss(cfg, V)
+    train(cfg, model, dataset, loss_fn, kind="flow_map")
+    assert loss_fn.snapshot is not None and all(torch.isfinite(p).all() for p in model.parameters())
+    from deqfm.sampling import sample_refine
+    assert sample_refine(model.eval(), "duration", build_clock("exponential"), 2, 4).shape == (2, dataset.seq_len)

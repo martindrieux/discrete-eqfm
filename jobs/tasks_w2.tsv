@@ -9,3 +9,5 @@ W2_fmlm	W2_flm	train_flow_map.py	configs/wt2.yaml model.cond=time loss.teacher=$
 W2_eqfm_distill_semigroup	W2_denoiser_timefree	train_flow_map.py	configs/wt2.yaml loss.teacher=$DEQ_ROOT/runs/W2_denoiser_timefree/best.pt train.steps=20000 train.betas=[0.9,0.95] loss.off_diagonal=semigroup
 W2_eqfm_distill_lagrangian	W2_denoiser_timefree	train_flow_map.py	configs/wt2.yaml loss.teacher=$DEQ_ROOT/runs/W2_denoiser_timefree/best.pt train.steps=20000 train.betas=[0.9,0.95] loss.off_diagonal=lagrangian
 W2_eqfm_distill_eulerian	W2_denoiser_timefree	train_flow_map.py	configs/wt2.yaml loss.teacher=$DEQ_ROOT/runs/W2_denoiser_timefree/best.pt train.steps=20000 train.betas=[0.9,0.95] loss.off_diagonal=eulerian
+W2_dbtm	-	train_dbtm.py	configs/wt2.yaml train.val_every=0
+W2_dbtm_ril	-	train_dbtm.py	configs/wt2.yaml train.val_every=0 dbtm.ril=true dbtm.ril_start=15000 dbtm.ril_frac=0.5

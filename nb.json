@@ -67,7 +67,8 @@
  "glossary": {
   "algos": {
    "denoiser": "$\\hat D = \\arg\\min \\mathbb{E}_{t,x_0,x_1}\\big[-w(t)\\, x_1 \\cdot \\log \\hat D(I_t)\\big]$, $I_t = (1-t)x_0 + t x_1$; sampled by Euler steps of $\\dot x = (\\hat D(x) - x)/(1-t)$",
-   "flow-map": "$\\hat\\Phi_\\kappa(x) = (1-\\kappa)x + \\kappa\\,\\hat\\delta_\\kappa(x)$ with $\\hat\\delta_0 = \\hat D$ and $\\hat\\delta_\\kappa$ trained by cross-entropy to a stop-gradient target (semigroup, Lagrangian or Eulerian); sampled by $K$ jumps"
+   "flow-map": "$\\hat\\Phi_\\kappa(x) = (1-\\kappa)x + \\kappa\\,\\hat\\delta_\\kappa(x)$ with $\\hat\\delta_0 = \\hat D$ and $\\hat\\delta_\\kappa$ trained by cross-entropy to a stop-gradient target (semigroup, Lagrangian or Eulerian); sampled by $K$ jumps",
+   "dbtm": "Discrete Beckmann Transport Model (baseline): one time-free map $T(x)$ trained on $\\lVert T(I_t) - \\mathrm{sg}(T(I_t) + \\dot I_t \\cdot \\nabla T(I_t)) \\rVert^2$ plus anchor and boundary cross-entropies; sampled in one step or with commit-and-renoise rounds"
   },
   "params": {
    "seed": "random seed",
@@ -161,7 +162,23 @@
    "loss.ril_rollout_net": "network that plays the training rollout (applies the map and commits): online (the trained weights) or snapshot (the frozen copy, refreshed every `loss.ril_refresh` steps)",
    "train.val_every": "steps between two evaluations of the held-out denoising loss; the averaged weights with the lowest value are kept",
    "eval.val_path": "held-out sequences for the denoising loss during training",
-   "eval.val_num": "number of held-out sequences used for that loss"
+   "eval.val_num": "number of held-out sequences used for that loss",
+   "dbtm.ot": "DBTM: if true, noise $x_0$ and data $x_1$ of a batch are paired by minibatch optimal transport",
+   "dbtm.partial_context": "DBTM: if true, per sample a fraction $f \\sim \\mathcal{U}[0,1]$ of the positions is clean, $t^l = 1$",
+   "dbtm.t_anchor": "DBTM: $t_{\\mathrm{anchor}}$; the anchor loss $-\\log T(I)^l_{y^l}$ is taken on positions with $t^l > t_{\\mathrm{anchor}}$",
+   "dbtm.lambda_anchor": "DBTM: weight of the anchor loss",
+   "dbtm.lambda_bnd": "DBTM: weight of the boundary loss $-\\log T(x_1)^l_{y^l}$",
+   "dbtm.adaptive_r": "DBTM: $r$; each sequence's loss $\\ell$ is multiplied by $(\\ell + c)^{-r}$, no gradient through the factor",
+   "dbtm.adaptive_c": "DBTM: $c$ in the factor $(\\ell + c)^{-r}$",
+   "dbtm.ril": "DBTM: if true, refinement-in-loop losses are added from step `dbtm.ril_start`",
+   "dbtm.ril_start": "DBTM: step at which the refinement-in-loop losses start",
+   "dbtm.ril_frac": "DBTM: fraction of the batch rolled out through the refinement rounds",
+   "dbtm.ril_depth": "DBTM: number of refinement rounds in the training rollout",
+   "dbtm.ril_threshold": "DBTM: commit threshold on the probability of the data token",
+   "dbtm.ril_distill_temp": "DBTM: temperature of the self-distillation target",
+   "dbtm.ril_refresh": "DBTM: steps between two refreshes of the frozen copy used as self-distillation teacher",
+   "dbtm.lambda_ril": "DBTM: weight of the data-supervised rollout loss",
+   "dbtm.lambda_semi": "DBTM: weight of the self-distillation rollout loss"
   },
   "symbols": {
    "x_1": "one-hot matrix in $\\mathbb{R}^{L \\times V}$ of a data sequence $y$ of $L$ tokens from a vocabulary of size $V$",

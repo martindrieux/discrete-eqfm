@@ -76,6 +76,12 @@ DEFAULTS = {
         "keep_every": 0,                 # > 0: also keep step_XXXXXXX.pt (EMA weights only) every this many steps
     },
     "ckpt_dir": None,                    # where checkpoints go (default: out_dir); logs and results stay in out_dir
+    "dbtm": {                            # Discrete Beckmann Transport Models baseline (deqfm/dbtm.py, scripts/train_dbtm.py)
+        "ot": True, "partial_context": True, "t_anchor": 0.75, "lambda_anchor": 1.0, "lambda_bnd": 1.0,
+        "adaptive_r": 0.5, "adaptive_c": 1.0,
+        "ril": False, "ril_start": 0, "ril_frac": 1.0, "ril_depth": 4, "ril_threshold": 0.9,
+        "ril_distill_temp": 0.7, "ril_refresh": 5000, "lambda_ril": 1.0, "lambda_semi": 1.0,
+    },
     "sample": {"steps": 8, "num": 16},
     "eval": {"steps": [1, 2, 4, 8], "num": 1024, "batch": 128, "grid": "reparam",   # grid: reparam | uniform
              "judge": "gpt2-large", "at_end": False,
