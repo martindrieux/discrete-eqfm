@@ -66,3 +66,4 @@ P_selfdistill_early	flow-map-from-data	Partial context, self-distilled rollouts,
 P_paper_early	flow-map-from-data	Partial context, Beckmann rollout losses, early start
 Q_sample	flow-map-from-data	Self-distilled rollouts, sample target
 Q_soft	flow-map-from-data	Self-distilled rollouts, soft target
+Q_sample_frozen	flow-map-from-data	Self-distilled rollouts, sample target, frozen rollout

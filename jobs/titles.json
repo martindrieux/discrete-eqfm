@@ -266,5 +266,9 @@
  "Q_soft": [
   "Self-distilled rollouts, soft target",
   "continued from \\cfg{train.init}; partial context \\cfg{loss.partial_context}; rollouts from step \\cfg{loss.ril_start} on a fraction \\cfg{loss.ril_frac} of the batch, commit \\cfg{loss.ril_commit}, data loss weight \\cfg{loss.ril_weight}, self-distillation target \\cfg{loss.ril_distill_target}; dropout \\cfg{model.dropout}"
+ ],
+ "Q_sample_frozen": [
+  "Self-distilled rollouts, sample target, frozen rollout",
+  "continued from \\cfg{train.init}; partial context \\cfg{loss.partial_context}; rollouts from step \\cfg{loss.ril_start} on a fraction \\cfg{loss.ril_frac} of the batch, commit \\cfg{loss.ril_commit}, played by \\cfg{loss.ril_rollout_net}, data loss weight \\cfg{loss.ril_weight}, self-distillation target \\cfg{loss.ril_distill_target}; dropout \\cfg{model.dropout}"
  ]
 }

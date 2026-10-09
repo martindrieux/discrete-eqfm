@@ -44,7 +44,7 @@ input: a fraction `loss.ril_frac` of the batch, depth $k$ = `loss.ril_depth`, th
 $x_0 \sim \mathcal{N}(0, I)$, paired with the data by minibatch optimal transport if `loss.ril_ot` (pairing over the whole batch)
 $\hat x \leftarrow x_0$, committed set $C \leftarrow \emptyset$
 for $r = 1, \dots, k$:
-    $p = T(\hat x)$, $q^l = p^l_{y^l}$   // probability of the data token; if `loss.ril_commit` = model: $q^l = \max_v p^l_v$ and the committed token is $\arg\max_v p^l_v$
+    $p = T(\hat x)$, $q^l = p^l_{y^l}$   // probability of the data token; the rollout is played by the network `loss.ril_rollout_net`; if `loss.ril_commit` = model: $q^l = \max_v p^l_v$ and the committed token is $\arg\max_v p^l_v$
     commit the uncommitted positions with $q^l \ge q^*$, and at least $\lceil (L - |C|)/(k - r + 1) \rceil$ of the highest $q^l$
     $L_r = \mathrm{mean}_{l \notin C}\big[-\log p^l_{y^l}\big]$   // on the positions still uncommitted
     $\hat x^l \leftarrow x_1^l$ for $l \in C$, $\hat x^l \leftarrow x_0^l$ otherwise   // same noise, no fresh draw

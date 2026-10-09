@@ -364,7 +364,7 @@ def test_dbtm_refinement(tmp_path):
 def test_self_distilled_rollout_with_sample_target(tmp_path):
     cfg, dataset, model = tiny(tmp_path, *DIT, "loss.jump_sampling=reparam", "loss.diag_time=reparam", "loss.partial_context=true",
                                "loss.ril_frac=0.5", "loss.ril_commit=model", "loss.ril_ot=false", "loss.ril_weight=0",
-                               "loss.ril_distill_weight=1.0", "loss.ril_distill_target=sample", "train.steps=3")
+                               "loss.ril_distill_weight=1.0", "loss.ril_distill_target=sample", "loss.ril_rollout_net=snapshot", "train.steps=3")
     loss_fn = make_flow_map_loss(cfg, dataset.vocab_size, build_clock("exponential"))
     for p in model.parameters():
         torch.nn.init.normal_(p, std=0.1)

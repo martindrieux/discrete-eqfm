@@ -148,7 +148,8 @@ def make_flow_map_loss(cfg, vocab_size, clock, teacher=None, teacher_cond=None):
         step = getattr(loss_fn, "step", 0)
         if L.ril_frac > 0 and step >= L.ril_start:       # refinement in the loop (DBTM), on the whole jump kappa = 1
             distill = L.ril_distill_weight > 0 and step >= max(L.ril_start, L.ril_distill_start)
-            if distill and (getattr(loss_fn, "snapshot", None) is None or step - loss_fn.snapshot_step >= L.ril_refresh):
+            frozen = L.ril_rollout_net == "snapshot"      # the frozen copy plays the rollout, not the trained network
+            if (distill or frozen) and (getattr(loss_fn, "snapshot", None) is None or step - loss_fn.snapshot_step >= L.ril_refresh):
                 loss_fn.snapshot = copy.deepcopy(raw).eval().requires_grad_(False)       # frozen teacher, refreshed
                 loss_fn.snapshot_step = step
             n = max(2, int(L.ril_frac * B))
@@ -158,7 +159,11 @@ def make_flow_map_loss(cfg, vocab_size, clock, teacher=None, teacher_cond=None):
             tok_r, x0 = tokens[:n], x0[:n]
             ones, zeros = torch.ones(n, device=dev), torch.zeros(n, device=dev)
             whole = lambda y: fn(y, zeros, ones)
-            states, masks = refinement_rollout(whole, tok_r, x0, vocab_size, L.ril_depth, L.ril_threshold, L.ril_commit)
+            roll = whole
+            if frozen:
+                snap_roll = make_fn(loss_fn.snapshot, cfg.model.cond, clock, vocab_size)
+                roll = lambda y: snap_roll(y, zeros, ones)
+            states, masks = refinement_rollout(roll, tok_r, x0, vocab_size, L.ril_depth, L.ril_threshold, L.ril_commit)
             target = None
             if distill and L.ril_distill_target == "sample":
                 # the tokens the rollout itself ends with: the multi-round sample from this noise, as a hard target
