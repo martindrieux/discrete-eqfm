@@ -12,7 +12,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from deqfm.config import parse_cli
 from deqfm.data import build_dataset
-from deqfm.dbtm import make_dbtm_loss
+from deqfm.dbtm import make_dbtm_loss, make_dbtm_val
 from deqfm.model import build_model
 from deqfm.trainer import train
 
@@ -22,7 +22,8 @@ def main():
     assert cfg.model.arch == "dit" and cfg.model.cond == "duration", "DBTM uses the time-free DiT"
     dataset = build_dataset(cfg.data)
     model = build_model(cfg.model, dataset.vocab_size, dataset.seq_len, "flow_map")
-    train(cfg, model, dataset, make_dbtm_loss(cfg, dataset.vocab_size), kind="flow_map")
+    train(cfg, model, dataset, make_dbtm_loss(cfg, dataset.vocab_size), kind="flow_map",
+          val_fn=make_dbtm_val(cfg, dataset.vocab_size))
 
 
 if __name__ == "__main__":

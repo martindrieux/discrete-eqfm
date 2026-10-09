@@ -1,13 +1,14 @@
-# WikiText-2, medium model, one GPU, batch 128. Stage 1 (FLM family) and stage 3 (EqFM, direct adaptation).
-#first attempt, overfitted (runs moved to runs/_wt2_first_attempt)# W2_flm	-	train_field.py	configs/wt2.yaml model.cond=time
-#first attempt, overfitted (runs moved to runs/_wt2_first_attempt)# W2_denoiser_timefree	-	train_field.py	configs/wt2.yaml
-#first attempt, overfitted (runs moved to runs/_wt2_first_attempt)# W2_eqfm_data_semigroup	-	train_flow_map.py	configs/wt2.yaml loss.off_diagonal=semigroup
-#first attempt, overfitted (runs moved to runs/_wt2_first_attempt)# W2_eqfm_data_lagrangian	-	train_flow_map.py	configs/wt2.yaml loss.off_diagonal=lagrangian
-#first attempt, overfitted (runs moved to runs/_wt2_first_attempt)# W2_eqfm_data_eulerian	-	train_flow_map.py	configs/wt2.yaml loss.off_diagonal=eulerian
-#first attempt, overfitted (runs moved to runs/_wt2_first_attempt)# W2_eqfm_data_semigroup_repodefault	-	train_flow_map.py	configs/wt2.yaml loss.off_diagonal=semigroup loss.diag_time=uniform loss.stratified=false loss.jump_sampling=notes loss.boundary_prob=0 loss.whole_jump_prob=0
-#first attempt, overfitted (runs moved to runs/_wt2_first_attempt)# W2_fmlm	W2_flm	train_flow_map.py	configs/wt2.yaml model.cond=time loss.teacher=$DEQ_ROOT/runs/W2_flm/best.pt loss.boundary_prob=0 train.steps=20000 train.betas=[0.9,0.95]
-#first attempt, overfitted (runs moved to runs/_wt2_first_attempt)# W2_eqfm_distill_semigroup	W2_denoiser_timefree	train_flow_map.py	configs/wt2.yaml loss.teacher=$DEQ_ROOT/runs/W2_denoiser_timefree/best.pt train.steps=20000 train.betas=[0.9,0.95] loss.off_diagonal=semigroup
-#first attempt, overfitted (runs moved to runs/_wt2_first_attempt)# W2_eqfm_distill_lagrangian	W2_denoiser_timefree	train_flow_map.py	configs/wt2.yaml loss.teacher=$DEQ_ROOT/runs/W2_denoiser_timefree/best.pt train.steps=20000 train.betas=[0.9,0.95] loss.off_diagonal=lagrangian
-#first attempt, overfitted (runs moved to runs/_wt2_first_attempt)# W2_eqfm_distill_eulerian	W2_denoiser_timefree	train_flow_map.py	configs/wt2.yaml loss.teacher=$DEQ_ROOT/runs/W2_denoiser_timefree/best.pt train.steps=20000 train.betas=[0.9,0.95] loss.off_diagonal=eulerian
-#first attempt, overfitted (runs moved to runs/_wt2_first_attempt)# W2_dbtm	-	train_dbtm.py	configs/wt2.yaml train.val_every=0
-#first attempt, overfitted (runs moved to runs/_wt2_first_attempt)# W2_dbtm_ril	-	train_dbtm.py	configs/wt2.yaml train.val_every=0 dbtm.ril=true dbtm.ril_start=15000 dbtm.ril_frac=0.5
+# WikiText-2 baselines and direct-adaptation EqFM. Small model (6 blocks, width 384), dropout 0.3, 6000 steps with cosine decay, one GPU, batch 128.
+# Every run is evaluated at its best held-out checkpoint (best.pt).
+W2_flm	-	train_field.py	configs/wt2.yaml model.cond=time
+W2_denoiser_timefree	-	train_field.py	configs/wt2.yaml
+W2_eqfm_data_semigroup	-	train_flow_map.py	configs/wt2.yaml loss.off_diagonal=semigroup
+W2_eqfm_data_lagrangian	-	train_flow_map.py	configs/wt2.yaml loss.off_diagonal=lagrangian
+W2_eqfm_data_eulerian	-	train_flow_map.py	configs/wt2.yaml loss.off_diagonal=eulerian
+W2_eqfm_data_semigroup_repodefault	-	train_flow_map.py	configs/wt2.yaml loss.off_diagonal=semigroup loss.diag_time=uniform loss.stratified=false loss.jump_sampling=notes loss.boundary_prob=0 loss.whole_jump_prob=0
+W2_dbtm	-	train_dbtm.py	configs/wt2.yaml
+W2_dbtm_ril	-	train_dbtm.py	configs/wt2.yaml dbtm.ril=true dbtm.ril_start=3000 dbtm.ril_frac=0.5 dbtm.ril_refresh=1000
+W2_fmlm	W2_flm	train_flow_map.py	configs/wt2.yaml model.cond=time loss.teacher=$DEQ_ROOT/runs/W2_flm/best.pt loss.boundary_prob=0 train.betas=[0.9,0.95]
+W2_eqfm_distill_semigroup	W2_denoiser_timefree	train_flow_map.py	configs/wt2.yaml loss.teacher=$DEQ_ROOT/runs/W2_denoiser_timefree/best.pt train.betas=[0.9,0.95] loss.off_diagonal=semigroup
+W2_eqfm_distill_lagrangian	W2_denoiser_timefree	train_flow_map.py	configs/wt2.yaml loss.teacher=$DEQ_ROOT/runs/W2_denoiser_timefree/best.pt train.betas=[0.9,0.95] loss.off_diagonal=lagrangian
+W2_eqfm_distill_eulerian	W2_denoiser_timefree	train_flow_map.py	configs/wt2.yaml loss.teacher=$DEQ_ROOT/runs/W2_denoiser_timefree/best.pt train.betas=[0.9,0.95] loss.off_diagonal=eulerian

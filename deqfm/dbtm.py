@@ -94,3 +94,32 @@ def make_dbtm_loss(cfg, vocab_size):
         return loss, {"loss": loss.item(), **logs}
 
     return loss_fn
+
+
+def make_dbtm_val(cfg, vocab_size):
+    """Held-out loss for the transport map: mean cross-entropy of T(I_t) to the data for t spread uniformly over
+    (t_anchor, 1), on `eval.val_num` sequences of `eval.val_path`, with fixed noise (the anchor loss, on unseen text)."""
+    import numpy as np
+    if not cfg.eval.val_path:
+        return None
+    tokens = torch.from_numpy(np.asarray(np.load(cfg.eval.val_path, mmap_mode="r")[:cfg.eval.val_num]).astype(np.int64))
+    n = tokens.shape[0]
+    a = cfg.dbtm.t_anchor
+    times = (a + (1 - a) * (torch.arange(n) + 0.5) / n)[torch.randperm(n, generator=torch.Generator().manual_seed(0))]
+
+    @torch.no_grad()
+    def val(model):
+        dev = next(model.parameters()).device
+        was_training = model.training
+        model.eval()
+        gen = torch.Generator(device=dev).manual_seed(0)
+        total = 0.0
+        for i in range(0, n, 128):
+            tok, t = tokens[i:i + 128].to(dev), times[i:i + 128].to(dev).view(-1, 1, 1)
+            x1 = F.one_hot(tok, vocab_size).float()
+            x = (1 - t) * torch.randn(x1.shape, device=dev, generator=gen) + t * x1
+            total += F.cross_entropy(model(x, torch.ones(tok.shape[0], device=dev)).float().flatten(0, 1), tok.flatten(), reduction="sum").item()
+        model.train(was_training)
+        return total / tokens.numel()
+
+    return val

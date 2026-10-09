@@ -50,14 +50,20 @@ slot() {   # slot <index> <comma-separated gpu ids>
       $launch scripts/$script $args out_dir=runs/$picked ckpt_dir=$DEQ_ROOT/runs/$picked train.max_minutes=$left
       rc=$?; [ -f runs/$picked/INTERRUPTED ] && rc=3
       if [ $rc = 0 ] && [ ! -f runs/$picked/eval.json ]; then   # bounded by the walltime: an unfinished evaluation is redone
-        ck=$DEQ_ROOT/runs/$picked/last.pt      # a denoiser with a held-out loss is evaluated at its best checkpoint
-        [ $script = train_field.py ] && [ -f $DEQ_ROOT/runs/$picked/best.pt ] && ck=$DEQ_ROOT/runs/$picked/best.pt
+        ck=$DEQ_ROOT/runs/$picked/last.pt      # a run with a held-out loss is evaluated at its best checkpoint
+        [ -f $DEQ_ROOT/runs/$picked/best.pt ] && ck=$DEQ_ROOT/runs/$picked/best.pt
         timeout $(( END - $(date +%s) - 150 ))s $PY -u scripts/eval_lm.py $ck out=runs/$picked/eval.tmp.json
         rc=$?; [ $rc = 124 ] && rc=3; [ $rc != 0 ] && [ $rc != 3 ] && rc=4
         [ $rc = 0 ] && mv runs/$picked/eval.tmp.json runs/$picked/eval.json
       fi
+      ck=$DEQ_ROOT/runs/$picked/last.pt; [ -f $DEQ_ROOT/runs/$picked/best.pt ] && ck=$DEQ_ROOT/runs/$picked/best.pt
+      if [ $rc = 0 ] && [ $script != train_field.py ] && [ ! -f runs/$picked/eval_refine.json ]; then   # commit-and-renoise sampler of DBTM
+        timeout $(( END - $(date +%s) - 150 ))s $PY -u scripts/eval_lm.py $ck out=runs/$picked/eval_refine.tmp.json sampler=refine threshold=0.9
+        rc=$?; [ $rc = 124 ] && rc=3; [ $rc != 0 ] && [ $rc != 3 ] && rc=4
+        [ $rc = 0 ] && mv runs/$picked/eval_refine.tmp.json runs/$picked/eval_refine.json
+      fi
       if [ $rc = 0 ] && [ $script = train_flow_map.py ] && [ ! -f runs/$picked/eval_churn0.8.json ]; then   # stochastic sampler of FMLM
-        timeout $(( END - $(date +%s) - 150 ))s $PY -u scripts/eval_lm.py $DEQ_ROOT/runs/$picked/last.pt out=runs/$picked/eval_churn.tmp.json churn=0.8
+        timeout $(( END - $(date +%s) - 150 ))s $PY -u scripts/eval_lm.py $ck out=runs/$picked/eval_churn.tmp.json churn=0.8
         rc=$?; [ $rc = 124 ] && rc=3; [ $rc != 0 ] && [ $rc != 3 ] && rc=4
         [ $rc = 0 ] && mv runs/$picked/eval_churn.tmp.json runs/$picked/eval_churn0.8.json
       fi

@@ -1,12 +1,12 @@
 # WikiText-2 (raw), bert-base-uncased tokens (vocabulary 30522), blocks of 128 tokens: 18096 training sequences.
-# Create the data with scripts/prepare_wikitext2.py --out data. Small enough to train to convergence in a few hours:
-# the held-out denoising loss is tracked (best.pt keeps the best averaged weights) and samples are checked for copying.
+# Create the data with scripts/prepare_wikitext2.py --out data. Models overfit after 2k to 4k steps: the held-out
+# denoising loss is tracked, best.pt keeps the best averaged weights, and samples are checked for copying.
 out_dir: runs/wt2
 clock: exponential
 data: {name: blocks, path: data/wt2_train.bin, seq_len: 128}
-model: {arch: dit, dim: 512, depth: 8, heads: 8, dropout: 0.1, cond: duration}
+model: {arch: dit, dim: 384, depth: 6, heads: 6, dropout: 0.3, cond: duration}   # best held-out loss in the sweep (tasks_w2reg)
 loss: {diag_time: reparam, stratified: true, off_diagonal: semigroup, jump_sampling: reparam, whole_jump_prob: 0.03125,
        boundary_prob: 0.1, boundary_t: 0.9}
-train: {steps: 30000, batch_size: 128, lr: 3.0e-4, warmup: 1000, lr_decay: cosine, precision: "no", num_workers: 4,
-        save_every: 2500, log_every: 100, val_every: 500, keep_every: 5000}
+train: {steps: 6000, batch_size: 128, lr: 3.0e-4, warmup: 500, lr_decay: cosine, precision: "no", num_workers: 4,
+        save_every: 1000, log_every: 100, val_every: 250, keep_every: 2000}
 eval: {steps: [1, 2, 4, 8], num: 1024, batch: 128, grid: reparam, val_path: data/wt2_validation.bin, val_num: 1024}
