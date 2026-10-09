@@ -52,18 +52,20 @@ U_eul_end	released-flm-distillation	Time from state norm: eulerian, end jumps, f
 U_semi_end_cos	released-flm-distillation	Semigroup, end jumps, cosine, batch 512, paused at 44k steps
 D_eul_end	flow-map-distillation	Time from state norm: eulerian, own denoiser
 D_fmlm	flow-map-distillation	FMLM, own denoiser
-T_ref_b512	flow-map-from-data	Full size, reference recipe, batch 512
-T_ref	flow-map-from-data	Full size, reference recipe
-T_dropout	flow-map-from-data	Full size, with dropout
-T_semigroup	flow-map-from-data	Full size, semigroup target
-T_endjumps	flow-map-from-data	Full size, with end jumps
+T_ref_b512	flow-map-from-data	Full size, reference recipe, batch 512, stopped at 17k steps
+T_ref	flow-map-from-data	Full size, reference recipe, stopped at 59k steps
+T_dropout	flow-map-from-data	Full size, with dropout, stopped at 59k steps
+T_semigroup	flow-map-from-data	Full size, semigroup target, stopped at 73k steps
+T_endjumps	flow-map-from-data	Full size, with end jumps, stopped at 62k steps
 R_dropout	flow-map-from-data	Beckmann refinement, first attempt, from the dropout run
 R_endjumps	flow-map-from-data	Beckmann refinement, first attempt, from the end-jumps run
-P_context	flow-map-from-data	Partial context only
-P_selfdistill	flow-map-from-data	Partial context, self-distilled rollouts
+P_context	flow-map-from-data	Partial context only, stopped at 24k steps
+P_selfdistill	flow-map-from-data	Partial context, self-distilled rollouts, stopped at 15k steps
 P_paper	flow-map-from-data	Partial context, Beckmann rollout losses
-P_selfdistill_early	flow-map-from-data	Partial context, self-distilled rollouts, early start
-P_paper_early	flow-map-from-data	Partial context, Beckmann rollout losses, early start
-Q_sample	flow-map-from-data	Self-distilled rollouts, sample target
+P_selfdistill_early	flow-map-from-data	Partial context, self-distilled rollouts, early start, stopped at 8k steps
+P_paper_early	flow-map-from-data	Partial context, Beckmann rollout losses, early start, stopped at 5k steps
+Q_sample	flow-map-from-data	Self-distilled rollouts, sample target, stopped at 2.7k steps
 Q_soft	flow-map-from-data	Self-distilled rollouts, soft target
 Q_sample_frozen	flow-map-from-data	Self-distilled rollouts, sample target, frozen rollout
+C_onestage	flow-map-from-data	Clean run: one stage from data
+C_twostage	flow-map-distillation	Clean run: distilled from our own denoiser

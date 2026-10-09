@@ -17,7 +17,7 @@ import nb
 
 import deqfm.losses, deqfm.reparam, deqfm.sampling  # noqa: E401,F401  the @nb.core functions must be imported before nb.start
 
-COLLAPSE_ENTROPY = 3.9      # real LM1B text: 4.31
+COLLAPSE_ENTROPY = 2.0      # real LM1B text: 4.31; below 2 the samples are one or two repeated tokens
 
 QUESTIONS = {
     "denoiser-training": "Does a denoiser without a time input train as well as a time-conditioned one, and which law of $t$ is best?",
@@ -63,9 +63,10 @@ def record(name, names, stopped=False):
             cfg[k] = cfg[k].replace("/data/user_data/mdrieux/deqfm/", "")
     # Collapse: samples that repeat one token have entropy near 0 and a perplexity near 1, which the results table
     # would print as the best value. Such a perplexity is void: it is not logged, and the title says so.
-    collapsed = sorted({int(k) for e in evals.values() for k, m in e["steps"].items()
-                        if k.isdigit() and m["entropy"] < COLLAPSE_ENTROPY and (e.get("train_step") or 0) == max(
-                            (x.get("train_step") or 0) for x in evals.values())})
+    last_step = max((x.get("train_step") or 0) for x in evals.values()) if evals else 0
+    collapsed = sorted({int(k) for tag, e in evals.items() for k, m in e["steps"].items()      # flow-map sampler only
+                        if k.isdigit() and m["entropy"] < COLLAPSE_ENTROPY and (e.get("train_step") or 0) == last_step
+                        and not any(w in tag for w in ("churn", "refine", "keepnoise", "denoiser"))})
     if collapsed:
         title = (title + ": collapsed at " + ", ".join(str(k) for k in collapsed) + " step" + ("s" if collapsed != [1] else ""))[:100]
     titles = json.load(open("jobs/titles.json"))      # name -> [title, formula]
@@ -80,7 +81,8 @@ def record(name, names, stopped=False):
         run.log(step=r["step"], **{k: v for k, v in r.items() if k in ("loss", "diag", "off")})
     for tag, e in sorted(evals.items(), key=lambda kv: kv[1].get("train_step") or last):   # kept checkpoints, then the end
         suffix = ("_churn" if "churn" in tag else "_refine" if "refine" in tag           # refine: DBTM sampler
-                  else "_keepnoise" if "keepnoise" in tag else "")                        # same, noise kept between rounds
+                  else "_keepnoise" if "keepnoise" in tag                                 # same, noise kept between rounds
+                  else "_denoiser" if "denoiser" in tag else "")                          # Euler steps of the denoiser alone
         metrics = {}
         for k, m in e["steps"].items():
             if suffix and k == "1":     # one step has no churn: same number as the deterministic sampler

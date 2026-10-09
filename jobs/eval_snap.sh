@@ -11,6 +11,10 @@ one() { # step  [timeout seconds]
   if grep -q '"flow_map": true' $o.json && [ ! -f ${o}_churn0.8.json ]; then
     timeout ${t}s $PY -u scripts/eval_lm.py $ck out=${o}_churn.tmp.json churn=0.8 && mv ${o}_churn.tmp.json ${o}_churn0.8.json || return 1
   fi
+  # the denoiser inside a flow map, sampled alone with Euler steps (clean from-scratch runs)
+  if [[ $n == C_* ]] && [ ! -f ${o}_denoiser.json ]; then
+    timeout ${t}s $PY -u scripts/eval_lm.py $ck out=${o}_denoiser.tmp.json flow_map=false 'eval.steps=[32,128]' && mv ${o}_denoiser.tmp.json ${o}_denoiser.json || return 1
+  fi
   # DBTM sampler (commit and renoise), for the teacher-free runs compared with DBTM
   if [[ $n == T_* || $n == R_* || $n == [PQ]_* ]] && [ ! -f ${o}_refine.json ]; then
     timeout ${t}s $PY -u scripts/eval_lm.py $ck out=${o}_refine.tmp.json sampler=refine threshold=0.9 && mv ${o}_refine.tmp.json ${o}_refine.json || return 1

@@ -212,23 +212,23 @@
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, inputs \\cfg{model.cond}, batch \\cfg{train.batch_size} per GPU on 4 GPUs, \\cfg{train.steps} steps; teacher \\cfg{loss.teacher}"
  ],
  "T_ref_b512": [
-  "Full size, reference recipe, batch 512",
+  "Full size, reference recipe, batch 512, stopped at 17k steps",
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, no teacher, \\cfg{model.depth} blocks of width \\cfg{model.dim}, batch \\cfg{train.batch_size}, \\cfg{train.steps} steps; dropout \\cfg{model.dropout}, end jumps \\cfg{loss.end_jump_prob}; 4 GPUs"
  ],
  "T_ref": [
-  "Full size, reference recipe",
+  "Full size, reference recipe, stopped at 59k steps",
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, no teacher, \\cfg{model.depth} blocks of width \\cfg{model.dim}, batch \\cfg{train.batch_size}, \\cfg{train.steps} steps; dropout \\cfg{model.dropout}, end jumps \\cfg{loss.end_jump_prob}"
  ],
  "T_dropout": [
-  "Full size, with dropout",
+  "Full size, with dropout, stopped at 59k steps",
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, no teacher, \\cfg{model.depth} blocks of width \\cfg{model.dim}, batch \\cfg{train.batch_size}, \\cfg{train.steps} steps; dropout \\cfg{model.dropout}, end jumps \\cfg{loss.end_jump_prob}"
  ],
  "T_semigroup": [
-  "Full size, semigroup target",
+  "Full size, semigroup target, stopped at 73k steps",
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, no teacher, \\cfg{model.depth} blocks of width \\cfg{model.dim}, batch \\cfg{train.batch_size}, \\cfg{train.steps} steps; dropout \\cfg{model.dropout}, end jumps \\cfg{loss.end_jump_prob}"
  ],
  "T_endjumps": [
-  "Full size, with end jumps",
+  "Full size, with end jumps, stopped at 62k steps",
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, no teacher, \\cfg{model.depth} blocks of width \\cfg{model.dim}, batch \\cfg{train.batch_size}, \\cfg{train.steps} steps; dropout \\cfg{model.dropout}, end jumps \\cfg{loss.end_jump_prob}"
  ],
  "R_dropout": [
@@ -240,11 +240,11 @@
   "continued from \\cfg{train.init} with DBTM refinement: partial context \\cfg{loss.partial_context}, rollout of depth \\cfg{loss.ril_depth} on a fraction \\cfg{loss.ril_frac} of the batch, threshold \\cfg{loss.ril_threshold}, self-distillation from step \\cfg{loss.ril_distill_start}; $\\bar\\delta$ by \\cfg{loss.off_diagonal}, dropout \\cfg{model.dropout}, end jumps \\cfg{loss.end_jump_prob}"
  ],
  "P_context": [
-  "Partial context only",
+  "Partial context only, stopped at 24k steps",
   "continued from \\cfg{train.init}; partial context \\cfg{loss.partial_context}; rollouts from step \\cfg{loss.ril_start} on a fraction \\cfg{loss.ril_frac} of the batch, commit \\cfg{loss.ril_commit}, data loss weight \\cfg{loss.ril_weight}, self-distillation weight \\cfg{loss.ril_distill_weight} at temperature \\cfg{loss.ril_distill_temp}; dropout \\cfg{model.dropout}"
  ],
  "P_selfdistill": [
-  "Partial context, self-distilled rollouts",
+  "Partial context, self-distilled rollouts, stopped at 15k steps",
   "continued from \\cfg{train.init}; partial context \\cfg{loss.partial_context}; rollouts from step \\cfg{loss.ril_start} on a fraction \\cfg{loss.ril_frac} of the batch, commit \\cfg{loss.ril_commit}, data loss weight \\cfg{loss.ril_weight}, self-distillation weight \\cfg{loss.ril_distill_weight} at temperature \\cfg{loss.ril_distill_temp}; dropout \\cfg{model.dropout}"
  ],
  "P_paper": [
@@ -252,15 +252,15 @@
   "continued from \\cfg{train.init}; partial context \\cfg{loss.partial_context}; rollouts from step \\cfg{loss.ril_start} on a fraction \\cfg{loss.ril_frac} of the batch, commit \\cfg{loss.ril_commit}, data loss weight \\cfg{loss.ril_weight}, self-distillation weight \\cfg{loss.ril_distill_weight} at temperature \\cfg{loss.ril_distill_temp}; dropout \\cfg{model.dropout}"
  ],
  "P_selfdistill_early": [
-  "Partial context, self-distilled rollouts, early start",
+  "Partial context, self-distilled rollouts, early start, stopped at 8k steps",
   "continued from \\cfg{train.init}; partial context \\cfg{loss.partial_context}; rollouts from step \\cfg{loss.ril_start} on a fraction \\cfg{loss.ril_frac} of the batch, commit \\cfg{loss.ril_commit}, data loss weight \\cfg{loss.ril_weight}, self-distillation weight \\cfg{loss.ril_distill_weight} at temperature \\cfg{loss.ril_distill_temp}; dropout \\cfg{model.dropout}"
  ],
  "P_paper_early": [
-  "Partial context, Beckmann rollout losses, early start",
+  "Partial context, Beckmann rollout losses, early start, stopped at 5k steps",
   "continued from \\cfg{train.init}; partial context \\cfg{loss.partial_context}; rollouts from step \\cfg{loss.ril_start} on a fraction \\cfg{loss.ril_frac} of the batch, commit \\cfg{loss.ril_commit}, data loss weight \\cfg{loss.ril_weight}, self-distillation weight \\cfg{loss.ril_distill_weight} at temperature \\cfg{loss.ril_distill_temp}; dropout \\cfg{model.dropout}"
  ],
  "Q_sample": [
-  "Self-distilled rollouts, sample target",
+  "Self-distilled rollouts, sample target, stopped at 2.7k steps",
   "continued from \\cfg{train.init}; partial context \\cfg{loss.partial_context}; rollouts from step \\cfg{loss.ril_start} on a fraction \\cfg{loss.ril_frac} of the batch, commit \\cfg{loss.ril_commit}, data loss weight \\cfg{loss.ril_weight}, self-distillation target \\cfg{loss.ril_distill_target}; dropout \\cfg{model.dropout}"
  ],
  "Q_soft": [
@@ -270,5 +270,13 @@
  "Q_sample_frozen": [
   "Self-distilled rollouts, sample target, frozen rollout",
   "continued from \\cfg{train.init}; partial context \\cfg{loss.partial_context}; rollouts from step \\cfg{loss.ril_start} on a fraction \\cfg{loss.ril_frac} of the batch, commit \\cfg{loss.ril_commit}, played by \\cfg{loss.ril_rollout_net}, data loss weight \\cfg{loss.ril_weight}, self-distillation target \\cfg{loss.ril_distill_target}; dropout \\cfg{model.dropout}"
+ ],
+ "C_onestage": [
+  "Clean run: one stage from data",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, random start, batch \\cfg{train.batch_size} per GPU on 4 GPUs, \\cfg{train.steps} steps, $\\eta$ decay \\cfg{train.lr_decay}, dropout \\cfg{model.dropout}; teacher \\cfg{loss.teacher}"
+ ],
+ "C_twostage": [
+  "Clean run: distilled from our own denoiser",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, random start, batch \\cfg{train.batch_size} per GPU on 4 GPUs, \\cfg{train.steps} steps, $\\eta$ decay \\cfg{train.lr_decay}, dropout \\cfg{model.dropout}; teacher \\cfg{loss.teacher}"
  ]
 }
