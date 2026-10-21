@@ -6,6 +6,11 @@ $t$ and weight $w$ by the rule `loss.diag_time`:
     uniform: $t = (1 - \epsilon) u$, $w = \frac{1}{1 - t}$   // $\epsilon$ = `loss.t_eps`
     log_uniform: $t = 1 - \epsilon^{u}$, $w = \log(1 / \epsilon)$
     reparam: $t = \tau^{-1}(u)$, $w = 1$   // $\tau(t) = 1 - \frac{V}{V-1} P(\arg\max_v I_t^l \ne y^l)$
+if `loss.independent_times`: one time per position, $t^l$ and $w^l$ by the same rule from $u^l \sim \mathcal{U}[0, 1]$ drawn independently for every $l$; $I^l = (1 - t^l) x_0^l + t^l x_1^l$; $w^l$ replaces $w$ in $L(\theta)$
+if `loss.conf_paths`: elapsed time $s \sim \mathrm{Exp}(\rho)$, $q(s) = \rho e^{-\rho s}$   // $\rho$ = `loss.conf_s_rate`; replaces $u$, $t$, $w$, $I_t$
+    $\frac{d}{ds} I_s^l = a(I_s^l)(x_1^l - I_s^l)$, $I_0 = x_0$, $a(z) = 1 + \beta e^{-r(z) / \lambda}$, $r(z) = \min_v \lVert z - e_v \rVert^2$   // $\beta$ = `loss.conf_beta`, $\lambda$ = `loss.conf_lambda`; no network in the rate
+    $I_s^l = (1 - t^l) x_0^l + t^l x_1^l$, $\frac{d}{ds} \log(1 - t^l) = -a(I_s^l)$, integrated with `loss.conf_ode_steps` midpoint steps
+    $w = \frac{\omega(I_s)}{q(s)} \cdot \frac{2}{L V}$, $\omega(x) = \sum_l r(x^l)$   // $\frac{2}{LV}$: a constant, $w \approx 1$ near the noise when $\beta = 0$
 $I_t = (1 - t) x_0 + t x_1$
 clean positions $C$ (none by default); the state is $x^l = x_1^l$ for $l \in C$ and $x^l = I_t^l$ otherwise:
     if `loss.partial_context`: $l \in C$ with probability $f$, $f \sim \mathcal{U}[0,1]$, on a share `loss.context_frac` of the samples
@@ -45,4 +50,12 @@ for $k = 1, \dots, K$:
     $t'^l = \tau^{-1}(u'^l)$, $\kappa^l = \frac{t'^l - t^l}{1 - t^l}$, $x^l \leftarrow (1 - \kappa^l) x^l + \kappa^l p^l$ for positions with $u^l < 1$
     positions that reach $u'^l = 1$: $x^l \leftarrow$ one-hot of $\arg\max_v p^l_v$, and they no longer move
     $u \leftarrow u'$, $t \leftarrow t'$
+return $\arg\max_v x^l_v$ for every position $l$
+
+== Generating samples with the confidence rate
+input: steps $K$, horizon $S$, rate $a(z) = 1 + \beta e^{-r(z) / \lambda}$ as in training ($\beta = 0$: constant rate)
+$x \sim \mathcal{N}(0, I)$, $h = S / K$
+for $k = 1, \dots, K$:
+    $p = \hat D(x)$, $s^l = 1 - e^{-h a(x^l)}$
+    $x^l \leftarrow (1 - s^l) x^l + s^l p^l$ for every position
 return $\arg\max_v x^l_v$ for every position $l$

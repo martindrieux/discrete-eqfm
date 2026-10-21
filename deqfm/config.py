@@ -48,6 +48,13 @@ DEFAULTS = {
         "random_speed": 0.0,             # denoiser: beta_max > 0 gives one time per position, t^l = min(1, t (1 + beta g^l)),
                                          # g^l ~ U[0, 1], beta ~ U[0, beta_max], on a share context_frac of the samples
         "context_frac": 1.0,             # fraction of the samples that get clean positions
+        "independent_times": False,      # denoiser: one time per position, t^l drawn independently by diag_time (and its weight)
+        "conf_paths": False,             # denoiser: states on the confidence-rate paths dI^l/ds = a(I^l)(x_1^l - I^l),
+                                         # s ~ Exp(conf_s_rate), loss omega(I_s) CE / q(s) (losses.conf_rate_state)
+        "conf_beta": 4.0,                # a(z) = 1 + beta chi(z), chi(z) = exp(-r(z) / lambda), r(z) = min_v |z - e_v|^2
+        "conf_lambda": 1.0,              # lambda of chi; beta = 0 gives the constant rate a = 1
+        "conf_s_rate": 2.0,              # s ~ Exp(conf_s_rate)
+        "conf_ode_steps": 64,            # midpoint steps of the per-position path ODE (no network in it)
         "ril_frac": 0.0,                 # fraction of the batch rolled out through the refinement rounds (0: off)
         "ril_commit": "data",            # data: commit data tokens by the confidence on them (DBTM training) | model: commit
                                          # the model's own argmax tokens by their confidence (as at sampling time)

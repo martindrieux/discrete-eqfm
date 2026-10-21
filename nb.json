@@ -203,7 +203,13 @@
       "loss.position_speed_finish": "semigroup target of a position with $\\kappa^l = 1$ inside a partial jump: self = the model's own second leg; teacher = $\\bar D^l(x')$, $x'$ = landing state with that position left in place",
       "model.self_cond": "if true, the network takes a second input, a draft $\\hat p \\in \\Delta^V$ per position, embedded and added to the input: $h = W x + W_{sc} \\hat p$ ($\\hat p = 0$: no draft; self-conditioning of ELF, arXiv 2605.10938). At sampling, $\\hat p$ is the output of the previous call",
       "loss.self_cond_prob": "share of the rows trained with a draft $\\hat p = \\mathrm{sg}\\, f(y, 0 \\mid 0)$; the others get $\\hat p = 0$",
-      "loss.self_cond_view": "state $y$ the draft is computed from: same: $y = $ the training state | other: an independent noisy view of the same sequence, $y = I_{t'}$ with new noise, $t' \\sim q$ and its own clean positions"
+      "loss.self_cond_view": "state $y$ the draft is computed from: same: $y = $ the training state | other: an independent noisy view of the same sequence, $y = I_{t'}$ with new noise, $t' \\sim q$ and its own clean positions",
+      "loss.independent_times": "one time per position: $t^l$ drawn independently by `loss.diag_time` for every $l$, weight $w^l$ per position",
+      "loss.conf_paths": "states on the confidence-rate paths $\\frac{d}{ds} I_s^l = a(I_s^l)(x_1^l - I_s^l)$, $s \\sim \\mathrm{Exp}(\\rho)$, loss weight $\\omega(I_s) / q(s)$",
+      "loss.conf_beta": "$\\beta$ in $a(z) = 1 + \\beta e^{-r(z)/\\lambda}$; $\\beta = 0$: constant rate",
+      "loss.conf_lambda": "$\\lambda$ in $a(z) = 1 + \\beta e^{-r(z)/\\lambda}$, $r(z) = \\min_v \\lVert z - e_v \\rVert^2$",
+      "loss.conf_s_rate": "$\\rho$ in $s \\sim \\mathrm{Exp}(\\rho)$",
+      "loss.conf_ode_steps": "midpoint steps of the per-position path ODE"
     },
     "symbols": {
       "x_1": "one-hot matrix in $\\mathbb{R}^{L \\times V}$ of a data sequence $y$ of $L$ tokens from a vocabulary of size $V$",

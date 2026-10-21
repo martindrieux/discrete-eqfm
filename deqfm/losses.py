@@ -146,6 +146,45 @@ def speed_clock_state(score_fn, tokens, vocab_size, t, reparam, beta, power, bas
     return state(u), u >= 1
 
 
+def conf_distance(x):
+    """r(x^l) = min_v |x^l - e_v|^2 = |x^l|^2 - 2 max_v x^l_v + 1, per position: [B, L, V] -> [B, L]."""
+    return x.float().pow(2).sum(-1) - 2 * x.float().max(-1).values + 1
+
+
+@nb.core
+def conf_rate(r, beta, lam):
+    """a = 1 + beta chi, chi = exp(-r / lambda): positions close to a vertex of the simplex move faster."""
+    return 1 + beta * torch.exp(-r / lam)
+
+
+@nb.core
+@torch.no_grad()
+def conf_rate_state(tokens, vocab_size, s, beta, lam, steps=64):
+    """State at elapsed time s [B] on the confidence-rate path dI^l/ds = a(I^l) (x_1^l - I^l), I_0 = x_0 ~ N(0, I).
+
+    The path stays on the segment from x_0^l to x_1^l: I^l = (1 - t^l) x_0^l + t^l x_1^l with
+    d log(1 - t^l) / ds = -a(I^l), and r(I^l) is a function of t^l and three numbers of x_0^l (|x_0^l|^2, x_0^l at the
+    data token, the largest other entry), so the ODE is integrated per position with `steps` midpoint steps and no
+    [B, L, V] tensor inside the loop. No network: the rate is fixed. Returns (x, t [B, L], r [B, L] at the state)."""
+    x1 = F.one_hot(tokens, vocab_size).float()
+    x0 = torch.randn_like(x1)
+    n0 = x0.pow(2).sum(-1)
+    a0 = x0.gather(-1, tokens.unsqueeze(-1)).squeeze(-1)
+    m = x0.masked_fill(x1.bool(), float("-inf")).max(-1).values
+
+    def r_of(t):
+        c = 1 - t
+        return c * c * n0 + 2 * t * c * a0 + t * t + 1 - 2 * torch.maximum(c * a0 + t, c * m)
+
+    y = torch.zeros_like(n0)                       # y = log(1 - t)
+    h = (s / steps).view(-1, 1)
+    for _ in range(steps):
+        y_mid = y - 0.5 * h * conf_rate(r_of(1 - y.exp()), beta, lam)
+        y = y - h * conf_rate(r_of(1 - y_mid.exp()), beta, lam)
+    t = 1 - y.exp()
+    return (1 - _b(t)) * x0 + _b(t) * x1, t, r_of(t)
+
+
 def uniform01(batch, device, stratified=False):
     """U[0, 1] samples; `stratified` puts one sample in each of `batch` equal bins, in random order (as FLM does)."""
     u = torch.rand(batch, device=device)
@@ -194,6 +233,8 @@ def diagonal_data_loss(logits, tokens, weight, noisy=None):
     ce = F.cross_entropy(logits.float().flatten(0, 1), tokens.flatten(), reduction="none").view(tokens.shape)
     if noisy is not None:
         ce = ce * noisy
+    if weight.dim() == 2:      # one time per position: one weight per position
+        return (weight * ce).mean()
     return (weight * ce.mean(dim=1)).mean()
 
 

@@ -7,7 +7,7 @@ import torch
 
 import copy
 
-from .losses import (TARGETS, lagrangian_target_positions, position_speed_jump, position_speed_state, confidence, adaptive_speed_state, adaptive_state, diagonal_data_loss, jvp_forward, make_jvp_fd, ot_coupling, partial_context, random_speed_times,
+from .losses import (TARGETS, conf_rate_state, lagrangian_target_positions, position_speed_jump, position_speed_state, confidence, adaptive_speed_state, adaptive_state, diagonal_data_loss, jvp_forward, make_jvp_fd, ot_coupling, partial_context, random_speed_times,
                      refinement_rollout, refinement_round_loss, sample_diag_time, sample_jumps, sample_state,
                      soft_cross_entropy, speed_clock_state, uniform01)
 from .nets import make_fn, probs_fn
@@ -45,6 +45,22 @@ def make_field_loss(cfg, vocab_size, clock):
         t, w = sample_diag_time(tokens.shape[0], L.diag_time, L.t_eps, tokens.device, rep, L.stratified)
         fn = make_fn(model, cfg.model.cond, clock, vocab_size)
         noisy, logs = None, {}
+        if L.conf_paths:          # confidence-rate paths, elapsed time s ~ Exp(rate), occupation weight omega / q
+            B, Lq = tokens.shape
+            s = torch.distributions.Exponential(L.conf_s_rate).sample((B,)).to(tokens.device)
+            x, t_pos, r = conf_rate_state(tokens, vocab_size, s, L.conf_beta, L.conf_lambda, L.conf_ode_steps)
+            # omega(x) = sum_l r(x^l), q(s) = rate e^{-rate s}; divided by the constant L V / 2 (its value at a = 1
+            # near the noise) so that the loss reads as a cross-entropy in nats
+            w = r.sum(1) / (L.conf_s_rate * torch.exp(-L.conf_s_rate * s)) / (Lq * vocab_size / 2)
+            loss = diagonal_data_loss(fn(x, t_pos.mean(1), torch.zeros_like(s)), tokens, w)
+            return loss, {"loss": loss.item(), "t_mean": t_pos.mean().item(), "w_mean": w.mean().item()}
+        if L.independent_times:   # one time per position, each drawn by diag_time, with its own weight
+            B, Lq = tokens.shape
+            t_pos, w_pos = sample_diag_time(B * Lq, L.diag_time, L.t_eps, tokens.device, rep, L.stratified)
+            t_pos, w_pos = t_pos.view(B, Lq), w_pos.view(B, Lq)
+            x = sample_state(tokens, vocab_size, t_pos)
+            loss = diagonal_data_loss(fn(x, t_pos.mean(1), torch.zeros_like(t)), tokens, w_pos)
+            return loss, {"loss": loss.item()}
         if L.adaptive != "off" and getattr(loss_fn, "step", 0) >= L.adaptive_start:
             # a denoiser has no map to the end: its own output scores the positions
             score = probs_fn(make_fn(raw, cfg.model.cond, clock, vocab_size))

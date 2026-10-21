@@ -295,6 +295,25 @@ def sample_speed_clock(model, cond, clock, num, steps, beta=16.0, power=4.0, sco
 
 @nb.core
 @torch.no_grad()
+def sample_conf_rate(model, cond, clock, num, steps, s_max, beta, lam, device="cpu"):
+    """Sampler of the autonomous field with the confidence rate (training side: losses.conf_rate_state).
+
+    One evaluation per step, step length h = s_max / K in elapsed time:
+        p = D(x),   a^l = 1 + beta exp(-r(x^l) / lambda),   s^l = 1 - exp(-h a^l),   x^l <- (1 - s^l) x^l + s^l p^l.
+    No commits; argmax at the end. beta = 0 is the constant-rate Euler sampler on a grid uniform in log(1 - t)."""
+    from .losses import conf_distance, conf_rate
+    f = probs_fn(make_fn(model, cond, clock, model.vocab_size))
+    x = torch.randn(num, model.seq_len, model.vocab_size, device=device)
+    zeros, h = torch.zeros(num, device=device), s_max / steps
+    for _ in range(steps):
+        p = f(x, zeros, zeros)
+        k = (1 - torch.exp(-h * conf_rate(conf_distance(x), beta, lam))).unsqueeze(-1)
+        x = (1 - k) * x + k * p
+    return x.argmax(dim=-1)
+
+
+@nb.core
+@torch.no_grad()
 def sample_speed_map(model, cond, clock, num, steps, beta=4.0, power=1.0, device="cpu", noise_scale=1.0, shared=False):
     """Adaptive-speed sampler for a flow map with one duration per position (trained with loss.position_speed).
 
