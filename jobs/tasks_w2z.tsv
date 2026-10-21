@@ -1,0 +1,9 @@
+# WikiText-2: denoiser trained with one time per position, and a denoiser with clean positions that is told the time, 4 seeds.
+W2Z_times_s0	-	train_field.py	configs/wt2.yaml loss.random_speed=8 seed=0
+W2Z_times_s1	-	train_field.py	configs/wt2.yaml loss.random_speed=8 seed=1
+W2Z_times_s2	-	train_field.py	configs/wt2.yaml loss.random_speed=8 seed=2
+W2Z_times_s3	-	train_field.py	configs/wt2.yaml loss.random_speed=8 seed=3
+W2Z_timecond_s0	-	train_field.py	configs/wt2.yaml model.cond=time loss.partial_context=true loss.freeze_context=true seed=0
+W2Z_timecond_s1	-	train_field.py	configs/wt2.yaml model.cond=time loss.partial_context=true loss.freeze_context=true seed=1
+W2Z_timecond_s2	-	train_field.py	configs/wt2.yaml model.cond=time loss.partial_context=true loss.freeze_context=true seed=2
+W2Z_timecond_s3	-	train_field.py	configs/wt2.yaml model.cond=time loss.partial_context=true loss.freeze_context=true seed=3

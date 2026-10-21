@@ -1,0 +1,4 @@
+# LM1B: flow map with one duration per position against plain EqFM, same teacher (denoiser trained with clean positions),
+# same Lagrangian target, 20000 steps at effective batch 512. Compared at 8 jumps.
+L7_plain	-	train_flow_map.py	configs/lm1b.yaml loss.teacher=$DEQ_ROOT/runs/L1_denoiser_context/last.pt train.betas=[0.9,0.95] loss.jump_sampling=notes_reparam loss.boundary_prob=0 train.steps=20000 train.warmup=500 train.keep_every=10000 loss.off_diagonal=lagrangian loss.whole_jump_prob=0.03125
+L7_speed	-	train_flow_map.py	configs/lm1b.yaml loss.teacher=$DEQ_ROOT/runs/L1_denoiser_context/last.pt train.betas=[0.9,0.95] loss.jump_sampling=notes_reparam loss.boundary_prob=0 train.steps=20000 train.warmup=500 train.keep_every=10000 loss.off_diagonal=lagrangian loss.whole_jump_prob=0.03125 loss.position_speed=8

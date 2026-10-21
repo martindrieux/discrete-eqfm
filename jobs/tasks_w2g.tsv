@@ -1,0 +1,2 @@
+# Second seed of the plain time-free denoiser on WikiText-2, to size the seed-to-seed spread of the baseline.
+W2F_denoiser_plain_seed1	-	train_field.py	configs/wt2.yaml seed=1

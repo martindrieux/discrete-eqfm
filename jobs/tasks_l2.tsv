@@ -1,0 +1,6 @@
+# LM1B: pure EqFM (network told the duration only) distilled from the time-free denoiser obtained from the FLM checkpoint of its
+# authors, with the recipe found on WikiText-2: no auxiliary loss, state time in the decoding-error clock, durations of the notes.
+# 30000 steps at batch 128 (FMLM: 100000 steps at batch 512). Compared with FMLM released and the published Beckmann numbers.
+L2_eqfm_semigroup_wholejump	-	train_flow_map.py	configs/lm1b.yaml loss.teacher=$DEQ_ROOT/runs/F_field_timefree/last.pt train.betas=[0.9,0.95] loss.jump_sampling=notes_reparam loss.boundary_prob=0 train.steps=30000 train.warmup=500 train.keep_every=10000 loss.off_diagonal=semigroup loss.whole_jump_prob=0.03125
+L2_eqfm_eulerian	-	train_flow_map.py	configs/lm1b.yaml loss.teacher=$DEQ_ROOT/runs/F_field_timefree/last.pt train.betas=[0.9,0.95] loss.jump_sampling=notes_reparam loss.boundary_prob=0 train.steps=30000 train.warmup=500 train.keep_every=10000 loss.off_diagonal=eulerian loss.whole_jump_prob=0
+L2_eqfm_lagrangian	-	train_flow_map.py	configs/lm1b.yaml loss.teacher=$DEQ_ROOT/runs/F_field_timefree/last.pt train.betas=[0.9,0.95] loss.jump_sampling=notes_reparam loss.boundary_prob=0 train.steps=30000 train.warmup=500 train.keep_every=10000 loss.off_diagonal=lagrangian loss.whole_jump_prob=0

@@ -358,5 +358,549 @@
  "W2_eqfm_data_eulerian_repodefault": [
   "EqFM from data, Eulerian, repository defaults",
   "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}"
+ ],
+ "W2B_eqfm_data_context": [
+  "EqFM from data, partial context",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, inputs \\cfg{model.cond}, teacher \\cfg{loss.teacher}, clean context \\cfg{loss.partial_context}, rollouts on \\cfg{loss.ril_frac} of the batch from step \\cfg{loss.ril_start}, self-distillation weight \\cfg{loss.ril_distill_weight}"
+ ],
+ "W2B_eqfm_data_context_ril": [
+  "EqFM from data, partial context, refinement in the loop",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, inputs \\cfg{model.cond}, teacher \\cfg{loss.teacher}, clean context \\cfg{loss.partial_context}, rollouts on \\cfg{loss.ril_frac} of the batch from step \\cfg{loss.ril_start}, self-distillation weight \\cfg{loss.ril_distill_weight}"
+ ],
+ "W2B_eqfm_data_context_ril_sd": [
+  "EqFM from data, partial context, refinement in the loop, self-distillation",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, inputs \\cfg{model.cond}, teacher \\cfg{loss.teacher}, clean context \\cfg{loss.partial_context}, rollouts on \\cfg{loss.ril_frac} of the batch from step \\cfg{loss.ril_start}, self-distillation weight \\cfg{loss.ril_distill_weight}"
+ ],
+ "W2B_denoiser_context": [
+  "Time-free denoiser, partial context",
+  "$\\hat D$ inputs \\cfg{model.cond}, clean context \\cfg{loss.partial_context}, loss on the other positions, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}"
+ ],
+ "W2B_eqfm_distill_context": [
+  "EqFM distilled, partial context",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, inputs \\cfg{model.cond}, teacher \\cfg{loss.teacher}, clean context \\cfg{loss.partial_context}, rollouts on \\cfg{loss.ril_frac} of the batch from step \\cfg{loss.ril_start}, self-distillation weight \\cfg{loss.ril_distill_weight}"
+ ],
+ "W2B_eqfm_distill_context_ril": [
+  "EqFM distilled, partial context, refinement in the loop",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, inputs \\cfg{model.cond}, teacher \\cfg{loss.teacher}, clean context \\cfg{loss.partial_context}, rollouts on \\cfg{loss.ril_frac} of the batch from step \\cfg{loss.ril_start}, self-distillation weight \\cfg{loss.ril_distill_weight}"
+ ],
+ "W2B_eqfm_distill_context_ril_sd": [
+  "EqFM distilled, partial context, refinement in the loop, self-distillation",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, inputs \\cfg{model.cond}, teacher \\cfg{loss.teacher}, clean context \\cfg{loss.partial_context}, rollouts on \\cfg{loss.ril_frac} of the batch from step \\cfg{loss.ril_start}, self-distillation weight \\cfg{loss.ril_distill_weight}"
+ ],
+ "W2C_eqfm_data_semigroup": [
+  "EqFM from data, semigroup, durations of the notes, no auxiliary loss",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}"
+ ],
+ "W2C_eqfm_data_lagrangian": [
+  "EqFM from data, Lagrangian, durations of the notes, no auxiliary loss",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}"
+ ],
+ "W2C_eqfm_data_eulerian": [
+  "EqFM from data, Eulerian, durations of the notes, no auxiliary loss",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}"
+ ],
+ "W2C_eqfm_distill_semigroup": [
+  "EqFM distilled, semigroup, durations of the notes, no auxiliary loss",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}"
+ ],
+ "W2C_eqfm_distill_lagrangian": [
+  "EqFM distilled, Lagrangian, durations of the notes, no auxiliary loss",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}"
+ ],
+ "W2C_eqfm_distill_eulerian": [
+  "EqFM distilled, Eulerian, durations of the notes, no auxiliary loss",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}"
+ ],
+ "W2C_eqfm_data_semigroup_wholejump": [
+  "EqFM from data, semigroup, durations of the notes, forced whole jump",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "W2C_eqfm_distill_semigroup_wholejump": [
+  "EqFM distilled, semigroup, durations of the notes, forced whole jump",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "W2D_denoiser_context": [
+  "Time-free denoiser, random clean positions",
+  "$\\hat D$ on states with clean positions: random \\cfg{loss.partial_context} (share of samples \\cfg{loss.context_frac}), model-chosen \\cfg{loss.adaptive} (confidence $>$ \\cfg{loss.adaptive_h}, share \\cfg{loss.adaptive_frac}); loss on the other positions"
+ ],
+ "W2D_denoiser_adaptive": [
+  "Time-free denoiser, model-chosen clean positions",
+  "$\\hat D$ on states with clean positions: random \\cfg{loss.partial_context} (share of samples \\cfg{loss.context_frac}), model-chosen \\cfg{loss.adaptive} (confidence $>$ \\cfg{loss.adaptive_h}, share \\cfg{loss.adaptive_frac}); loss on the other positions"
+ ],
+ "W2D_eqfm_data_context": [
+  "EqFM from data, random clean positions",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, jumps by \\cfg{loss.jump_sampling}, teacher \\cfg{loss.teacher}; clean positions: random \\cfg{loss.partial_context} (share \\cfg{loss.context_frac}), model-chosen \\cfg{loss.adaptive} (confidence $>$ \\cfg{loss.adaptive_h}, share \\cfg{loss.adaptive_frac})"
+ ],
+ "W2D_eqfm_data_adaptive": [
+  "EqFM from data, model-chosen clean positions",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, jumps by \\cfg{loss.jump_sampling}, teacher \\cfg{loss.teacher}; clean positions: random \\cfg{loss.partial_context} (share \\cfg{loss.context_frac}), model-chosen \\cfg{loss.adaptive} (confidence $>$ \\cfg{loss.adaptive_h}, share \\cfg{loss.adaptive_frac})"
+ ],
+ "W2D_eqfm_distill_context": [
+  "EqFM distilled, random clean positions",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, jumps by \\cfg{loss.jump_sampling}, teacher \\cfg{loss.teacher}; clean positions: random \\cfg{loss.partial_context} (share \\cfg{loss.context_frac}), model-chosen \\cfg{loss.adaptive} (confidence $>$ \\cfg{loss.adaptive_h}, share \\cfg{loss.adaptive_frac})"
+ ],
+ "W2D_eqfm_distill_adaptive": [
+  "EqFM distilled, model-chosen clean positions",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, jumps by \\cfg{loss.jump_sampling}, teacher \\cfg{loss.teacher}; clean positions: random \\cfg{loss.partial_context} (share \\cfg{loss.context_frac}), model-chosen \\cfg{loss.adaptive} (confidence $>$ \\cfg{loss.adaptive_h}, share \\cfg{loss.adaptive_frac})"
+ ],
+ "W2E_eqfm_data_context_ril": [
+  "EqFM from data, random clean positions, refinement in the loop",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, inputs \\cfg{model.cond}, teacher \\cfg{loss.teacher}, clean context \\cfg{loss.partial_context}, rollouts on \\cfg{loss.ril_frac} of the batch from step \\cfg{loss.ril_start}, self-distillation weight \\cfg{loss.ril_distill_weight}"
+ ],
+ "W2E_eqfm_data_context_ril_sd": [
+  "EqFM from data, random clean positions, refinement in the loop, self-distillation",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, inputs \\cfg{model.cond}, teacher \\cfg{loss.teacher}, clean context \\cfg{loss.partial_context}, rollouts on \\cfg{loss.ril_frac} of the batch from step \\cfg{loss.ril_start}, self-distillation weight \\cfg{loss.ril_distill_weight}"
+ ],
+ "W2E_eqfm_distill_context_ril": [
+  "EqFM distilled, random clean positions, refinement in the loop",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, inputs \\cfg{model.cond}, teacher \\cfg{loss.teacher}, clean context \\cfg{loss.partial_context}, rollouts on \\cfg{loss.ril_frac} of the batch from step \\cfg{loss.ril_start}, self-distillation weight \\cfg{loss.ril_distill_weight}"
+ ],
+ "W2E_eqfm_distill_context_ril_sd": [
+  "EqFM distilled, random clean positions, refinement in the loop, self-distillation",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal}, inputs \\cfg{model.cond}, teacher \\cfg{loss.teacher}, clean context \\cfg{loss.partial_context}, rollouts on \\cfg{loss.ril_frac} of the batch from step \\cfg{loss.ril_start}, self-distillation weight \\cfg{loss.ril_distill_weight}"
+ ],
+ "W2F_denoiser_adaptive_h50": [
+  "Time-free denoiser, model-chosen clean positions, threshold 0.5",
+  "$\\hat D$ on states with clean positions: random \\cfg{loss.partial_context} (share of samples \\cfg{loss.context_frac}), model-chosen \\cfg{loss.adaptive} (confidence $>$ \\cfg{loss.adaptive_h}, share \\cfg{loss.adaptive_frac}); loss on the other positions"
+ ],
+ "W2F_denoiser_adaptive_h50_all": [
+  "Time-free denoiser, model-chosen clean positions on every sample, threshold 0.5",
+  "$\\hat D$ on states with clean positions: random \\cfg{loss.partial_context} (share of samples \\cfg{loss.context_frac}), model-chosen \\cfg{loss.adaptive} (confidence $>$ \\cfg{loss.adaptive_h}, share \\cfg{loss.adaptive_frac}); loss on the other positions"
+ ],
+ "W2F_denoiser_adaptive_h30": [
+  "Time-free denoiser, model-chosen clean positions, threshold 0.3",
+  "$\\hat D$ on states with clean positions: random \\cfg{loss.partial_context} (share of samples \\cfg{loss.context_frac}), model-chosen \\cfg{loss.adaptive} (confidence $>$ \\cfg{loss.adaptive_h}, share \\cfg{loss.adaptive_frac}); loss on the other positions"
+ ],
+ "W2F_denoiser_mixed_h50": [
+  "Time-free denoiser, half model-chosen, half random clean positions",
+  "$\\hat D$ on states with clean positions: random \\cfg{loss.partial_context} (share of samples \\cfg{loss.context_frac}), model-chosen \\cfg{loss.adaptive} (confidence $>$ \\cfg{loss.adaptive_h}, share \\cfg{loss.adaptive_frac}); loss on the other positions"
+ ],
+ "W2F_denoiser_context_all": [
+  "Time-free denoiser, random clean positions on every sample",
+  "$\\hat D$ on states with clean positions: random \\cfg{loss.partial_context} (share of samples \\cfg{loss.context_frac}), model-chosen \\cfg{loss.adaptive} (confidence $>$ \\cfg{loss.adaptive_h}, share \\cfg{loss.adaptive_frac}); loss on the other positions"
+ ],
+ "W2F_denoiser_plain_seed1": [
+  "Time-free denoiser, no clean positions (second seed)",
+  "$\\hat D$ on states with clean positions: random \\cfg{loss.partial_context} (share of samples \\cfg{loss.context_frac}), model-chosen \\cfg{loss.adaptive} (confidence $>$ \\cfg{loss.adaptive_h}, share \\cfg{loss.adaptive_frac}); loss on the other positions"
+ ],
+ "W2S_dbtm_s1": [
+  "Beckmann transport map, plain",
+  "$T(x)$ trained on transport + anchor ($t >$ \\cfg{dbtm.t_anchor}) + boundary losses, partial context \\cfg{dbtm.partial_context}, optimal-transport pairing \\cfg{dbtm.ot}; refinement in the loop \\cfg{dbtm.ril} from step \\cfg{dbtm.ril_start}; \\cfg{train.steps} steps of batch \\cfg{train.batch_size}"
+ ],
+ "W2S_dbtm_s2": [
+  "Beckmann transport map, plain",
+  "$T(x)$ trained on transport + anchor ($t >$ \\cfg{dbtm.t_anchor}) + boundary losses, partial context \\cfg{dbtm.partial_context}, optimal-transport pairing \\cfg{dbtm.ot}; refinement in the loop \\cfg{dbtm.ril} from step \\cfg{dbtm.ril_start}; \\cfg{train.steps} steps of batch \\cfg{train.batch_size}"
+ ],
+ "W2S_dbtm_ril_s1": [
+  "Beckmann transport map, refinement in the loop",
+  "$T(x)$ trained on transport + anchor ($t >$ \\cfg{dbtm.t_anchor}) + boundary losses, partial context \\cfg{dbtm.partial_context}, optimal-transport pairing \\cfg{dbtm.ot}; refinement in the loop \\cfg{dbtm.ril} from step \\cfg{dbtm.ril_start}; \\cfg{train.steps} steps of batch \\cfg{train.batch_size}"
+ ],
+ "W2S_dbtm_ril_s2": [
+  "Beckmann transport map, refinement in the loop",
+  "$T(x)$ trained on transport + anchor ($t >$ \\cfg{dbtm.t_anchor}) + boundary losses, partial context \\cfg{dbtm.partial_context}, optimal-transport pairing \\cfg{dbtm.ot}; refinement in the loop \\cfg{dbtm.ril} from step \\cfg{dbtm.ril_start}; \\cfg{train.steps} steps of batch \\cfg{train.batch_size}"
+ ],
+ "W2S_eqfm_data_s1": [
+  "EqFM from data, semigroup, durations of the notes, forced whole jump",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "W2S_eqfm_data_s2": [
+  "EqFM from data, semigroup, durations of the notes, forced whole jump",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "W2S_eqfm_distill_s1": [
+  "EqFM distilled, semigroup, durations of the notes, forced whole jump",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "W2S_eqfm_distill_s2": [
+  "EqFM distilled, semigroup, durations of the notes, forced whole jump",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "W2T_sg_nodrop_s0": [
+  "EqFM from data, semigroup, targets without dropout",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "W2T_sg_nodrop_s1": [
+  "EqFM from data, semigroup, targets without dropout",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "W2T_sg_nodrop_s2": [
+  "EqFM from data, semigroup, targets without dropout",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "W2T_sg_nodrop_ema_s0": [
+  "EqFM from data, semigroup, targets from averaged weights without dropout",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "W2T_sg_nodrop_ema_s1": [
+  "EqFM from data, semigroup, targets from averaged weights without dropout",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "W2T_sg_nodrop_ema_s2": [
+  "EqFM from data, semigroup, targets from averaged weights without dropout",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "W2T_lag_s1": [
+  "EqFM from data, Lagrangian, durations of the notes, no auxiliary loss",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "W2T_lag_s2": [
+  "EqFM from data, Lagrangian, durations of the notes, no auxiliary loss",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "W2T_lag_nodrop_s0": [
+  "EqFM from data, Lagrangian, targets without dropout",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "W2T_lag_nodrop_s1": [
+  "EqFM from data, Lagrangian, targets without dropout",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "W2T_lag_nodrop_s2": [
+  "EqFM from data, Lagrangian, targets without dropout",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "W2T_stage1_s0": [
+  "Time-free denoiser, 3000 steps (first stage)",
+  "$\\hat D$ inputs \\cfg{model.cond}, $t$ by \\cfg{loss.diag_time}, \\cfg{model.depth} blocks of width \\cfg{model.dim}, dropout \\cfg{model.dropout}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, best held-out loss kept"
+ ],
+ "W2T_twostage_s0": [
+  "EqFM in two stages from data, 3000 + 3000 steps",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "W2T_stage1_s1": [
+  "Time-free denoiser, 3000 steps (first stage)",
+  "$\\hat D$ inputs \\cfg{model.cond}, $t$ by \\cfg{loss.diag_time}, \\cfg{model.depth} blocks of width \\cfg{model.dim}, dropout \\cfg{model.dropout}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, best held-out loss kept"
+ ],
+ "W2T_twostage_s1": [
+  "EqFM in two stages from data, 3000 + 3000 steps",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "W2T_stage1_s2": [
+  "Time-free denoiser, 3000 steps (first stage)",
+  "$\\hat D$ inputs \\cfg{model.cond}, $t$ by \\cfg{loss.diag_time}, \\cfg{model.depth} blocks of width \\cfg{model.dim}, dropout \\cfg{model.dropout}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, best held-out loss kept"
+ ],
+ "W2T_twostage_s2": [
+  "EqFM in two stages from data, 3000 + 3000 steps",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "L1_denoiser_context": [
+  "Time-free denoiser from FLM, random clean positions",
+  "$\\hat D$ on states with clean positions: random \\cfg{loss.partial_context} (share of samples \\cfg{loss.context_frac}), model-chosen \\cfg{loss.adaptive} (confidence $>$ \\cfg{loss.adaptive_h}, share \\cfg{loss.adaptive_frac}); loss on the other positions"
+ ],
+ "L1_denoiser_control": [
+  "Time-free denoiser from FLM, no clean positions (control)",
+  "$\\hat D$ on states with clean positions: random \\cfg{loss.partial_context} (share of samples \\cfg{loss.context_frac}), model-chosen \\cfg{loss.adaptive} (confidence $>$ \\cfg{loss.adaptive_h}, share \\cfg{loss.adaptive_frac}); loss on the other positions"
+ ],
+ "W2F_denoiser_context_all_s2": [
+  "Time-free denoiser, random clean positions on every sample",
+  "$\\hat D$ on states with clean positions: random \\cfg{loss.partial_context} (share of samples \\cfg{loss.context_frac}), model-chosen \\cfg{loss.adaptive} (confidence $>$ \\cfg{loss.adaptive_h}, share \\cfg{loss.adaptive_frac}); loss on the other positions"
+ ],
+ "W2F_denoiser_context_all_s3": [
+  "Time-free denoiser, random clean positions on every sample",
+  "$\\hat D$ on states with clean positions: random \\cfg{loss.partial_context} (share of samples \\cfg{loss.context_frac}), model-chosen \\cfg{loss.adaptive} (confidence $>$ \\cfg{loss.adaptive_h}, share \\cfg{loss.adaptive_frac}); loss on the other positions"
+ ],
+ "L2_eqfm_semigroup_wholejump": [
+  "EqFM distilled from the FLM denoiser, semigroup, forced whole jump, no auxiliary loss",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "L2_eqfm_eulerian": [
+  "EqFM distilled from the FLM denoiser, Eulerian, no auxiliary loss",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "L2_eqfm_lagrangian": [
+  "EqFM distilled from the FLM denoiser, Lagrangian, no auxiliary loss",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "W2U_long2_s0": [
+  "EqFM in two stages from data, 2000 + 4000 steps",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "W2U_long2_s1": [
+  "EqFM in two stages from data, 2000 + 4000 steps",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "W2U_long2_s2": [
+  "EqFM in two stages from data, 2000 + 4000 steps",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "W2U_whole8_s0": [
+  "EqFM in two stages from data, 3000 + 3000 steps, forced whole jump 1 in 8",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "W2U_whole8_s1": [
+  "EqFM in two stages from data, 3000 + 3000 steps, forced whole jump 1 in 8",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "W2U_whole8_s2": [
+  "EqFM in two stages from data, 3000 + 3000 steps, forced whole jump 1 in 8",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "W2U_eul_s0": [
+  "EqFM in two stages from data, 3000 + 3000 steps, Eulerian target",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "W2U_eul_s1": [
+  "EqFM in two stages from data, 3000 + 3000 steps, Eulerian target",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "W2U_eul_s2": [
+  "EqFM in two stages from data, 3000 + 3000 steps, Eulerian target",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "L3_lag_sgwhole": [
+  "EqFM distilled from the FLM denoiser, Lagrangian, semigroup target on whole jumps",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "L3_eul_sgwhole": [
+  "EqFM distilled from the FLM denoiser, Eulerian, semigroup target on whole jumps",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "L3_sg_ema": [
+  "EqFM distilled from the FLM denoiser, semigroup, targets from averaged weights without dropout",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "L3_sg_lr1": [
+  "EqFM distilled from the FLM denoiser, semigroup, learning rate 1e-4",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "L3_lag_sgwhole_lr1": [
+  "EqFM distilled from the FLM denoiser, Lagrangian, semigroup target on whole jumps, learning rate 1e-4",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "L4_lagrangian_long": [
+  "EqFM distilled from the FLM denoiser, Lagrangian, continued at batch 512",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "L4_lagrangian_sgwhole_long": [
+  "EqFM from the FLM denoiser, Lagrangian, semigroup target on whole jumps, continued at batch 512",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "W2V_onestep_s0": [
+  "One-step map trained on the denoiser's continuous-speed samples",
+  "$L = \\mathbb{E}_{x_0}[-y(x_0) \\cdot \\log \\hat\\delta_1(x_0)]$, $y(x_0)$ = output of the \\cfg{sdist.K}-step continuous adaptive-speed sampler ($\\psi = $ \\cfg{sdist.base} $+$ \\cfg{sdist.beta} $g$) of a frozen denoiser trained with random clean positions, started at the noise $x_0$; student starts from the denoiser's weights, \\cfg{train.steps} steps"
+ ],
+ "W2V_onestep_s1": [
+  "One-step map trained on the denoiser's continuous-speed samples",
+  "$L = \\mathbb{E}_{x_0}[-y(x_0) \\cdot \\log \\hat\\delta_1(x_0)]$, $y(x_0)$ = output of the \\cfg{sdist.K}-step continuous adaptive-speed sampler ($\\psi = $ \\cfg{sdist.base} $+$ \\cfg{sdist.beta} $g$) of a frozen denoiser trained with random clean positions, started at the noise $x_0$; student starts from the denoiser's weights, \\cfg{train.steps} steps"
+ ],
+ "W2V_onestep_s2": [
+  "One-step map trained on the denoiser's continuous-speed samples",
+  "$L = \\mathbb{E}_{x_0}[-y(x_0) \\cdot \\log \\hat\\delta_1(x_0)]$, $y(x_0)$ = output of the \\cfg{sdist.K}-step continuous adaptive-speed sampler ($\\psi = $ \\cfg{sdist.base} $+$ \\cfg{sdist.beta} $g$) of a frozen denoiser trained with random clean positions, started at the noise $x_0$; student starts from the denoiser's weights, \\cfg{train.steps} steps"
+ ],
+ "W2V_onestep_s3": [
+  "One-step map trained on the denoiser's continuous-speed samples",
+  "$L = \\mathbb{E}_{x_0}[-y(x_0) \\cdot \\log \\hat\\delta_1(x_0)]$, $y(x_0)$ = output of the \\cfg{sdist.K}-step continuous adaptive-speed sampler ($\\psi = $ \\cfg{sdist.base} $+$ \\cfg{sdist.beta} $g$) of a frozen denoiser trained with random clean positions, started at the noise $x_0$; student starts from the denoiser's weights, \\cfg{train.steps} steps"
+ ],
+ "W2W_plain_s0": [
+  "Plain EqFM, semigroup target",
+  "One duration for the whole sequence: $\\hat\\delta_{\\sigma_3}(x) \\leftarrow \\gamma\\hat\\delta_{\\sigma_1}(x) + (1-\\gamma)\\hat\\delta_{\\sigma_2}(\\hat\\Phi_{\\sigma_1}(x))$; teacher $\\bar D$ = denoiser trained with random clean positions; no auxiliary loss"
+ ],
+ "W2W_plain_s1": [
+  "Plain EqFM, semigroup target",
+  "One duration for the whole sequence: $\\hat\\delta_{\\sigma_3}(x) \\leftarrow \\gamma\\hat\\delta_{\\sigma_1}(x) + (1-\\gamma)\\hat\\delta_{\\sigma_2}(\\hat\\Phi_{\\sigma_1}(x))$; teacher $\\bar D$ = denoiser trained with random clean positions; no auxiliary loss"
+ ],
+ "W2W_plain_s2": [
+  "Plain EqFM, semigroup target",
+  "One duration for the whole sequence: $\\hat\\delta_{\\sigma_3}(x) \\leftarrow \\gamma\\hat\\delta_{\\sigma_1}(x) + (1-\\gamma)\\hat\\delta_{\\sigma_2}(\\hat\\Phi_{\\sigma_1}(x))$; teacher $\\bar D$ = denoiser trained with random clean positions; no auxiliary loss"
+ ],
+ "W2W_plain_s3": [
+  "Plain EqFM, semigroup target",
+  "One duration for the whole sequence: $\\hat\\delta_{\\sigma_3}(x) \\leftarrow \\gamma\\hat\\delta_{\\sigma_1}(x) + (1-\\gamma)\\hat\\delta_{\\sigma_2}(\\hat\\Phi_{\\sigma_1}(x))$; teacher $\\bar D$ = denoiser trained with random clean positions; no auxiliary loss"
+ ],
+ "W2W_speed_s0": [
+  "Adaptive flow map, semigroup target",
+  "$u^l = \\min(1, s(1+\\beta r^l))$, $s=\\tau(t)$, $r^l \\sim \\mathcal{U}[0,1]$, $\\beta \\sim \\mathcal{U}[0,$\\cfg{loss.position_speed}$]$; $u'^l = \\min(1, u^l + du(1+\\beta g^l))$, $g^l = \\max_v \\bar D^l_v(x)$, $\\kappa^l = \\frac{\\tau^{-1}(u'^l)-t^l}{1-t^l}$. Target: semigroup, first leg $a\\kappa$, $a \\sim \\mathcal{U}[0,1]$"
+ ],
+ "W2W_speed_s1": [
+  "Adaptive flow map, semigroup target",
+  "$u^l = \\min(1, s(1+\\beta r^l))$, $s=\\tau(t)$, $r^l \\sim \\mathcal{U}[0,1]$, $\\beta \\sim \\mathcal{U}[0,$\\cfg{loss.position_speed}$]$; $u'^l = \\min(1, u^l + du(1+\\beta g^l))$, $g^l = \\max_v \\bar D^l_v(x)$, $\\kappa^l = \\frac{\\tau^{-1}(u'^l)-t^l}{1-t^l}$. Target: semigroup, first leg $a\\kappa$, $a \\sim \\mathcal{U}[0,1]$"
+ ],
+ "W2W_speed_s2": [
+  "Adaptive flow map, semigroup target",
+  "$u^l = \\min(1, s(1+\\beta r^l))$, $s=\\tau(t)$, $r^l \\sim \\mathcal{U}[0,1]$, $\\beta \\sim \\mathcal{U}[0,$\\cfg{loss.position_speed}$]$; $u'^l = \\min(1, u^l + du(1+\\beta g^l))$, $g^l = \\max_v \\bar D^l_v(x)$, $\\kappa^l = \\frac{\\tau^{-1}(u'^l)-t^l}{1-t^l}$. Target: semigroup, first leg $a\\kappa$, $a \\sim \\mathcal{U}[0,1]$"
+ ],
+ "W2W_speed_s3": [
+  "Adaptive flow map, semigroup target",
+  "$u^l = \\min(1, s(1+\\beta r^l))$, $s=\\tau(t)$, $r^l \\sim \\mathcal{U}[0,1]$, $\\beta \\sim \\mathcal{U}[0,$\\cfg{loss.position_speed}$]$; $u'^l = \\min(1, u^l + du(1+\\beta g^l))$, $g^l = \\max_v \\bar D^l_v(x)$, $\\kappa^l = \\frac{\\tau^{-1}(u'^l)-t^l}{1-t^l}$. Target: semigroup, first leg $a\\kappa$, $a \\sim \\mathcal{U}[0,1]$"
+ ],
+ "W2W_speedlag_s0": [
+  "Adaptive flow map, Lagrangian target",
+  "$u^l = \\min(1, s(1+\\beta r^l))$, $s=\\tau(t)$, $r^l \\sim \\mathcal{U}[0,1]$, $\\beta \\sim \\mathcal{U}[0,$\\cfg{loss.position_speed}$]$; $u'^l = \\min(1, u^l + du(1+\\beta g^l))$, $g^l = \\max_v \\bar D^l_v(x)$, $\\kappa^l = \\frac{\\tau^{-1}(u'^l)-t^l}{1-t^l}$. Target: $\\bar D(\\hat\\Phi(x)) - (1-\\kappa^l)\\partial_a\\hat\\delta(x, a\\kappa)|_{a=1}$"
+ ],
+ "W2W_speedlag_s1": [
+  "Adaptive flow map, Lagrangian target",
+  "$u^l = \\min(1, s(1+\\beta r^l))$, $s=\\tau(t)$, $r^l \\sim \\mathcal{U}[0,1]$, $\\beta \\sim \\mathcal{U}[0,$\\cfg{loss.position_speed}$]$; $u'^l = \\min(1, u^l + du(1+\\beta g^l))$, $g^l = \\max_v \\bar D^l_v(x)$, $\\kappa^l = \\frac{\\tau^{-1}(u'^l)-t^l}{1-t^l}$. Target: $\\bar D(\\hat\\Phi(x)) - (1-\\kappa^l)\\partial_a\\hat\\delta(x, a\\kappa)|_{a=1}$"
+ ],
+ "W2W_speedlag_s2": [
+  "Adaptive flow map, Lagrangian target",
+  "$u^l = \\min(1, s(1+\\beta r^l))$, $s=\\tau(t)$, $r^l \\sim \\mathcal{U}[0,1]$, $\\beta \\sim \\mathcal{U}[0,$\\cfg{loss.position_speed}$]$; $u'^l = \\min(1, u^l + du(1+\\beta g^l))$, $g^l = \\max_v \\bar D^l_v(x)$, $\\kappa^l = \\frac{\\tau^{-1}(u'^l)-t^l}{1-t^l}$. Target: $\\bar D(\\hat\\Phi(x)) - (1-\\kappa^l)\\partial_a\\hat\\delta(x, a\\kappa)|_{a=1}$"
+ ],
+ "W2W_speedlag_s3": [
+  "Adaptive flow map, Lagrangian target",
+  "$u^l = \\min(1, s(1+\\beta r^l))$, $s=\\tau(t)$, $r^l \\sim \\mathcal{U}[0,1]$, $\\beta \\sim \\mathcal{U}[0,$\\cfg{loss.position_speed}$]$; $u'^l = \\min(1, u^l + du(1+\\beta g^l))$, $g^l = \\max_v \\bar D^l_v(x)$, $\\kappa^l = \\frac{\\tau^{-1}(u'^l)-t^l}{1-t^l}$. Target: $\\bar D(\\hat\\Phi(x)) - (1-\\kappa^l)\\partial_a\\hat\\delta(x, a\\kappa)|_{a=1}$"
+ ],
+ "W2X_lagplain_s0": [
+  "Plain EqFM, Lagrangian target",
+  "$\\beta = 0$: one duration $\\kappa$ for the sequence. Target: $\\bar D(\\hat\\Phi_\\kappa(x)) - (1-\\kappa)\\kappa\\partial_\\kappa\\hat\\delta_\\kappa(x)$; a jump to the end ($\\kappa = 1$) gets $\\bar D(x)$"
+ ],
+ "W2X_lagplain_s1": [
+  "Plain EqFM, Lagrangian target",
+  "$\\beta = 0$: one duration $\\kappa$ for the sequence. Target: $\\bar D(\\hat\\Phi_\\kappa(x)) - (1-\\kappa)\\kappa\\partial_\\kappa\\hat\\delta_\\kappa(x)$; a jump to the end ($\\kappa = 1$) gets $\\bar D(x)$"
+ ],
+ "W2X_lagplain_s2": [
+  "Plain EqFM, Lagrangian target",
+  "$\\beta = 0$: one duration $\\kappa$ for the sequence. Target: $\\bar D(\\hat\\Phi_\\kappa(x)) - (1-\\kappa)\\kappa\\partial_\\kappa\\hat\\delta_\\kappa(x)$; a jump to the end ($\\kappa = 1$) gets $\\bar D(x)$"
+ ],
+ "W2X_lagplain_s3": [
+  "Plain EqFM, Lagrangian target",
+  "$\\beta = 0$: one duration $\\kappa$ for the sequence. Target: $\\bar D(\\hat\\Phi_\\kappa(x)) - (1-\\kappa)\\kappa\\partial_\\kappa\\hat\\delta_\\kappa(x)$; a jump to the end ($\\kappa = 1$) gets $\\bar D(x)$"
+ ],
+ "W2X_lagspeed_s0": [
+  "Adaptive flow map, Lagrangian target, finishing positions held",
+  "$u^l = \\min(1, s(1+\\beta r^l))$, $s=\\tau(t)$, $r^l \\sim \\mathcal{U}[0,1]$, $\\beta \\sim \\mathcal{U}[0,$\\cfg{loss.position_speed}$]$; $u'^l = \\min(1, u^l + du(1+\\beta g^l))$, $g^l = \\max_v \\bar D^l_v(x)$, $\\kappa^l = \\frac{\\tau^{-1}(u'^l)-t^l}{1-t^l}$. Target: $\\bar D(x') - (1-\\kappa^l)\\partial_a\\hat\\delta(x, a\\kappa)|_{a=1}$, $x'^l = x^l$ if $\\kappa^l = 1$, else $\\hat\\Phi^l(x)$"
+ ],
+ "W2X_lagspeed_s1": [
+  "Adaptive flow map, Lagrangian target, finishing positions held",
+  "$u^l = \\min(1, s(1+\\beta r^l))$, $s=\\tau(t)$, $r^l \\sim \\mathcal{U}[0,1]$, $\\beta \\sim \\mathcal{U}[0,$\\cfg{loss.position_speed}$]$; $u'^l = \\min(1, u^l + du(1+\\beta g^l))$, $g^l = \\max_v \\bar D^l_v(x)$, $\\kappa^l = \\frac{\\tau^{-1}(u'^l)-t^l}{1-t^l}$. Target: $\\bar D(x') - (1-\\kappa^l)\\partial_a\\hat\\delta(x, a\\kappa)|_{a=1}$, $x'^l = x^l$ if $\\kappa^l = 1$, else $\\hat\\Phi^l(x)$"
+ ],
+ "W2X_lagspeed_s2": [
+  "Adaptive flow map, Lagrangian target, finishing positions held",
+  "$u^l = \\min(1, s(1+\\beta r^l))$, $s=\\tau(t)$, $r^l \\sim \\mathcal{U}[0,1]$, $\\beta \\sim \\mathcal{U}[0,$\\cfg{loss.position_speed}$]$; $u'^l = \\min(1, u^l + du(1+\\beta g^l))$, $g^l = \\max_v \\bar D^l_v(x)$, $\\kappa^l = \\frac{\\tau^{-1}(u'^l)-t^l}{1-t^l}$. Target: $\\bar D(x') - (1-\\kappa^l)\\partial_a\\hat\\delta(x, a\\kappa)|_{a=1}$, $x'^l = x^l$ if $\\kappa^l = 1$, else $\\hat\\Phi^l(x)$"
+ ],
+ "W2X_lagspeed_s3": [
+  "Adaptive flow map, Lagrangian target, finishing positions held",
+  "$u^l = \\min(1, s(1+\\beta r^l))$, $s=\\tau(t)$, $r^l \\sim \\mathcal{U}[0,1]$, $\\beta \\sim \\mathcal{U}[0,$\\cfg{loss.position_speed}$]$; $u'^l = \\min(1, u^l + du(1+\\beta g^l))$, $g^l = \\max_v \\bar D^l_v(x)$, $\\kappa^l = \\frac{\\tau^{-1}(u'^l)-t^l}{1-t^l}$. Target: $\\bar D(x') - (1-\\kappa^l)\\partial_a\\hat\\delta(x, a\\kappa)|_{a=1}$, $x'^l = x^l$ if $\\kappa^l = 1$, else $\\hat\\Phi^l(x)$"
+ ],
+ "W2Y_speedsg_s0": [
+  "Adaptive flow map, semigroup target, finishing positions from the teacher",
+  "$u^l = \\min(1, s(1+\\beta r^l))$, $s=\\tau(t)$, $r^l \\sim \\mathcal{U}[0,1]$, $\\beta \\sim \\mathcal{U}[0,$\\cfg{loss.position_speed}$]$; $u'^l = \\min(1, u^l + du(1+\\beta g^l))$, $g^l = \\max_v \\bar D^l_v(x)$, $\\kappa^l = \\frac{\\tau^{-1}(u'^l)-t^l}{1-t^l}$. Target: semigroup, first leg $a\\kappa$; if $\\kappa^l = 1$: $\\bar D^l(x')$, $x'$ = landing state, $l$ held"
+ ],
+ "W2Y_speedsg_s1": [
+  "Adaptive flow map, semigroup target, finishing positions from the teacher",
+  "$u^l = \\min(1, s(1+\\beta r^l))$, $s=\\tau(t)$, $r^l \\sim \\mathcal{U}[0,1]$, $\\beta \\sim \\mathcal{U}[0,$\\cfg{loss.position_speed}$]$; $u'^l = \\min(1, u^l + du(1+\\beta g^l))$, $g^l = \\max_v \\bar D^l_v(x)$, $\\kappa^l = \\frac{\\tau^{-1}(u'^l)-t^l}{1-t^l}$. Target: semigroup, first leg $a\\kappa$; if $\\kappa^l = 1$: $\\bar D^l(x')$, $x'$ = landing state, $l$ held"
+ ],
+ "W2Y_speedsg_s2": [
+  "Adaptive flow map, semigroup target, finishing positions from the teacher",
+  "$u^l = \\min(1, s(1+\\beta r^l))$, $s=\\tau(t)$, $r^l \\sim \\mathcal{U}[0,1]$, $\\beta \\sim \\mathcal{U}[0,$\\cfg{loss.position_speed}$]$; $u'^l = \\min(1, u^l + du(1+\\beta g^l))$, $g^l = \\max_v \\bar D^l_v(x)$, $\\kappa^l = \\frac{\\tau^{-1}(u'^l)-t^l}{1-t^l}$. Target: semigroup, first leg $a\\kappa$; if $\\kappa^l = 1$: $\\bar D^l(x')$, $x'$ = landing state, $l$ held"
+ ],
+ "W2Y_speedsg_s3": [
+  "Adaptive flow map, semigroup target, finishing positions from the teacher",
+  "$u^l = \\min(1, s(1+\\beta r^l))$, $s=\\tau(t)$, $r^l \\sim \\mathcal{U}[0,1]$, $\\beta \\sim \\mathcal{U}[0,$\\cfg{loss.position_speed}$]$; $u'^l = \\min(1, u^l + du(1+\\beta g^l))$, $g^l = \\max_v \\bar D^l_v(x)$, $\\kappa^l = \\frac{\\tau^{-1}(u'^l)-t^l}{1-t^l}$. Target: semigroup, first leg $a\\kappa$; if $\\kappa^l = 1$: $\\bar D^l(x')$, $x'$ = landing state, $l$ held"
+ ],
+ "L5_onestep_s0": [
+  "One-step map trained on the denoiser's continuous-speed samples",
+  "$L = \\mathbb{E}_{x_0}[-y(x_0) \\cdot \\log \\hat\\delta_1(x_0)]$, $y(x_0)$ = output of the \\cfg{sdist.K}-step continuous adaptive-speed sampler ($\\psi = $ \\cfg{sdist.base} $+$ \\cfg{sdist.beta} $g$) of a frozen denoiser trained with random clean positions, started at the noise $x_0$; student starts from the denoiser's weights, \\cfg{train.steps} steps"
+ ],
+ "L5_onestep_s1": [
+  "One-step map trained on the denoiser's continuous-speed samples",
+  "$L = \\mathbb{E}_{x_0}[-y(x_0) \\cdot \\log \\hat\\delta_1(x_0)]$, $y(x_0)$ = output of the \\cfg{sdist.K}-step continuous adaptive-speed sampler ($\\psi = $ \\cfg{sdist.base} $+$ \\cfg{sdist.beta} $g$) of a frozen denoiser trained with random clean positions, started at the noise $x_0$; student starts from the denoiser's weights, \\cfg{train.steps} steps"
+ ],
+ "L7_plain": [
+  "Plain EqFM, Lagrangian target",
+  "One duration $\\kappa$ for the sequence. Target: $\\bar D(\\hat\\Phi_\\kappa(x)) - (1-\\kappa)\\kappa\\partial_\\kappa\\hat\\delta_\\kappa(x)$; a jump to the end ($\\kappa = 1$) gets $\\bar D(x)$"
+ ],
+ "L7_speed": [
+  "Adaptive flow map, Lagrangian target",
+  "$u^l = \\min(1, s(1+\\beta r^l))$, $s=\\tau(t)$, $r^l \\sim \\mathcal{U}[0,1]$, $\\beta \\sim \\mathcal{U}[0,$\\cfg{loss.position_speed}$]$; $u'^l = \\min(1, u^l + du(1+\\beta g^l))$, $g^l = \\max_v \\bar D^l_v(x)$, $\\kappa^l = \\frac{\\tau^{-1}(u'^l)-t^l}{1-t^l}$. Target: $\\bar D(x') - (1-\\kappa^l)\\partial_a\\hat\\delta(x, a\\kappa)|_{a=1}$, $x'^l = x^l$ if $\\kappa^l = 1$, else $\\hat\\Phi^l(x)$"
+ ],
+ "L8_lag_sgwhole_s1": [
+  "EqFM from the FLM denoiser, Lagrangian, semigroup target on whole jumps, second seed at batch 512",
+  "$\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), inputs \\cfg{model.cond}, jumps by \\cfg{loss.jump_sampling}, boundary probability \\cfg{loss.boundary_prob}, teacher \\cfg{loss.teacher}, \\cfg{train.steps} steps of batch \\cfg{train.batch_size}, whole jump probability \\cfg{loss.whole_jump_prob}"
+ ],
+ "W2R_context_s0": [
+  "EqFM flow map with clean positions in its states",
+  "States: a share $f \\sim \\mathcal{U}[0,1]$ of the positions is clean on \\cfg{loss.context_frac} of the samples. Loss: $L_{diag} + L_{off}$ with $\\bar\\delta$ by \\cfg{loss.off_diagonal}, teacher $\\bar D$ trained with clean positions."
+ ],
+ "W2R_context_s1": [
+  "EqFM flow map with clean positions in its states",
+  "States: a share $f \\sim \\mathcal{U}[0,1]$ of the positions is clean on \\cfg{loss.context_frac} of the samples. Loss: $L_{diag} + L_{off}$ with $\\bar\\delta$ by \\cfg{loss.off_diagonal}, teacher $\\bar D$ trained with clean positions."
+ ],
+ "W2R_context_s2": [
+  "EqFM flow map with clean positions in its states",
+  "States: a share $f \\sim \\mathcal{U}[0,1]$ of the positions is clean on \\cfg{loss.context_frac} of the samples. Loss: $L_{diag} + L_{off}$ with $\\bar\\delta$ by \\cfg{loss.off_diagonal}, teacher $\\bar D$ trained with clean positions."
+ ],
+ "W2R_context_s3": [
+  "EqFM flow map with clean positions in its states",
+  "States: a share $f \\sim \\mathcal{U}[0,1]$ of the positions is clean on \\cfg{loss.context_frac} of the samples. Loss: $L_{diag} + L_{off}$ with $\\bar\\delta$ by \\cfg{loss.off_diagonal}, teacher $\\bar D$ trained with clean positions."
+ ],
+ "W2R_ril_own_s0": [
+  "EqFM flow map, refinement in the loop on its own samples",
+  "As the map with clean positions, plus from step \\cfg{loss.ril_start}: a frozen copy runs \\cfg{loss.ril_depth} rounds of commit ($g^l \\ge$ \\cfg{loss.ril_threshold}) and renoise from $x_0$, giving tokens $y(x_0)$; the map at $\\kappa = 1$ on every round's state is trained by cross-entropy to $y(x_0)$ on uncommitted positions."
+ ],
+ "W2R_ril_own_s1": [
+  "EqFM flow map, refinement in the loop on its own samples",
+  "As the map with clean positions, plus from step \\cfg{loss.ril_start}: a frozen copy runs \\cfg{loss.ril_depth} rounds of commit ($g^l \\ge$ \\cfg{loss.ril_threshold}) and renoise from $x_0$, giving tokens $y(x_0)$; the map at $\\kappa = 1$ on every round's state is trained by cross-entropy to $y(x_0)$ on uncommitted positions."
+ ],
+ "W2R_ril_own_s2": [
+  "EqFM flow map, refinement in the loop on its own samples",
+  "As the map with clean positions, plus from step \\cfg{loss.ril_start}: a frozen copy runs \\cfg{loss.ril_depth} rounds of commit ($g^l \\ge$ \\cfg{loss.ril_threshold}) and renoise from $x_0$, giving tokens $y(x_0)$; the map at $\\kappa = 1$ on every round's state is trained by cross-entropy to $y(x_0)$ on uncommitted positions."
+ ],
+ "W2R_ril_own_s3": [
+  "EqFM flow map, refinement in the loop on its own samples",
+  "As the map with clean positions, plus from step \\cfg{loss.ril_start}: a frozen copy runs \\cfg{loss.ril_depth} rounds of commit ($g^l \\ge$ \\cfg{loss.ril_threshold}) and renoise from $x_0$, giving tokens $y(x_0)$; the map at $\\kappa = 1$ on every round's state is trained by cross-entropy to $y(x_0)$ on uncommitted positions."
+ ],
+ "W2R_ril_paper_s0": [
+  "EqFM flow map, refinement in the loop as in Beckmann",
+  "As the map with clean positions, plus from step \\cfg{loss.ril_start} the two losses of DBTM on \\cfg{loss.ril_depth} rounds of commit and renoise (data tokens committed, OT pairing): cross-entropy to the data, and to a frozen copy's output at the last round, at $\\kappa = 1$ on uncommitted positions."
+ ],
+ "W2R_ril_paper_s1": [
+  "EqFM flow map, refinement in the loop as in Beckmann",
+  "As the map with clean positions, plus from step \\cfg{loss.ril_start} the two losses of DBTM on \\cfg{loss.ril_depth} rounds of commit and renoise (data tokens committed, OT pairing): cross-entropy to the data, and to a frozen copy's output at the last round, at $\\kappa = 1$ on uncommitted positions."
+ ],
+ "W2R_ril_paper_s2": [
+  "EqFM flow map, refinement in the loop as in Beckmann",
+  "As the map with clean positions, plus from step \\cfg{loss.ril_start} the two losses of DBTM on \\cfg{loss.ril_depth} rounds of commit and renoise (data tokens committed, OT pairing): cross-entropy to the data, and to a frozen copy's output at the last round, at $\\kappa = 1$ on uncommitted positions."
+ ],
+ "W2R_ril_paper_s3": [
+  "EqFM flow map, refinement in the loop as in Beckmann",
+  "As the map with clean positions, plus from step \\cfg{loss.ril_start} the two losses of DBTM on \\cfg{loss.ril_depth} rounds of commit and renoise (data tokens committed, OT pairing): cross-entropy to the data, and to a frozen copy's output at the last round, at $\\kappa = 1$ on uncommitted positions."
+ ],
+ "W2Z_times_s0": [
+  "Denoiser trained with one time per position",
+  "$t^l = \\min(1, t(1 + \\beta r^l))$, $r^l \\sim \\mathcal{U}[0,1]$, $\\beta \\sim \\mathcal{U}[0,$\\cfg{loss.random_speed}$]$; $x^l = (1-t^l)x_0^l + t^l x_1^l$; cross-entropy to the data on positions with $t^l < 1$. Network told nothing about time."
+ ],
+ "W2Z_times_s1": [
+  "Denoiser trained with one time per position",
+  "$t^l = \\min(1, t(1 + \\beta r^l))$, $r^l \\sim \\mathcal{U}[0,1]$, $\\beta \\sim \\mathcal{U}[0,$\\cfg{loss.random_speed}$]$; $x^l = (1-t^l)x_0^l + t^l x_1^l$; cross-entropy to the data on positions with $t^l < 1$. Network told nothing about time."
+ ],
+ "W2Z_times_s2": [
+  "Denoiser trained with one time per position",
+  "$t^l = \\min(1, t(1 + \\beta r^l))$, $r^l \\sim \\mathcal{U}[0,1]$, $\\beta \\sim \\mathcal{U}[0,$\\cfg{loss.random_speed}$]$; $x^l = (1-t^l)x_0^l + t^l x_1^l$; cross-entropy to the data on positions with $t^l < 1$. Network told nothing about time."
+ ],
+ "W2Z_times_s3": [
+  "Denoiser trained with one time per position",
+  "$t^l = \\min(1, t(1 + \\beta r^l))$, $r^l \\sim \\mathcal{U}[0,1]$, $\\beta \\sim \\mathcal{U}[0,$\\cfg{loss.random_speed}$]$; $x^l = (1-t^l)x_0^l + t^l x_1^l$; cross-entropy to the data on positions with $t^l < 1$. Network told nothing about time."
+ ],
+ "W2Z_timecond_s0": [
+  "Denoiser with clean positions, told the time",
+  "A share $f \\sim \\mathcal{U}[0,1]$ of the positions is clean, the others at time $t$; cross-entropy to the data on noisy positions. The network is told $t$ (\\cfg{model.cond}); control for the network told nothing."
+ ],
+ "W2Z_timecond_s1": [
+  "Denoiser with clean positions, told the time",
+  "A share $f \\sim \\mathcal{U}[0,1]$ of the positions is clean, the others at time $t$; cross-entropy to the data on noisy positions. The network is told $t$ (\\cfg{model.cond}); control for the network told nothing."
+ ],
+ "W2Z_timecond_s2": [
+  "Denoiser with clean positions, told the time",
+  "A share $f \\sim \\mathcal{U}[0,1]$ of the positions is clean, the others at time $t$; cross-entropy to the data on noisy positions. The network is told $t$ (\\cfg{model.cond}); control for the network told nothing."
+ ],
+ "W2Z_timecond_s3": [
+  "Denoiser with clean positions, told the time",
+  "A share $f \\sim \\mathcal{U}[0,1]$ of the positions is clean, the others at time $t$; cross-entropy to the data on noisy positions. The network is told $t$ (\\cfg{model.cond}); control for the network told nothing."
+ ],
+ "L9_context": [
+  "EqFM flow map with clean positions in its states (as FMLM+, told no time)",
+  "States: a share $f \\sim \\mathcal{U}[0,1]$ of the positions is clean on \\cfg{loss.context_frac} of the samples. Loss: $L_{diag} + L_{off}$ with $\\bar\\delta$ by \\cfg{loss.off_diagonal}, teacher $\\bar D$ trained with clean positions."
+ ],
+ "TS_denoiser_context": [
+  "Time-free denoiser with clean positions",
+  "A share $f \\sim \\mathcal{U}[0,1]$ of the positions is clean, the others at time $t$; cross-entropy to the data on noisy positions. Network told nothing about time. \\cfg{train.steps} steps."
+ ],
+ "TS_eqfm_context": [
+  "EqFM flow map with clean positions (FMLM+ recipe, told no time)",
+  "States: a share $f \\sim \\mathcal{U}[0,1]$ of the positions is clean on \\cfg{loss.context_frac} of the samples. $L_{diag} + L_{off}$, $\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), teacher $\\bar D$ the denoiser with clean positions. Network told the duration only."
+ ],
+ "TS_eqfm_plain": [
+  "EqFM flow map, no clean positions in its states",
+  "$L_{diag} + L_{off}$, $\\bar\\delta$ by \\cfg{loss.off_diagonal} (at $\\kappa = 1$: \\cfg{loss.whole_jump_target}), same teacher; every position at the common time $t$. Network told the duration only."
  ]
 }

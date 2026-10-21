@@ -1,0 +1,8 @@
+# Synthetic check of Section 7 of the notes: a sparse Markov chain (64 tokens, 4 allowed successors each, length 32).
+# Every metric is exact (scripts/eval_toy_markov.py). Algorithm 1 of the notes with its own sampling of times.
+out_dir: runs/toy_markov
+clock: exponential
+data: {name: markov, seq_len: 32, vocab_size: 64, branching: 4}
+model: {dim: 128, depth: 3, heads: 4}
+loss: {diag_time: log_uniform, t_eps: 1.0e-3, off_diagonal: semigroup}
+train: {steps: 20000, batch_size: 256, lr: 1.0e-3, warmup: 500, ema: 0.999, num_workers: 2, log_every: 500, save_every: 5000}

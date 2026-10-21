@@ -1,0 +1,7 @@
+# WikiText-2 denoisers, Section 7 of the notes, second round: lower commit threshold (the WikiText-2 models are rarely 90% sure),
+# model-chosen clean positions on every sample, and a mix (half of the samples model-chosen, the other half random).
+W2F_denoiser_adaptive_h50	-	train_field.py	configs/wt2.yaml loss.adaptive=binary loss.adaptive_start=1000 loss.adaptive_h=0.5 loss.adaptive_frac=0.5
+W2F_denoiser_adaptive_h50_all	-	train_field.py	configs/wt2.yaml loss.adaptive=binary loss.adaptive_start=1000 loss.adaptive_h=0.5 loss.adaptive_frac=1
+W2F_denoiser_adaptive_h30	-	train_field.py	configs/wt2.yaml loss.adaptive=binary loss.adaptive_start=1000 loss.adaptive_h=0.3 loss.adaptive_frac=0.5
+W2F_denoiser_mixed_h50	-	train_field.py	configs/wt2.yaml loss.adaptive=binary loss.adaptive_start=1000 loss.adaptive_h=0.5 loss.adaptive_frac=0.5 loss.partial_context=true loss.freeze_context=true
+W2F_denoiser_context_all	-	train_field.py	configs/wt2.yaml loss.partial_context=true loss.freeze_context=true seed=1

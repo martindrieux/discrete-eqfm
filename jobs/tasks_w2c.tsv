@@ -1,0 +1,8 @@
+# WikiText-2: EqFM with no auxiliary loss, state times uniform in the decoding-error clock (as FLM) and the durations of the notes
+# (sigma_3 with density 2 sigma_3 and sigma_1 ~ U[0, sigma_3] for the semigroup loss, sigma ~ U[0, 1] otherwise): every jump length is trained from every state.
+W2C_eqfm_data_semigroup	-	train_flow_map.py	configs/wt2.yaml loss.off_diagonal=semigroup loss.jump_sampling=notes_reparam loss.boundary_prob=0 loss.whole_jump_prob=0
+W2C_eqfm_data_lagrangian	-	train_flow_map.py	configs/wt2.yaml loss.off_diagonal=lagrangian loss.jump_sampling=notes_reparam loss.boundary_prob=0 loss.whole_jump_prob=0
+W2C_eqfm_data_eulerian	-	train_flow_map.py	configs/wt2.yaml loss.off_diagonal=eulerian loss.jump_sampling=notes_reparam loss.boundary_prob=0 loss.whole_jump_prob=0
+W2C_eqfm_distill_semigroup	-	train_flow_map.py	configs/wt2.yaml loss.teacher=$DEQ_ROOT/runs/W2_denoiser_timefree/best.pt train.betas=[0.9,0.95] loss.off_diagonal=semigroup loss.jump_sampling=notes_reparam loss.boundary_prob=0 loss.whole_jump_prob=0
+W2C_eqfm_distill_lagrangian	-	train_flow_map.py	configs/wt2.yaml loss.teacher=$DEQ_ROOT/runs/W2_denoiser_timefree/best.pt train.betas=[0.9,0.95] loss.off_diagonal=lagrangian loss.jump_sampling=notes_reparam loss.boundary_prob=0 loss.whole_jump_prob=0
+W2C_eqfm_distill_eulerian	-	train_flow_map.py	configs/wt2.yaml loss.teacher=$DEQ_ROOT/runs/W2_denoiser_timefree/best.pt train.betas=[0.9,0.95] loss.off_diagonal=eulerian loss.jump_sampling=notes_reparam loss.boundary_prob=0 loss.whole_jump_prob=0

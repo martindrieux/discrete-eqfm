@@ -1,0 +1,7 @@
+# WikiText-2: one-step map trained on a denoiser's own samples. Teacher = time-free denoiser with random clean positions on every
+# sample (6000 steps from data), sampled with continuous adaptive speed 1 + 2g, 32 steps. Student = whole jump of a flow map, started
+# from the teacher's weights, 3000 steps on (noise, teacher sample) pairs; no data and no outside teacher in this stage. 4 seeds.
+W2V_onestep_s0	-	train_sample_distill.py	configs/wt2.yaml loss.teacher=$DEQ_ROOT/runs/W2B_denoiser_context/best.pt train.steps=3000 train.val_every=0 seed=0
+W2V_onestep_s1	-	train_sample_distill.py	configs/wt2.yaml loss.teacher=$DEQ_ROOT/runs/W2F_denoiser_context_all/best.pt train.steps=3000 train.val_every=0 seed=1
+W2V_onestep_s2	-	train_sample_distill.py	configs/wt2.yaml loss.teacher=$DEQ_ROOT/runs/W2F_denoiser_context_all_s2/best.pt train.steps=3000 train.val_every=0 seed=2
+W2V_onestep_s3	-	train_sample_distill.py	configs/wt2.yaml loss.teacher=$DEQ_ROOT/runs/W2F_denoiser_context_all_s3/best.pt train.steps=3000 train.val_every=0 seed=3

@@ -7,11 +7,17 @@ $t$ and weight $w$ by the rule `loss.diag_time`:
     log_uniform: $t = 1 - \epsilon^{u}$, $w = \log(1 / \epsilon)$
     reparam: $t = \tau^{-1}(u)$, $w = 1$   // $\tau(t) = 1 - \frac{V}{V-1} P(\arg\max_v I_t^l \ne y^l)$
 $I_t = (1 - t) x_0 + t x_1$
+clean positions $C$ (none by default); the state is $x^l = x_1^l$ for $l \in C$ and $x^l = I_t^l$ otherwise:
+    if `loss.partial_context`: $l \in C$ with probability $f$, $f \sim \mathcal{U}[0,1]$, on a share `loss.context_frac` of the samples
+    `loss.adaptive` = binary (from step `loss.adaptive_start`, share `loss.adaptive_frac`): $p = \mathrm{sg}[\hat D(I_t)]$, $C = \{l : \max_v p^l_v > h\}$   // $h$ = `loss.adaptive_h`
+    if `loss.random_speed` $= \beta_{\max} > 0$: no clean set is drawn; $t^l = \min(1, t(1 + \beta g^l))$, $g^l \sim \mathcal{U}[0,1]$, $\beta \sim \mathcal{U}[0, \beta_{\max}]$, $x^l = (1 - t^l) x_0^l + t^l x_1^l$, $C = \{l : t^l = 1\}$
+    `loss.adaptive` = speed_clock: progress $u^l$ in the decoding-error clock, $t^l = \tau^{-1}(u^l)$; $u^l_0 = 0$, $u^l_{j+1} = \min(1, u^l_j + \frac{\tau(t)}{n}(b + \beta (g^l_j)^p))$, $g_j = \max_v \mathrm{sg}[\hat D(x_j)]_v$; state $x_n$, $C = \{l : u^l_n = 1\}$   // $b$ = `loss.adaptive_base`, $\beta$ = `loss.adaptive_beta`, $p$ = `loss.adaptive_power`
+    `loss.adaptive` = speed: $t^l_0 = 0$, $t^l_{j+1} = \min(1, t^l_j + \frac{t}{n}(1 + \beta g^l_j))$, $g_j = \max_v \mathrm{sg}[\hat D(x_j)]_v$, $x_j^l = (1 - t^l_j) x_0^l + t^l_j x_1^l$; state $x_n$, $C = \{l : t^l_n = 1\}$   // $\beta$ = `loss.adaptive_beta`, $n$ = `loss.adaptive_rollout_steps`
 network input $a$ by the rule `model.cond`:
     duration: $a = 0$   // time-free
     state_time: $a = \tau(\hat t(I_t))$, $\hat t(x)$ the root of $(1 - t)^2 V + t^2 = \frac{1}{L} \sum_l \lVert x^l \rVert^2$   // time-free
     time: $a = \tau(t)$   // FLM
-$L(\theta) = \frac{1}{B} \sum_{i=1}^{B} w^{(i)} \frac{1}{L} \sum_{l=1}^{L} - \log \hat D(I_t^{(i)}, a^{(i)})^l_{y^{(i),l}}$
+$L(\theta) = \frac{1}{B} \sum_{i=1}^{B} w^{(i)} \frac{1}{L} \sum_{l \notin C^{(i)}} - \log \hat D(x^{(i)}, a^{(i)})^l_{y^{(i),l}}$   // all positions if `loss.freeze_context` is false and `loss.adaptive` is off
 
 == Generating samples (Euler)
 input: number of steps $K$, times $t_0 = 0 < \dots < t_K = 1$ by the rule `eval.grid`
@@ -19,4 +25,24 @@ $x \sim \mathcal{N}(0, I)$
 for $k = 0, \dots, K - 1$:
     $\kappa_k = \frac{t_{k+1} - t_k}{1 - t_k}$   // $\kappa_{K-1} = 1$
     $x \leftarrow (1 - \kappa_k) x + \kappa_k \hat D(x, a)$   // $a$ as in training, with $t = t_k$
+return $\arg\max_v x^l_v$ for every position $l$
+
+== Generating samples with commits (Section 7.2 of the notes)
+input: steps $K$, grid $t_0 = 0 < \dots < t_K = 1$, threshold $h$
+$x \sim \mathcal{N}(0, I)$, committed positions $C = \emptyset$
+for $k = 0, \dots, K - 1$:
+    $p = \hat D(x)$, $\kappa_k = \frac{t_{k+1} - t_k}{1 - t_k}$
+    for $l \notin C$: $x^l \leftarrow (1 - \kappa_k) x^l + \kappa_k p^l$
+    for $l \notin C$ with $\max_v p^l_v > h$: $x^l \leftarrow$ one-hot of $\arg\max_v p^l_v$, $C \leftarrow C \cup \{l\}$
+return $\arg\max_v x^l_v$ for every position $l$
+
+== Generating samples with continuous adaptive speed (Section 7.2 of the notes, equations 31 and 32)
+input: steps $K$, speed law $\psi(g) = b + \beta g^p$, or the binary law $\psi(g) = b + \beta \cdot 1[g > h]$ (comparison)
+$x \sim \mathcal{N}(0, I)$, progress $u^l = 0$, $t^l = 0$ for every position
+for $k = 1, \dots, K$:
+    $p = \hat D(x)$, $g^l = \max_v p^l_v$
+    $u'^l = \min(1, u^l + \frac{1}{K}\psi(g^l))$; at $k = K$: $u'^l = 1$
+    $t'^l = \tau^{-1}(u'^l)$, $\kappa^l = \frac{t'^l - t^l}{1 - t^l}$, $x^l \leftarrow (1 - \kappa^l) x^l + \kappa^l p^l$ for positions with $u^l < 1$
+    positions that reach $u'^l = 1$: $x^l \leftarrow$ one-hot of $\arg\max_v p^l_v$, and they no longer move
+    $u \leftarrow u'$, $t \leftarrow t'$
 return $\arg\max_v x^l_v$ for every position $l$

@@ -1,0 +1,11 @@
+# WikiText-2, Section 7 of the notes: states with clean (committed) positions, on half of the samples.
+#   context  : the clean positions are drawn at random (a fraction f ~ U[0, 1] of them), Section 7.1
+#   adaptive : the clean positions are those where the model's own prediction is confident (largest probability > 0.9), Section 7.2, from step 1000
+# Base recipes: the time-free denoiser (W2_denoiser_timefree) and EqFM with the semigroup loss, durations of the notes, no auxiliary loss (W2C_*_semigroup).
+# Distilled flow maps use the denoiser trained on the same kind of states as teacher.
+W2D_denoiser_context	-	train_field.py	configs/wt2.yaml loss.partial_context=true loss.freeze_context=true loss.context_frac=0.5
+W2D_denoiser_adaptive	-	train_field.py	configs/wt2.yaml loss.adaptive=binary loss.adaptive_h=0.9 loss.adaptive_frac=0.5 loss.adaptive_start=1000
+W2D_eqfm_data_context	-	train_flow_map.py	configs/wt2.yaml loss.off_diagonal=semigroup loss.jump_sampling=notes_reparam loss.boundary_prob=0 loss.whole_jump_prob=0 loss.partial_context=true loss.freeze_context=true loss.context_frac=0.5
+W2D_eqfm_data_adaptive	-	train_flow_map.py	configs/wt2.yaml loss.off_diagonal=semigroup loss.jump_sampling=notes_reparam loss.boundary_prob=0 loss.whole_jump_prob=0 loss.adaptive=binary loss.adaptive_h=0.9 loss.adaptive_frac=0.5 loss.adaptive_start=1000
+W2D_eqfm_distill_context	W2D_denoiser_context	train_flow_map.py	configs/wt2.yaml loss.teacher=$DEQ_ROOT/runs/W2D_denoiser_context/best.pt train.betas=[0.9,0.95] loss.off_diagonal=semigroup loss.jump_sampling=notes_reparam loss.boundary_prob=0 loss.whole_jump_prob=0 loss.partial_context=true loss.freeze_context=true loss.context_frac=0.5
+W2D_eqfm_distill_adaptive	W2D_denoiser_adaptive	train_flow_map.py	configs/wt2.yaml loss.teacher=$DEQ_ROOT/runs/W2D_denoiser_adaptive/best.pt train.betas=[0.9,0.95] loss.off_diagonal=semigroup loss.jump_sampling=notes_reparam loss.boundary_prob=0 loss.whole_jump_prob=0 loss.adaptive=binary loss.adaptive_h=0.9 loss.adaptive_frac=0.5 loss.adaptive_start=1000

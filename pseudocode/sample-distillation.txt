@@ -1,0 +1,9 @@
+== Training step
+input: frozen denoiser $\hat D$ trained with random clean positions, student $\hat\delta_1$ started from the weights of $\hat D$, batch size $B$ = `train.batch_size`
+$x_0 \sim \mathcal{N}(0, I)$ in $\mathbb{R}^{L \times V}$   // no data is used in this stage
+$y$ = tokens returned by the continuous adaptive-speed sampler of $\hat D$ started at $x_0$, with $K$ = `sdist.K` steps and speed $b + \beta g^p$   // $b$ = `sdist.base`, $\beta$ = `sdist.beta`, $p$ = `sdist.power`; deterministic given $x_0$, no gradient
+$L(\theta) = \frac{1}{B} \sum_{i=1}^{B} \frac{1}{L} \sum_{l=1}^{L} - \log \hat\delta_1(x_0^{(i)})^l_{y^{(i),l}}$
+
+== Generating samples
+$x_0 \sim \mathcal{N}(0, I)$
+return $\arg\max_v \hat\delta_1(x_0)^l_v$ for every position $l$   // one network evaluation

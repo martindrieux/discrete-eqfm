@@ -43,7 +43,7 @@ slot() {   # slot <index> <comma-separated gpu ids>
     script=$(awk -F'\t' -v n=$picked '$1==n{print $3}' $TASKS); args=$(awk -F'\t' -v n=$picked '$1==n{print $4}' $TASKS)
     args=$(eval echo "\"$args\"")
     local launch="$PY -u"
-    [ $GPT -gt 1 ] && launch="$PY -m accelerate.commands.launch --multi_gpu --num_processes $GPT --mixed_precision no"
+    [ $GPT -gt 1 ] && launch="$PY -m accelerate.commands.launch --multi_gpu --num_processes $GPT --mixed_precision no --main_process_port $((20000 + RANDOM % 20000))"
     log $id "start $picked (budget ${left} min, gpus $gpus)"
     ( export CUDA_VISIBLE_DEVICES=$gpus
       rm -f runs/$picked/INTERRUPTED runs/$picked/SLOW
@@ -73,7 +73,10 @@ slot() {   # slot <index> <comma-separated gpu ids>
     wait $pid; local rc=$?
     # kept checkpoints not evaluated yet (a denoiser gets a short Euler evaluation), within the time that is left
     ( [ $script = train_field.py ] && export EVAL_ARGS='eval.steps=[32,256]'
-      CUDA_VISIBLE_DEVICES=${gpus%%,*} bash jobs/eval_snap.sh $picked all $(( END - $(date +%s) - 120 )) ) >> runs/$picked/train.log 2>&1 &
+      CUDA_VISIBLE_DEVICES=${gpus%%,*} bash jobs/eval_snap.sh $picked all $(( END - $(date +%s) - 120 ))
+      # runs of the commit-state study: the samplers with commits, on the best checkpoint
+      [ $rc = 0 ] && [[ $picked == W2[DEF]_* ]] && CUDA_VISIBLE_DEVICES=${gpus%%,*} timeout $(( END - $(date +%s) - 120 ))s bash jobs/eval_extra.sh $picked
+      ) >> runs/$picked/train.log 2>&1 &
     local epid=$!
     while kill -0 $epid 2>/dev/null; do touch runs/$picked/.lock/hb; sleep 30; done
     if [ $rc = 0 ]; then    # done: this worker takes one of the tasks it unblocks; start a worker for each of the others

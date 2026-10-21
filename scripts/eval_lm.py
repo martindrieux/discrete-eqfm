@@ -2,7 +2,7 @@
 
     python scripts/eval_lm.py CKPT out=results.json [eval.steps=[1,2,4,8]] [eval.num=1024] [eval.grid=reparam]
                               [train=<blocks file>: also report the copy rate against it]
-                              [churn=0.0] [noise_scale=1.0] [sampler=refine threshold=0.9] [cond=...] [flow_map=true|false] [seed=1]
+                              [churn=0.0] [noise_scale=1.0] [sampler=refine threshold=0.9 fresh=true rep=0] [sampler=adaptive threshold=0.9 when=post] [cond=...] [flow_map=true|false] [seed=1]
 
 CKPT is a checkpoint written by this repository, or one of
     released:flm:<dir>    released:fmlm:<dir>     (FLM-B-LM1B / FMLM-B-LM1B from the FLM authors, model.safetensors)
@@ -23,7 +23,7 @@ import torch
 from deqfm.clocks import build_clock
 from deqfm.config import load_config
 from deqfm.evaluation import text_metrics
-from deqfm.sampling import sample_grid, sample_refine, time_grid
+from deqfm.sampling import sample_adaptive, sample_grid, sample_speed_clock, sample_speed_map, sample_refine, sample_remask, time_grid
 from deqfm.trainer import load_model
 
 
@@ -71,11 +71,40 @@ def main():
             if opts.get("sampler") == "refine":      # DBTM sampler: `steps` rounds of commit and renoise
                 tokens = torch.cat([sample_refine(model, cond, clock, min(E.batch, E.num - i), steps,
                                                   float(opts.get("threshold", 0.9)), device,
-                                                  fresh=opts.get("fresh", "true") == "true").cpu()
+                                                  fresh=opts.get("fresh", "true") == "true",
+                                                  rep_lambda=float(opts.get("rep", 0.0)),
+                                                  noise_scale=float(opts.get("noise_scale", 1.0)),
+                                                  flow_steps=int(opts.get("flow_steps", 1)),
+                                                  churn=float(opts.get("churn", 0.0))).cpu()
+                                    for i in range(0, E.num, E.batch)])
+            elif opts.get("sampler") == "remask":    # commit and renoise, with partial renoising / undone commits / drawn tokens
+                tokens = torch.cat([sample_remask(model, cond, clock, min(E.batch, E.num - i), steps,
+                                                  float(opts.get("threshold", 0.9)), device,
+                                                  float(opts.get("noise_scale", 1.0)), float(opts.get("keep", 0.0)),
+                                                  opts.get("recommit", "false") == "true", float(opts.get("temp", 0.0)),
+                                                  flow_map).cpu()
+                                    for i in range(0, E.num, E.batch)])
+            elif opts.get("sampler") == "speed":     # continuous adaptive speed (denoisers): psi(g) = base + beta g^power
+                tokens = torch.cat([sample_speed_clock(model, cond, clock, min(E.batch, E.num - i), steps,
+                                                       float(opts.get("beta", 1024)), float(opts.get("power", 16)),
+                                                       device=device, base=float(opts.get("base", 0.75))).cpu()
+                                    for i in range(0, E.num, E.batch)])
+            elif opts.get("sampler") == "speedmap":  # flow map with one duration per position: psi(g) = 1 + beta g^power
+                tokens = torch.cat([sample_speed_map(model, cond, clock, min(E.batch, E.num - i), steps,
+                                                     float(opts.get("beta", 4)), float(opts.get("power", 1)), device,
+                                                     float(opts.get("noise_scale", 1.0)),
+                                                     str(opts.get("shared", "false")).lower() == "true").cpu()
+                                    for i in range(0, E.num, E.batch)])
+            elif opts.get("sampler") == "adaptive":  # Section 7.2 of the notes: jumps on the grid, confident positions committed
+                tokens = torch.cat([sample_adaptive(model, cond, clock, min(E.batch, E.num - i), grid,
+                                                    float(opts.get("threshold", 0.9)), opts.get("score", "maxprob"),
+                                                    opts.get("when", "post"), flow_map, device,
+                                                    noise_scale=float(opts.get("noise_scale", 1.0)))[0].cpu()
                                     for i in range(0, E.num, E.batch)])
             else:
                 tokens = torch.cat([sample_grid(model, cond, clock, min(E.batch, E.num - i), grid, flow_map, churn, device,
-                                                noise_scale=float(opts.get("noise_scale", 1.0))).cpu()
+                                                noise_scale=float(opts.get("noise_scale", 1.0)),
+                                                temp=float(opts.get("temp", 0.0))).cpu()
                                     for i in range(0, E.num, E.batch)])
             result["steps"][str(steps)], texts = text_metrics(tokens, tok, E.judge, device, train_keys)
             result["steps"][str(steps)]["seconds"] = time.time() - tic

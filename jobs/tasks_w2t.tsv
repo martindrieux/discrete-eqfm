@@ -1,0 +1,23 @@
+# WikiText-2: making EqFM trained from data alone reproducible (2 of 3 seeds of the semigroup recipe collapse). No auxiliary loss anywhere.
+#   nodrop     : the stop-gradient targets are computed without dropout (dropout is 0.3 in this model)
+#   nodrop_ema : and with the averaged weights
+#   lag        : Lagrangian target, whose every jump length is tied to the denoiser directly (seed 0 is W2C_eqfm_data_lagrangian)
+#   two-stage  : same total budget as one 6000-step run and no outside teacher: a time-free denoiser for 3000 steps, then the
+#                flow map distilled from it for 3000 steps (semigroup, forced whole jump)
+W2T_sg_nodrop_s0	-	train_flow_map.py	configs/wt2.yaml loss.jump_sampling=notes_reparam loss.boundary_prob=0 loss.off_diagonal=semigroup loss.whole_jump_prob=0.03125 loss.target_eval=true seed=0
+W2T_sg_nodrop_s1	-	train_flow_map.py	configs/wt2.yaml loss.jump_sampling=notes_reparam loss.boundary_prob=0 loss.off_diagonal=semigroup loss.whole_jump_prob=0.03125 loss.target_eval=true seed=1
+W2T_sg_nodrop_s2	-	train_flow_map.py	configs/wt2.yaml loss.jump_sampling=notes_reparam loss.boundary_prob=0 loss.off_diagonal=semigroup loss.whole_jump_prob=0.03125 loss.target_eval=true seed=2
+W2T_sg_nodrop_ema_s0	-	train_flow_map.py	configs/wt2.yaml loss.jump_sampling=notes_reparam loss.boundary_prob=0 loss.off_diagonal=semigroup loss.whole_jump_prob=0.03125 loss.target_eval=true loss.target_net=ema seed=0
+W2T_sg_nodrop_ema_s1	-	train_flow_map.py	configs/wt2.yaml loss.jump_sampling=notes_reparam loss.boundary_prob=0 loss.off_diagonal=semigroup loss.whole_jump_prob=0.03125 loss.target_eval=true loss.target_net=ema seed=1
+W2T_sg_nodrop_ema_s2	-	train_flow_map.py	configs/wt2.yaml loss.jump_sampling=notes_reparam loss.boundary_prob=0 loss.off_diagonal=semigroup loss.whole_jump_prob=0.03125 loss.target_eval=true loss.target_net=ema seed=2
+W2T_lag_s1	-	train_flow_map.py	configs/wt2.yaml loss.jump_sampling=notes_reparam loss.boundary_prob=0 loss.off_diagonal=lagrangian loss.whole_jump_prob=0 seed=1
+W2T_lag_s2	-	train_flow_map.py	configs/wt2.yaml loss.jump_sampling=notes_reparam loss.boundary_prob=0 loss.off_diagonal=lagrangian loss.whole_jump_prob=0 seed=2
+W2T_lag_nodrop_s0	-	train_flow_map.py	configs/wt2.yaml loss.jump_sampling=notes_reparam loss.boundary_prob=0 loss.off_diagonal=lagrangian loss.whole_jump_prob=0 loss.target_eval=true seed=0
+W2T_lag_nodrop_s1	-	train_flow_map.py	configs/wt2.yaml loss.jump_sampling=notes_reparam loss.boundary_prob=0 loss.off_diagonal=lagrangian loss.whole_jump_prob=0 loss.target_eval=true seed=1
+W2T_lag_nodrop_s2	-	train_flow_map.py	configs/wt2.yaml loss.jump_sampling=notes_reparam loss.boundary_prob=0 loss.off_diagonal=lagrangian loss.whole_jump_prob=0 loss.target_eval=true seed=2
+W2T_stage1_s0	-	train_field.py	configs/wt2.yaml train.steps=3000 seed=0
+W2T_twostage_s0	W2T_stage1_s0	train_flow_map.py	configs/wt2.yaml loss.jump_sampling=notes_reparam loss.boundary_prob=0 loss.off_diagonal=semigroup loss.whole_jump_prob=0.03125 train.steps=3000 loss.teacher=$DEQ_ROOT/runs/W2T_stage1_s0/best.pt train.betas=[0.9,0.95] seed=0
+W2T_stage1_s1	-	train_field.py	configs/wt2.yaml train.steps=3000 seed=1
+W2T_twostage_s1	W2T_stage1_s1	train_flow_map.py	configs/wt2.yaml loss.jump_sampling=notes_reparam loss.boundary_prob=0 loss.off_diagonal=semigroup loss.whole_jump_prob=0.03125 train.steps=3000 loss.teacher=$DEQ_ROOT/runs/W2T_stage1_s1/best.pt train.betas=[0.9,0.95] seed=1
+W2T_stage1_s2	-	train_field.py	configs/wt2.yaml train.steps=3000 seed=2
+W2T_twostage_s2	W2T_stage1_s2	train_flow_map.py	configs/wt2.yaml loss.jump_sampling=notes_reparam loss.boundary_prob=0 loss.off_diagonal=semigroup loss.whole_jump_prob=0.03125 train.steps=3000 loss.teacher=$DEQ_ROOT/runs/W2T_stage1_s2/best.pt train.betas=[0.9,0.95] seed=2

@@ -65,7 +65,10 @@ def text_metrics(tokens, tokenizer, judge="gpt2-large", device="cuda", train_key
     """tokens: LongTensor [N, L] in the model's vocabulary."""
     texts = tokenizer.batch_decode(tokens.cpu())
     ppl, n = generative_perplexity(texts, tokens.shape[1], judge, device)
-    out = {"gen_ppl": ppl, "entropy": unigram_entropy(tokens.cpu()), "judge_tokens": n, "num": len(texts)}
+    t = tokens.cpu()
+    out = {"gen_ppl": ppl, "entropy": unigram_entropy(t), "judge_tokens": n, "num": len(texts),
+           # doubled tokens: share of positions equal to the previous one, and to the one two back (real text: about 0.1 % and 1 %)
+           "dup1": (t[:, 1:] == t[:, :-1]).float().mean().item(), "dup2": (t[:, 2:] == t[:, :-2]).float().mean().item()}
     if train_keys is not None:
         out["copy8"] = copy_rate(tokens, train_keys)
     return out, texts

@@ -1,0 +1,12 @@
+# TinyStories as in FMLM+ (arXiv 2606.24773): GPT-2 tokens (vocabulary 50257), one story per row of 128 tokens,
+# their "mini" DiT (hidden 512, 8 blocks, 8 heads, dropout 0.1). Data: scripts/prepare_tinystories.py.
+# The effective batch is train.batch_size x processes (theirs: 512 for 100000 steps).
+out_dir: runs/tinystories
+clock: exponential
+data: {name: blocks, path: data/tinystories_train.bin, seq_len: 128}
+model: {arch: dit, dim: 512, depth: 8, heads: 8, dropout: 0.1, cond: duration}
+loss: {diag_time: reparam, stratified: true, off_diagonal: semigroup, jump_sampling: reparam, whole_jump_prob: 0.03125,
+       boundary_prob: 0.1, boundary_t: 0.9}
+train: {steps: 100000, batch_size: 128, lr: 3.0e-4, warmup: 2500, precision: "no", num_workers: 4,
+        save_every: 2500, log_every: 100}
+eval: {steps: [1, 2, 4, 8], num: 1024, batch: 128, grid: reparam}

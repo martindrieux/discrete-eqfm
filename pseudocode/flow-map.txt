@@ -9,9 +9,13 @@ $L_{\mathrm{diag}}$:
 off-diagonal half: time $t$, jump fraction $\kappa$ and first leg $\kappa_1 \le \kappa$ by the rule `loss.jump_sampling`:
     notes: $t \sim \mathcal{U}[0,1]$; semigroup: $\sigma_3 = \sqrt{u}$, $\sigma_1 \sim \mathcal{U}[0, \sigma_3]$, $\kappa = \kappa(\sigma_3)$, $\kappa_1 = \kappa(\sigma_1)$; otherwise $\sigma \sim \mathcal{U}[0,1]$, $\kappa = \kappa(\sigma)$
     reparam: $h \sim \mathcal{U}[0,1]$, $\tau_s \sim \mathcal{U}[0, 1 - h]$, $\tau_e = \tau_s + h$; with probability `loss.whole_jump_prob`: $\tau_s = 0$, $\tau_e = 1$; with probability `loss.end_jump_prob`: $\tau_s \sim \mathcal{U}[0,1]$, $\tau_e = 1$; $t = \tau^{-1}(\tau_s)$, $t' = \tau^{-1}(\tau_e)$, $u = \tau^{-1}(\frac{\tau_s + \tau_e}{2})$, $\kappa = \frac{t' - t}{1 - t}$, $\kappa_1 = \frac{u - t}{1 - t}$
+    notes_reparam: as notes, but $t = \tau^{-1}(u)$, $u \sim \mathcal{U}[0,1]$; with probability `loss.whole_jump_prob`: $t = 0$, $\kappa = 1$
     endpoint: $t \sim \mathcal{U}[0,1]$, $\kappa = 1$
 boundary samples: with probability `loss.boundary_prob`, replace by $t \sim \mathcal{U}[t_b, 1]$, $\kappa = 1$ with probability $\frac12$ else $\kappa \sim \mathcal{U}[0,1]$   // $t_b$ = `loss.boundary_t`
 $x = I_t = (1 - t) x_0 + t x_1$; if `loss.partial_context`: per position $t^l = 1$ with probability $f$, $f \sim \mathcal{U}[0,1]$, else $t^l = t$   // clean context, also on the diagonal half
+`loss.adaptive` = binary (from step `loss.adaptive_start`, share `loss.adaptive_frac`): clean positions chosen by the model, $C = \{l : \max_v \mathrm{sg}[\hat\delta_1(I_t)]^l_v > h\}$, $x^l = x_1^l$ on $C$   // $h$ = `loss.adaptive_h`; both halves
+if `loss.freeze_context` or `loss.adaptive` is on: clean positions do not move in the jumps inside the targets, and $L_{\mathrm{diag}}$, $L_{\mathrm{off}}$ sum over $l \notin C$ only
+if `model.self_cond`: per row, with probability `loss.self_cond_prob`, draft $\hat p = \mathrm{sg}\, \hat\delta_0(y \mid 0)$, else $\hat p = 0$; $y = x$, or if `loss.self_cond_view` = other $y = I_{t'}$ with new noise, $t'$ as $t$ and its own clean positions; every $\hat\delta$ of the row below (losses and targets) is $\hat\delta(\cdot \mid \hat p)$   // self-conditioning (ELF)
 inside the target, $\hat\delta$ uses the weights `loss.target_net` (online $\theta$ or averaged $\bar\theta$), without dropout if `loss.target_eval`
 target $\bar\delta$ (no gradient) by the rule `loss.off_diagonal`:
     semigroup: $\kappa_2 = \frac{\kappa - \kappa_1}{1 - \kappa_1}$, $\gamma = \frac{\kappa_1 (1 - \kappa_2)}{\kappa}$, $x' = (1 - \kappa_1) x + \kappa_1 \hat\delta_{\kappa_1}(x)$, $\bar\delta = \gamma \hat\delta_{\kappa_1}(x) + (1 - \gamma) \hat\delta_{\kappa_2}(x')$
@@ -34,7 +38,7 @@ input: number of steps $K$, times $t_0 = 0 < \dots < t_K = 1$ by the rule `eval.
 $x \sim \mathcal{N}(0, a^2 I)$   // $a$ = noise scale of the sampler, 1 unless stated
 for $k = 0, \dots, K - 1$:
     $s = (1 - t_{k+1}) \sqrt{1 - g^2}$, $\kappa_k = 1 - \frac{s}{1 - t_k}$   // $g = 0$: $\kappa_k = \frac{t_{k+1} - t_k}{1 - t_k}$
-    $p = \hat\delta_{\kappa_k}(x)$
+    $p = \hat\delta_{\kappa_k}(x \mid p_{\mathrm{prev}})$   // $p_{\mathrm{prev}}$: output of the previous call, none at the first; only if `model.self_cond`, as in every sampler
     if $k = K - 1$: $x \leftarrow p$
     else: $x \leftarrow (1 - \kappa_k) x + \kappa_k p + (s - (1 - t_{k+1})) p + g (1 - t_{k+1}) \xi$, $\xi \sim \mathcal{N}(0, I)$
 return $\arg\max_v x^l_v$ for every position $l$
@@ -58,3 +62,34 @@ for $r = 1, \dots, K$:
     $p = \hat\delta_1(x)$; commit the uncommitted positions with $\max_v p^l_v \ge q^*$, and at least $\lceil (L - |C|)/(K - r + 1) \rceil$ of the most confident, to $\arg\max_v p^l_v$
     $x^l \leftarrow$ one-hot of the committed token for $l \in C$, fresh $\mathcal{N}(0, I)$ otherwise
 return the committed tokens   // $K = 1$ is the one-step sample
+
+== Generating samples with commits (Section 7.2 of the notes)
+input: steps $K$, grid $t_0 = 0 < \dots < t_K = 1$, threshold $h$
+$x \sim \mathcal{N}(0, I)$, committed positions $C = \emptyset$
+for $k = 0, \dots, K - 1$:
+    $\kappa_k = \frac{t_{k+1} - t_k}{1 - t_k}$, $p = \hat\delta_{\kappa_k}(x)$
+    for $l \notin C$: $x^l \leftarrow (1 - \kappa_k) x^l + \kappa_k p^l$
+    for $l \notin C$ with $\max_v p^l_v > h$: $x^l \leftarrow$ one-hot of $\arg\max_v p^l_v$, $C \leftarrow C \cup \{l\}$
+return $\arg\max_v x^l_v$ for every position $l$
+
+== Training step with one duration per position (`loss.position_speed` > 0, distillation from a denoiser $\bar D$)
+input: tokens $x_1$, noise $x_0 \sim \mathcal{N}(0, I)$, common time $t$ and jump fraction $k_3$ as in the plain step
+$s = \tau(t)$, $\beta \sim \mathcal{U}[0, \beta_{\max}]$, $r^l \sim \mathcal{U}[0, 1]$   // $\beta_{\max}$ = `loss.position_speed`
+$u^l = \min(1, s (1 + \beta r^l))$, $t^l = \tau^{-1}(u^l)$, $x^l = (1 - t^l) x_0^l + t^l x_1^l$   // $u^l = 1$: clean position
+$g^l = \max_v \bar D^l_v(x)$, $du = \tau(1 - (1 - k_3)(1 - t)) - \tau(t)$
+$u'^l = \min(1, u^l + du (1 + \beta g^l))$, $\kappa^l = (\tau^{-1}(u'^l) - t^l) / (1 - t^l)$, $\kappa^l = 0$ at clean positions
+if `loss.off_diagonal` = lagrangian:
+    $x'^l = (1 - \kappa^l) x^l + \kappa^l \hat\delta^l(x, \kappa)$ where $\kappa^l < 1$, $x'^l = x^l$ where $\kappa^l = 1$
+    target $= \bar D(x') - (1 - \kappa^l) \partial_a \hat\delta(x, a \kappa)|_{a = 1}$
+else:
+    target $= \gamma \hat\delta(x, a\kappa) + (1 - \gamma) \hat\delta(\hat\Phi_{a\kappa}(x), \kappa_2)$, $a \sim \mathcal{U}[0, 1]$, $\kappa_2^l = \frac{(1 - a)\kappa^l}{1 - a\kappa^l}$, $\gamma^l = \frac{a (1 - \kappa^l)}{1 - a \kappa^l}$
+$L = -\frac{1}{L}\sum_{l: u^l < 1} \mathrm{target}^l \cdot \log \hat\delta^l(x, \kappa)$ + the same against $\bar D(x)$ at $\kappa = 0$
+
+== Sampling with one duration per position
+input: steps $K$, speed $\psi(g) = 1 + \beta g$
+$x \sim \mathcal{N}(0, I)$, $u^l = 0$, $g^l = 0$
+for $k = 1, \dots, K$:
+    $u'^l = \min(1, u^l + \psi(g^l) / K)$ (all $1$ at $k = K$), $\kappa^l = (\tau^{-1}(u'^l) - t^l) / (1 - t^l)$
+    $p = \hat\delta(x, \kappa)$, $x^l \leftarrow (1 - \kappa^l) x^l + \kappa^l p^l$, one-hot $\arg\max p^l$ where $u'^l = 1$
+    $g^l \leftarrow \max_v p^l_v$, $u \leftarrow u'$
+return $\arg\max_v x^l_v$

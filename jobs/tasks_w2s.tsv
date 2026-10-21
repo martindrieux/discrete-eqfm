@@ -1,0 +1,9 @@
+# WikiText-2: seeds 1 and 2 of the four models of the equal-entropy comparison with Beckmann (seed 0: the runs named in tasks_w2 / tasks_w2c2).
+W2S_dbtm_s1	-	train_dbtm.py	configs/wt2.yaml seed=1
+W2S_dbtm_s2	-	train_dbtm.py	configs/wt2.yaml seed=2
+W2S_dbtm_ril_s1	-	train_dbtm.py	configs/wt2.yaml dbtm.ril=true dbtm.ril_start=3000 dbtm.ril_frac=0.5 dbtm.ril_refresh=1000 seed=1
+W2S_dbtm_ril_s2	-	train_dbtm.py	configs/wt2.yaml dbtm.ril=true dbtm.ril_start=3000 dbtm.ril_frac=0.5 dbtm.ril_refresh=1000 seed=2
+W2S_eqfm_data_s1	-	train_flow_map.py	configs/wt2.yaml loss.off_diagonal=semigroup loss.jump_sampling=notes_reparam loss.boundary_prob=0 loss.whole_jump_prob=0.03125 seed=1
+W2S_eqfm_data_s2	-	train_flow_map.py	configs/wt2.yaml loss.off_diagonal=semigroup loss.jump_sampling=notes_reparam loss.boundary_prob=0 loss.whole_jump_prob=0.03125 seed=2
+W2S_eqfm_distill_s1	-	train_flow_map.py	configs/wt2.yaml loss.teacher=$DEQ_ROOT/runs/W2_denoiser_timefree/best.pt train.betas=[0.9,0.95] loss.off_diagonal=semigroup loss.jump_sampling=notes_reparam loss.boundary_prob=0 loss.whole_jump_prob=0.03125 seed=1
+W2S_eqfm_distill_s2	-	train_flow_map.py	configs/wt2.yaml loss.teacher=$DEQ_ROOT/runs/W2_denoiser_timefree/best.pt train.betas=[0.9,0.95] loss.off_diagonal=semigroup loss.jump_sampling=notes_reparam loss.boundary_prob=0 loss.whole_jump_prob=0.03125 seed=2

@@ -1,0 +1,12 @@
+# WikiText-2: the refinement techniques of Discrete Beckmann Transport Models added to EqFM, one at a time.
+# Base = EqFM with the semigroup loss and no auxiliary loss (W2_eqfm_*_semigroup_noaux). Same model, steps and evaluation.
+#   context : partial-context states (a random fraction of the positions is clean and frozen), losses on the other positions
+#   ril     : + refinement in the loop from step 3000 (rollouts of the map to the end, data tokens committed, half the batch)
+#   ril_sd  : + self-distillation of the last rollout round (soft target, temperature 0.7, copy refreshed every 1000 steps)
+W2B_eqfm_data_context	-	train_flow_map.py	configs/wt2.yaml loss.boundary_prob=0 loss.partial_context=true loss.freeze_context=true
+W2B_eqfm_data_context_ril	-	train_flow_map.py	configs/wt2.yaml loss.boundary_prob=0 loss.partial_context=true loss.freeze_context=true loss.ril_frac=0.5 loss.ril_start=3000 loss.ril_adaptive_r=0.5
+W2B_eqfm_data_context_ril_sd	-	train_flow_map.py	configs/wt2.yaml loss.boundary_prob=0 loss.partial_context=true loss.freeze_context=true loss.ril_frac=0.5 loss.ril_start=3000 loss.ril_adaptive_r=0.5 loss.ril_distill_weight=1 loss.ril_distill_start=3000 loss.ril_refresh=1000
+W2B_denoiser_context	-	train_field.py	configs/wt2.yaml loss.partial_context=true loss.freeze_context=true
+W2B_eqfm_distill_context	W2B_denoiser_context	train_flow_map.py	configs/wt2.yaml loss.teacher=$DEQ_ROOT/runs/W2B_denoiser_context/best.pt train.betas=[0.9,0.95] loss.boundary_prob=0 loss.partial_context=true loss.freeze_context=true
+# stopped (base recipe collapses): W2B_eqfm_distill_context_ril	W2B_denoiser_context	train_flow_map.py	configs/wt2.yaml loss.teacher=$DEQ_ROOT/runs/W2B_denoiser_context/best.pt train.betas=[0.9,0.95] loss.boundary_prob=0 loss.partial_context=true loss.freeze_context=true loss.ril_frac=0.5 loss.ril_start=3000 loss.ril_adaptive_r=0.5
+# stopped (base recipe collapses): W2B_eqfm_distill_context_ril_sd	W2B_denoiser_context	train_flow_map.py	configs/wt2.yaml loss.teacher=$DEQ_ROOT/runs/W2B_denoiser_context/best.pt train.betas=[0.9,0.95] loss.boundary_prob=0 loss.partial_context=true loss.freeze_context=true loss.ril_frac=0.5 loss.ril_start=3000 loss.ril_adaptive_r=0.5 loss.ril_distill_weight=1 loss.ril_distill_start=3000 loss.ril_refresh=1000

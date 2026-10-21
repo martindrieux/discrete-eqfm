@@ -89,3 +89,148 @@ W2_eqfm_data_lagrangian_repodefault	wt2-eqfm	EqFM from data, Lagrangian, reposit
 W2_eqfm_data_eulerian_noaux	wt2-eqfm	EqFM from data, Eulerian, no auxiliary loss
 W2_eqfm_distill_eulerian_noaux	wt2-eqfm	EqFM distilled, Eulerian, no auxiliary loss
 W2_eqfm_data_eulerian_repodefault	wt2-eqfm	EqFM from data, Eulerian, repository defaults
+W2B_eqfm_data_context	wt2-eqfm	EqFM from data, partial context
+W2B_eqfm_data_context_ril	wt2-eqfm	EqFM from data, partial context, refinement in the loop
+W2B_eqfm_data_context_ril_sd	wt2-eqfm	EqFM from data, partial context, refinement in the loop, self-distillation
+W2B_denoiser_context	wt2-eqfm	Time-free denoiser, partial context
+W2B_eqfm_distill_context	wt2-eqfm	EqFM distilled, partial context
+W2B_eqfm_distill_context_ril	wt2-eqfm	EqFM distilled, partial context, refinement in the loop
+W2B_eqfm_distill_context_ril_sd	wt2-eqfm	EqFM distilled, partial context, refinement in the loop, self-distillation
+W2C_eqfm_data_semigroup	wt2-eqfm	EqFM from data, semigroup, durations of the notes, no auxiliary loss
+W2C_eqfm_data_lagrangian	wt2-eqfm	EqFM from data, Lagrangian, durations of the notes, no auxiliary loss
+W2C_eqfm_data_eulerian	wt2-eqfm	EqFM from data, Eulerian, durations of the notes, no auxiliary loss
+W2C_eqfm_distill_semigroup	wt2-eqfm	EqFM distilled, semigroup, durations of the notes, no auxiliary loss
+W2C_eqfm_distill_lagrangian	wt2-eqfm	EqFM distilled, Lagrangian, durations of the notes, no auxiliary loss
+W2C_eqfm_distill_eulerian	wt2-eqfm	EqFM distilled, Eulerian, durations of the notes, no auxiliary loss
+W2C_eqfm_data_semigroup_wholejump	wt2-eqfm	EqFM from data, semigroup, durations of the notes, forced whole jump
+W2C_eqfm_distill_semigroup_wholejump	wt2-eqfm	EqFM distilled, semigroup, durations of the notes, forced whole jump
+W2D_denoiser_context	wt2-commit-states	Time-free denoiser, random clean positions
+W2D_denoiser_adaptive	wt2-commit-states	Time-free denoiser, model-chosen clean positions
+W2D_eqfm_data_context	wt2-commit-states	EqFM from data, random clean positions
+W2D_eqfm_data_adaptive	wt2-commit-states	EqFM from data, model-chosen clean positions
+W2D_eqfm_distill_context	wt2-commit-states	EqFM distilled, random clean positions
+W2D_eqfm_distill_adaptive	wt2-commit-states	EqFM distilled, model-chosen clean positions
+W2E_eqfm_data_context_ril	wt2-eqfm	EqFM from data, random clean positions, refinement in the loop
+W2E_eqfm_data_context_ril_sd	wt2-eqfm	EqFM from data, random clean positions, refinement in the loop, self-distillation
+W2E_eqfm_distill_context_ril	wt2-eqfm	EqFM distilled, random clean positions, refinement in the loop
+W2E_eqfm_distill_context_ril_sd	wt2-eqfm	EqFM distilled, random clean positions, refinement in the loop, self-distillation
+W2F_denoiser_adaptive_h50	wt2-commit-states	Time-free denoiser, model-chosen clean positions, threshold 0.5
+W2F_denoiser_adaptive_h50_all	wt2-commit-states	Time-free denoiser, model-chosen clean positions on every sample, threshold 0.5
+W2F_denoiser_adaptive_h30	wt2-commit-states	Time-free denoiser, model-chosen clean positions, threshold 0.3
+W2F_denoiser_mixed_h50	wt2-commit-states	Time-free denoiser, half model-chosen, half random clean positions
+W2F_denoiser_context_all	wt2-commit-states	Time-free denoiser, random clean positions on every sample
+W2F_denoiser_plain_seed1	wt2-commit-states	Time-free denoiser, no clean positions (second seed)
+W2S_dbtm_s1	wt2-beckmann	Beckmann transport map, plain
+W2S_dbtm_s2	wt2-beckmann	Beckmann transport map, plain
+W2S_dbtm_ril_s1	wt2-beckmann	Beckmann transport map, refinement in the loop
+W2S_dbtm_ril_s2	wt2-beckmann	Beckmann transport map, refinement in the loop
+W2S_eqfm_data_s1	wt2-eqfm	EqFM from data, semigroup, durations of the notes, forced whole jump
+W2S_eqfm_data_s2	wt2-eqfm	EqFM from data, semigroup, durations of the notes, forced whole jump
+W2S_eqfm_distill_s1	wt2-eqfm	EqFM distilled, semigroup, durations of the notes, forced whole jump
+W2S_eqfm_distill_s2	wt2-eqfm	EqFM distilled, semigroup, durations of the notes, forced whole jump
+W2T_sg_nodrop_s0	wt2-eqfm	EqFM from data, semigroup, targets without dropout
+W2T_sg_nodrop_s1	wt2-eqfm	EqFM from data, semigroup, targets without dropout
+W2T_sg_nodrop_s2	wt2-eqfm	EqFM from data, semigroup, targets without dropout
+W2T_sg_nodrop_ema_s0	wt2-eqfm	EqFM from data, semigroup, targets from averaged weights without dropout
+W2T_sg_nodrop_ema_s1	wt2-eqfm	EqFM from data, semigroup, targets from averaged weights without dropout
+W2T_sg_nodrop_ema_s2	wt2-eqfm	EqFM from data, semigroup, targets from averaged weights without dropout
+W2T_lag_s1	wt2-eqfm	EqFM from data, Lagrangian, durations of the notes, no auxiliary loss
+W2T_lag_s2	wt2-eqfm	EqFM from data, Lagrangian, durations of the notes, no auxiliary loss
+W2T_lag_nodrop_s0	wt2-eqfm	EqFM from data, Lagrangian, targets without dropout
+W2T_lag_nodrop_s1	wt2-eqfm	EqFM from data, Lagrangian, targets without dropout
+W2T_lag_nodrop_s2	wt2-eqfm	EqFM from data, Lagrangian, targets without dropout
+W2T_stage1_s0	wt2-eqfm	Time-free denoiser, 3000 steps (first stage)
+W2T_twostage_s0	wt2-eqfm	EqFM in two stages from data, 3000 + 3000 steps
+W2T_stage1_s1	wt2-eqfm	Time-free denoiser, 3000 steps (first stage)
+W2T_twostage_s1	wt2-eqfm	EqFM in two stages from data, 3000 + 3000 steps
+W2T_stage1_s2	wt2-eqfm	Time-free denoiser, 3000 steps (first stage)
+W2T_twostage_s2	wt2-eqfm	EqFM in two stages from data, 3000 + 3000 steps
+L1_denoiser_context	lm1b-adaptive-speed	Time-free denoiser from FLM, random clean positions
+L1_denoiser_control	lm1b-adaptive-speed	Time-free denoiser from FLM, no clean positions (control)
+W2F_denoiser_context_all_s2	wt2-commit-states	Time-free denoiser, random clean positions on every sample
+W2F_denoiser_context_all_s3	wt2-commit-states	Time-free denoiser, random clean positions on every sample
+L2_eqfm_semigroup_wholejump	released-flm-distillation	EqFM distilled from the FLM denoiser, semigroup, forced whole jump, no auxiliary loss
+L2_eqfm_eulerian	released-flm-distillation	EqFM distilled from the FLM denoiser, Eulerian, no auxiliary loss
+L2_eqfm_lagrangian	released-flm-distillation	EqFM distilled from the FLM denoiser, Lagrangian, no auxiliary loss
+W2U_long2_s0	wt2-eqfm	EqFM in two stages from data, 2000 + 4000 steps
+W2U_long2_s1	wt2-eqfm	EqFM in two stages from data, 2000 + 4000 steps
+W2U_long2_s2	wt2-eqfm	EqFM in two stages from data, 2000 + 4000 steps
+W2U_whole8_s0	wt2-eqfm	EqFM in two stages from data, 3000 + 3000 steps, forced whole jump 1 in 8
+W2U_whole8_s1	wt2-eqfm	EqFM in two stages from data, 3000 + 3000 steps, forced whole jump 1 in 8
+W2U_whole8_s2	wt2-eqfm	EqFM in two stages from data, 3000 + 3000 steps, forced whole jump 1 in 8
+W2U_eul_s0	wt2-eqfm	EqFM in two stages from data, 3000 + 3000 steps, Eulerian target
+W2U_eul_s1	wt2-eqfm	EqFM in two stages from data, 3000 + 3000 steps, Eulerian target
+W2U_eul_s2	wt2-eqfm	EqFM in two stages from data, 3000 + 3000 steps, Eulerian target
+L3_lag_sgwhole	released-flm-distillation	EqFM distilled from the FLM denoiser, Lagrangian, semigroup target on whole jumps
+L3_eul_sgwhole	released-flm-distillation	EqFM distilled from the FLM denoiser, Eulerian, semigroup target on whole jumps
+L3_sg_ema	released-flm-distillation	EqFM distilled from the FLM denoiser, semigroup, targets from averaged weights without dropout
+L3_sg_lr1	released-flm-distillation	EqFM distilled from the FLM denoiser, semigroup, learning rate 1e-4
+L3_lag_sgwhole_lr1	released-flm-distillation	EqFM distilled from the FLM denoiser, Lagrangian, semigroup target on whole jumps, learning rate 1e-4
+L4_lagrangian_long	released-flm-distillation	EqFM distilled from the FLM denoiser, Lagrangian, continued at batch 512
+L4_lagrangian_sgwhole_long	released-flm-distillation	EqFM from the FLM denoiser, Lagrangian, semigroup target on whole jumps, continued at batch 512
+W2V_onestep_s0	wt2-beckmann	One-step map trained on the denoiser's continuous-speed samples
+W2V_onestep_s1	wt2-beckmann	One-step map trained on the denoiser's continuous-speed samples
+W2V_onestep_s2	wt2-beckmann	One-step map trained on the denoiser's continuous-speed samples
+W2V_onestep_s3	wt2-beckmann	One-step map trained on the denoiser's continuous-speed samples
+W2W_plain_s0	wt2-adaptive-flow-map	Plain EqFM, semigroup target
+W2W_plain_s1	wt2-adaptive-flow-map	Plain EqFM, semigroup target
+W2W_plain_s2	wt2-adaptive-flow-map	Plain EqFM, semigroup target
+W2W_plain_s3	wt2-adaptive-flow-map	Plain EqFM, semigroup target
+W2W_speed_s0	wt2-adaptive-flow-map	Adaptive flow map, semigroup target
+W2W_speed_s1	wt2-adaptive-flow-map	Adaptive flow map, semigroup target
+W2W_speed_s2	wt2-adaptive-flow-map	Adaptive flow map, semigroup target
+W2W_speed_s3	wt2-adaptive-flow-map	Adaptive flow map, semigroup target
+W2W_speedlag_s0	wt2-adaptive-flow-map	Adaptive flow map, Lagrangian target
+W2W_speedlag_s1	wt2-adaptive-flow-map	Adaptive flow map, Lagrangian target
+W2W_speedlag_s2	wt2-adaptive-flow-map	Adaptive flow map, Lagrangian target
+W2W_speedlag_s3	wt2-adaptive-flow-map	Adaptive flow map, Lagrangian target
+W2X_lagplain_s0	wt2-adaptive-flow-map	Plain EqFM, Lagrangian target
+W2X_lagplain_s1	wt2-adaptive-flow-map	Plain EqFM, Lagrangian target
+W2X_lagplain_s2	wt2-adaptive-flow-map	Plain EqFM, Lagrangian target
+W2X_lagplain_s3	wt2-adaptive-flow-map	Plain EqFM, Lagrangian target
+W2X_lagspeed_s0	wt2-adaptive-flow-map	Adaptive flow map, Lagrangian target, finishing positions held
+W2X_lagspeed_s1	wt2-adaptive-flow-map	Adaptive flow map, Lagrangian target, finishing positions held
+W2X_lagspeed_s2	wt2-adaptive-flow-map	Adaptive flow map, Lagrangian target, finishing positions held
+W2X_lagspeed_s3	wt2-adaptive-flow-map	Adaptive flow map, Lagrangian target, finishing positions held
+W2Y_speedsg_s0	wt2-adaptive-flow-map	Adaptive flow map, semigroup target, finishing positions from the teacher
+W2Y_speedsg_s1	wt2-adaptive-flow-map	Adaptive flow map, semigroup target, finishing positions from the teacher
+W2Y_speedsg_s2	wt2-adaptive-flow-map	Adaptive flow map, semigroup target, finishing positions from the teacher
+W2Y_speedsg_s3	wt2-adaptive-flow-map	Adaptive flow map, semigroup target, finishing positions from the teacher
+L5_onestep_s0	lm1b-adaptive-speed	One-step map trained on the denoiser's continuous-speed samples
+L5_onestep_s1	lm1b-adaptive-speed	One-step map trained on the denoiser's continuous-speed samples
+L1_denoiser_context_s1	lm1b-adaptive-speed	Time-free denoiser from FLM, random clean positions
+L1_denoiser_control_s1	lm1b-adaptive-speed	Time-free denoiser from FLM, no clean positions (control)
+L7_plain	lm1b-adaptive-flow-map	Plain EqFM, Lagrangian target
+L7_speed	lm1b-adaptive-flow-map	Adaptive flow map, Lagrangian target
+L8_lag_sgwhole_s1	released-flm-distillation	EqFM from the FLM denoiser, Lagrangian, semigroup target on whole jumps, second seed at batch 512
+W2R_context_s0	wt2-refinement-eqfm	EqFM flow map with clean positions in its states
+W2R_context_s1	wt2-refinement-eqfm	EqFM flow map with clean positions in its states
+W2R_context_s2	wt2-refinement-eqfm	EqFM flow map with clean positions in its states
+W2R_context_s3	wt2-refinement-eqfm	EqFM flow map with clean positions in its states
+W2R_ril_own_s0	wt2-refinement-eqfm	EqFM flow map, refinement in the loop on its own samples
+W2R_ril_own_s1	wt2-refinement-eqfm	EqFM flow map, refinement in the loop on its own samples
+W2R_ril_own_s2	wt2-refinement-eqfm	EqFM flow map, refinement in the loop on its own samples
+W2R_ril_own_s3	wt2-refinement-eqfm	EqFM flow map, refinement in the loop on its own samples
+W2R_ril_paper_s0	wt2-refinement-eqfm	EqFM flow map, refinement in the loop as in Beckmann
+W2R_ril_paper_s1	wt2-refinement-eqfm	EqFM flow map, refinement in the loop as in Beckmann
+W2R_ril_paper_s2	wt2-refinement-eqfm	EqFM flow map, refinement in the loop as in Beckmann
+W2R_ril_paper_s3	wt2-refinement-eqfm	EqFM flow map, refinement in the loop as in Beckmann
+W2Z_times_s0	wt2-position-times	Denoiser trained with one time per position
+W2Z_times_s1	wt2-position-times	Denoiser trained with one time per position
+W2Z_times_s2	wt2-position-times	Denoiser trained with one time per position
+W2Z_times_s3	wt2-position-times	Denoiser trained with one time per position
+W2Z_timecond_s0	wt2-position-times	Denoiser with clean positions, told the time
+W2Z_timecond_s1	wt2-position-times	Denoiser with clean positions, told the time
+W2Z_timecond_s2	wt2-position-times	Denoiser with clean positions, told the time
+W2Z_timecond_s3	wt2-position-times	Denoiser with clean positions, told the time
+L9_context	released-flm-distillation	EqFM flow map with clean positions in its states (as FMLM+, told no time)
+TS_denoiser_context	tinystories-fmlm-plus	Time-free denoiser with clean positions
+TS_eqfm_context	tinystories-fmlm-plus	EqFM flow map with clean positions (FMLM+ recipe, told no time)
+TS_eqfm_plain	tinystories-fmlm-plus	EqFM flow map, no clean positions in its states
+TS_denoiser_context_100k	tinystories-fmlm-plus	Time-free denoiser with clean positions, trained to their budget
+TS_eqfm_context_100k	tinystories-fmlm-plus	EqFM flow map with clean positions, from the longer-trained denoiser
+TS_joint_lagrangian	tinystories-fmlm-plus	One model from data, no teacher, Lagrangian target (as FMLM+ trains)
+TS_joint_semigroup	tinystories-fmlm-plus	One model from data, no teacher, semigroup target
+TS_joint_lagrangian_beta999	tinystories-fmlm-plus	One model from data, Lagrangian target, Adam β₂ = 0.999 as in FMLM+
+TS_joint_selfcond	tinystories-fmlm-plus	One model from data, Lagrangian target, self-conditioning on its own draft
+TS_joint_selfcond_otherview	tinystories-fmlm-plus	One model from data, Lagrangian target, self-conditioning on a draft from another noisy view

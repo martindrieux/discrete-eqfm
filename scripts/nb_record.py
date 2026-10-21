@@ -27,6 +27,13 @@ QUESTIONS = {
     "wt2-fmlm": "On WikiText-2, how good are FLM and FMLM when trained to convergence with this code?",
     "wt2-beckmann": "On WikiText-2, how good is the Beckmann transport map, plain and with refinement in the loop?",
     "wt2-eqfm": "On WikiText-2, how does pure EqFM (network told the duration only) compare with FMLM and Beckmann?",
+    "wt2-adaptive-flow-map": "On WikiText-2, can a flow map with one duration per position (continuous adaptive speed) be trained stably, and does it beat plain EqFM at 4 to 8 steps?",
+    "lm1b-adaptive-flow-map": "On LM1B, does a flow map with one duration per position (continuous adaptive speed) beat plain EqFM trained from the same teacher, at 8 steps?",
+    "wt2-refinement-eqfm": "On WikiText-2, does refinement in the loop (Beckmann) help the EqFM flow map distilled from a denoiser?",
+    "wt2-position-times": "On WikiText-2, does a denoiser trained with one time per position sample better with continuous speed than one trained with clean positions, and does a network told nothing about time do better than one told the time?",
+    "tinystories-fmlm-plus": "On TinyStories, the benchmark of FMLM+, does the same recipe on EqFM (clean positions in training, posterior refinement sampler, network told no time) match or beat FMLM+ (17.53 / 3.96 at 32 evaluations)?",
+    "wt2-commit-states": "On WikiText-2, does training on states with clean (committed) positions, random or chosen by the model's confidence, improve few-step samples when the sampler commits confident positions?",
+    "lm1b-adaptive-speed": "On LM1B, starting from the FLM denoiser of its authors, does the continuous adaptive-speed sampler (eq. 31-32 of the notes) improve samples once the denoiser has seen clean positions?",
     "endpoint-only": "Does learning only the whole jump $\\kappa = 1$ (as in Discrete Beckmann Transport Models) work in this framework?",
 }
 
@@ -61,7 +68,10 @@ def record(name, names, stopped=False):
     evals = {os.path.basename(p)[4:-5].strip("_"): json.load(open(p)) for p in sorted(glob.glob(f"{d}/eval*.json"))
              if ".tmp" not in p}
     kind = "flow-map" if any(e.get("flow_map") for e in evals.values()) or cfg.get("loss.off_diagonal") and "field" not in name else "denoiser"
-    kind = "dbtm" if "dbtm" in name else ("denoiser" if "denoiser" in name or name.endswith("_flm") else kind)
+    if name.startswith(("W2V_", "L5_")):
+        kind = "sample-distillation"
+    else:
+      kind = "dbtm" if "dbtm" in name else ("denoiser" if "denoiser" in name or name.endswith("_flm") else kind)
     for k in ("loss.teacher", "train.init", "data.path", "out_dir", "ckpt_dir"):      # keep paths short
         if isinstance(cfg.get(k), str):
             cfg[k] = cfg[k].replace("/data/user_data/mdrieux/deqfm/", "")
@@ -70,7 +80,7 @@ def record(name, names, stopped=False):
     last_step = max((x.get("train_step") or 0) for x in evals.values()) if evals else 0
     collapsed = sorted({int(k) for tag, e in evals.items() for k, m in e["steps"].items()      # flow-map sampler only
                         if k.isdigit() and m["entropy"] < COLLAPSE_ENTROPY and (e.get("train_step") or 0) == last_step
-                        and not any(w in tag for w in ("churn", "refine", "keepnoise", "denoiser"))})
+                        and not any(w in tag for w in ("churn", "refine", "keepnoise", "denoiser", "adaptive", "speedmap"))})
     if collapsed:
         title = (title + ": collapsed at " + ", ".join(str(k) for k in collapsed) + " step" + ("s" if collapsed != [1] else ""))[:100]
     titles = json.load(open("jobs/titles.json"))      # name -> [title, formula]
@@ -84,7 +94,10 @@ def record(name, names, stopped=False):
         last = r["step"]
         run.log(step=r["step"], **{k: v for k, v in r.items() if k in ("loss", "diag", "off")})
     for tag, e in sorted(evals.items(), key=lambda kv: kv[1].get("train_step") or last):   # kept checkpoints, then the end
-        suffix = ("_churn" if "churn" in tag else "_refine" if "refine" in tag           # refine: DBTM sampler
+        suffix = ("_speed" + tag.split("beta")[-1] if "speedmap" in tag            # adaptive-speed sampler 1 + beta g of a flow map
+                  else "_churn" if "churn" in tag else "_refine_rep" if "refine_rep" in tag   # DBTM sampler with repetition exponent
+                  else "_commit" + tag.split("_h")[-1] if "adaptive" in tag             # jumps with commits, threshold in the name
+                  else "_refine" if "refine" in tag                                     # refine: DBTM sampler
                   else "_keepnoise" if "keepnoise" in tag                                 # same, noise kept between rounds
                   else "_denoiser" if "denoiser" in tag else "")                          # Euler steps of the denoiser alone
         metrics = {}

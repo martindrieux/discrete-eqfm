@@ -1,0 +1,2 @@
+# LM1B: second seed of the pure EqFM flow map (Lagrangian, semigroup target on whole jumps), one run of 45000 steps at effective batch 512.
+L8_lag_sgwhole_s1	-	train_flow_map.py	configs/lm1b.yaml loss.teacher=$DEQ_ROOT/runs/F_field_timefree/last.pt train.betas=[0.9,0.95] loss.jump_sampling=notes_reparam loss.boundary_prob=0 train.steps=45000 train.warmup=500 train.keep_every=15000 loss.off_diagonal=lagrangian loss.whole_jump_prob=0.03125 loss.whole_jump_target=semigroup seed=1

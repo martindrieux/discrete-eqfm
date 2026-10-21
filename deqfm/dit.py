@@ -44,7 +44,7 @@ class TimestepEmbedder(nn.Module):
     def forward(self, t):
         half = self.frequency_embedding_size // 2
         freqs = torch.exp(-math.log(10000) * torch.arange(half, dtype=torch.float32, device=t.device) / half)
-        args = t[:, None].float() * freqs[None]
+        args = t[..., None].float() * freqs       # t: [B], or [B, L] for one value per position
         return self.mlp(torch.cat([torch.cos(args), torch.sin(args)], dim=-1))
 
 
@@ -76,7 +76,8 @@ class DDiTBlock(nn.Module):
 
     def forward(self, x, cos, sin, c):
         B, L, C = x.shape
-        shift_msa, scale_msa, gate_msa, shift_mlp, scale_mlp, gate_mlp = self.adaLN_modulation(c)[:, None].chunk(6, dim=2)
+        mod = self.adaLN_modulation(c)
+        shift_msa, scale_msa, gate_msa, shift_mlp, scale_mlp, gate_mlp = (mod if mod.dim() == 3 else mod[:, None]).chunk(6, dim=2)
         h = self.norm1(x) * (1 + scale_msa) + shift_msa
         q, k, v = self.attn_qkv(h).view(B, L, 3, self.n_heads, C // self.n_heads).permute(2, 0, 3, 1, 4)
         q, k = apply_rotary(q, cos.to(q.dtype), sin.to(q.dtype)), apply_rotary(k, cos.to(k.dtype), sin.to(k.dtype))
@@ -110,17 +111,23 @@ class DDiTFinalLayer(nn.Module):
             layer.bias.data.zero_()
 
     def forward(self, x, c):
-        shift, scale = self.adaLN_modulation(c)[:, None].chunk(2, dim=2)
+        mod = self.adaLN_modulation(c)
+        shift, scale = (mod if mod.dim() == 3 else mod[:, None]).chunk(2, dim=2)
         return self.linear(self.norm_final(x) * (1 + scale) + shift)
 
 
 class DiT(nn.Module):
     def __init__(self, vocab_size, seq_len, dim=768, depth=12, heads=12, cond_dim=128, dropout=0.1, softcap=50.0,
-                 logit_cap=30.0, second_input=False, mixed_precision=True):
+                 logit_cap=30.0, second_input=False, mixed_precision=True, self_cond=False):
         super().__init__()
         self.vocab_size, self.seq_len, self.dim, self.heads = vocab_size, seq_len, dim, heads
         self.logit_cap, self.mixed_precision = logit_cap, mixed_precision
         self.vocab_embed = EmbeddingLayer(dim, vocab_size)
+        # self-conditioning (ELF, arXiv 2605.10938): a draft p of the clean tokens, embedded and added to the input;
+        # starts as a no-op, and p = 0 (or None) means no draft
+        self.sc_embed = EmbeddingLayer(dim, vocab_size) if self_cond else None
+        if self_cond:
+            self.sc_embed.embedding.data.zero_()
         self.sigma_map = TimestepEmbedder(cond_dim)
         self.sigma_map_prime = TimestepEmbedder(cond_dim) if second_input else None
         if second_input:   # starts as a no-op, as when FMLM is initialised from FLM
@@ -130,9 +137,12 @@ class DiT(nn.Module):
                                     for _ in range(depth))
         self.output_layer = DDiTFinalLayer(dim, vocab_size, cond_dim)
 
-    def forward(self, x, a, b=None, manual_attn=False):
-        """x: [B, L, V] float; a, b: [B]. Returns logits [B, L, V]. (`manual_attn` is accepted and ignored.)"""
+    def forward(self, x, a, b=None, manual_attn=False, sc=None):
+        """x: [B, L, V] float; a, b: [B], or [B, L] for one value per position; sc: [B, L, V] draft (self-conditioning).
+        Returns logits [B, L, V]. (`manual_attn` is accepted and ignored.)"""
         h = self.vocab_embed(x)
+        if sc is not None and self.sc_embed is not None:
+            h = h + self.sc_embed(sc)
         emb = self.sigma_map(a)
         if b is not None:
             emb = emb + self.sigma_map_prime(b)

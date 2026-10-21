@@ -90,7 +90,7 @@ def build_model(cfg, vocab_size, seq_len, kind="field"):
         from .dit import DiT
         second = kind == "flow_map" and cfg["cond"] != "duration"   # the target time is a second input
         return DiT(vocab_size, seq_len, cfg["dim"], cfg["depth"], cfg["heads"], cfg["cond_dim"], cfg["dropout"],
-                   cfg["softcap"], cfg["logit_cap"], second_input=second)
+                   cfg["softcap"], cfg["logit_cap"], second_input=second, self_cond=cfg.get("self_cond", False))
     if cfg.get("cond", "duration") != "duration":
         raise ValueError("model.arch = denoiser only supports model.cond = duration")
     return Denoiser(vocab_size, seq_len, cfg["dim"], cfg["depth"], cfg["heads"], cfg["mlp_ratio"], cfg["dropout"],

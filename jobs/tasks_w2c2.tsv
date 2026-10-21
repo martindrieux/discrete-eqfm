@@ -1,0 +1,3 @@
+# As tasks_w2c (semigroup), plus the forced whole jump of FMLM: with probability 1/32 the sample is the jump from pure noise to the end.
+W2C_eqfm_data_semigroup_wholejump	-	train_flow_map.py	configs/wt2.yaml loss.off_diagonal=semigroup loss.jump_sampling=notes_reparam loss.boundary_prob=0 loss.whole_jump_prob=0.03125
+W2C_eqfm_distill_semigroup_wholejump	-	train_flow_map.py	configs/wt2.yaml loss.teacher=$DEQ_ROOT/runs/W2_denoiser_timefree/best.pt train.betas=[0.9,0.95] loss.off_diagonal=semigroup loss.jump_sampling=notes_reparam loss.boundary_prob=0 loss.whole_jump_prob=0.03125

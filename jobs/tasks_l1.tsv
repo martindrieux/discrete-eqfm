@@ -1,0 +1,9 @@
+# LM1B: does the continuous adaptive-speed sampler help on a strong denoiser? Both runs start from the time-free denoiser
+# obtained from the FLM checkpoint of its authors (F_field_timefree) and train 20000 more steps at batch 128, learning rate 1e-4.
+#   context : with random clean positions on every sample (loss on the other positions)
+#   control : the same further training without clean positions
+L1_denoiser_context	-	train_field.py	configs/lm1b.yaml train.init=$DEQ_ROOT/runs/F_field_timefree/last.pt train.steps=20000 train.lr=1e-4 train.warmup=1000 train.keep_every=10000 loss.partial_context=true loss.freeze_context=true
+L1_denoiser_control	-	train_field.py	configs/lm1b.yaml train.init=$DEQ_ROOT/runs/F_field_timefree/last.pt train.steps=20000 train.lr=1e-4 train.warmup=1000 train.keep_every=10000
+# WikiText-2: two more seeds of the denoiser with random clean positions on every sample
+W2F_denoiser_context_all_s2	-	train_field.py	configs/wt2.yaml loss.partial_context=true loss.freeze_context=true seed=2
+W2F_denoiser_context_all_s3	-	train_field.py	configs/wt2.yaml loss.partial_context=true loss.freeze_context=true seed=3

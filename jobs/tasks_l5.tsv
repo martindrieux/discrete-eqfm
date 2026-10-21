@@ -1,0 +1,5 @@
+# LM1B: one-step map trained on the samples of the denoiser with random clean positions (L1_denoiser_context), sampled with
+# continuous adaptive speed 1 + 16 g^2 at 32 steps (100 / 4.28). Student = whole jump of a flow map, started from the denoiser's
+# weights; 4 GPUs x batch 128, 4000 steps. Reference: published Beckmann at one step, plain 201.2 / 4.03, refinement in the loop 85.5 / 3.92.
+L5_onestep_s0	-	train_sample_distill.py	configs/lm1b.yaml loss.teacher=$DEQ_ROOT/runs/L1_denoiser_context/last.pt train.steps=4000 train.lr=1e-4 train.warmup=500 train.lr_decay=cosine train.save_every=250 train.keep_every=2000 sdist.K=32 sdist.beta=16 sdist.power=2 seed=0
+L5_onestep_s1	-	train_sample_distill.py	configs/lm1b.yaml loss.teacher=$DEQ_ROOT/runs/L1_denoiser_context/last.pt train.steps=4000 train.lr=1e-4 train.warmup=500 train.lr_decay=cosine train.save_every=250 train.keep_every=2000 sdist.K=32 sdist.beta=16 sdist.power=2 seed=1

@@ -1,0 +1,3 @@
+# LM1B: a second seed of the denoiser with random clean positions and of its control (as tasks_l1), for the continuous-speed sampler.
+L1_denoiser_context_s1	-	train_field.py	configs/lm1b.yaml train.init=$DEQ_ROOT/runs/F_field_timefree/last.pt train.steps=20000 train.lr=1e-4 train.warmup=1000 train.keep_every=10000 loss.partial_context=true loss.freeze_context=true seed=1
+L1_denoiser_control_s1	-	train_field.py	configs/lm1b.yaml train.init=$DEQ_ROOT/runs/F_field_timefree/last.pt train.steps=20000 train.lr=1e-4 train.warmup=1000 train.keep_every=10000 seed=1
